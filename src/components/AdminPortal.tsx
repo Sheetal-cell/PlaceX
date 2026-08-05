@@ -17,7 +17,7 @@ import {
 import type { Student, PlacementDrive } from '../mockData';
 import { Footer } from './Footer';
 import { ScrapedDrives } from "./scrapper/ScrapedDrives";
-
+import CalendarPage from "./calendar/CalendarPage";
 interface AdminPortalProps {
   students: Student[];
   drives: PlacementDrive[];
@@ -41,7 +41,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   onRejectStudent,
   onSeedData
 }) => {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'drives' |'scraped'| 'students' | 'tracker'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'drives' |'scraped'| 'students' | 'tracker'|'calendar'>('dashboard');
 
   // New Drive Form State
   const [showDriveForm, setShowDriveForm] = useState(false);
@@ -217,6 +217,17 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 >
     🌐
     Recruitment Feed
+</button>
+
+<button
+onClick={()=>setActiveTab("calendar")}
+className={`menu-item ${
+activeTab==="calendar" ? "active":""
+}`}
+>
+
+Placement Calendar
+
 </button>
           <button
             onClick={() => setActiveTab('students')}
@@ -920,6 +931,13 @@ activeTab==="scraped" &&
             )}
           </div>
         )}
+
+        {
+activeTab==="calendar" &&
+
+<CalendarPage/>
+
+}
 
       </main>
 
