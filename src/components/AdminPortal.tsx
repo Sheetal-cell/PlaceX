@@ -57,6 +57,8 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const [deadline, setDeadline] = useState('2026-06-30');
   const [jobDesc, setJobDesc] = useState('');
   const [skillsRequiredText, setSkillsRequiredText] = useState('React, JavaScript, Node.js');
+  // State
+  const [feedback, setFeedback] = useState<Record<string,string>>({});
   const [roundsText, setRoundsText] = useState('Aptitude Test, Technical Interview, HR Interview');
 
   // Student Database Filter State
@@ -992,6 +994,33 @@ activeTab==="hr" &&
             </div>
 
             <h4 className="text-xs font-bold uppercase text-gray-400 tracking-wider mb-2 mt-4">Candidate Skills</h4>
+            <div className="mt-6">
+    <h4 className="text-xs font-bold uppercase text-gray-400 tracking-wider mb-2">
+        TPO Feedback
+    </h4>
+
+    <textarea
+        rows={5}
+        placeholder="Write resume feedback for the student..."
+        value={feedback[selectedStudentForResume.id] || ""}
+        onChange={(e)=>
+            setFeedback({
+                ...feedback,
+                [selectedStudentForResume.id]:e.target.value
+            })
+        }
+        className="input-field resize-none"
+    />
+
+    <button
+        className="btn btn-primary mt-3"
+        onClick={()=>{
+            alert("Feedback Saved!");
+        }}
+    >
+        Save Feedback
+    </button>
+</div>
             <div className="flex flex-wrap gap-1">
               {selectedStudentForResume.skills.map(s => (
                 <span key={s} className="px-2.5 py-0.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 rounded text-[10px]">{s}</span>
