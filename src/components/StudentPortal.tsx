@@ -47,6 +47,8 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   const [profileSkills, setProfileSkills] = useState(currentStudent.skills.join(', '));
   const [profileProjects, setProfileProjects] = useState(currentStudent.projectsCount.toString());
   const [profileResume, setProfileResume] = useState(currentStudent.resumeText || '');
+  const [uploadedResumeName, setUploadedResumeName] = useState('');
+  const [, setUploadedResumeFile] = useState<File | null>(null);
 
   // Reset fields if logged-in student changes
   useEffect(() => {
@@ -123,6 +125,57 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
 
     return { eligible: true, score: overallScore, matchingSkills };
   };
+
+  const handleResumeUpload = (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+
+  const file = e.target.files?.[0];
+
+  if (!file) return;
+
+
+  const allowedExtensions = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ];
+
+
+  if (!allowedExtensions.includes(file.type)) {
+    alert("Upload only PDF, DOC, or DOCX files");
+    return;
+  }
+
+
+  setUploadedResumeFile(file);
+  setUploadedResumeName(file.name);
+
+
+  // Temporary frontend extraction
+  // Backend will replace this later
+
+  const reader = new FileReader();
+
+
+  reader.onload = () => {
+
+    const text = reader.result as string;
+
+
+    // Update Profile Resume
+    setProfileResume(text);
+
+
+    // Sync with ATS section
+    setResumeTextInput(text);
+
+  };
+
+
+  reader.readAsText(file);
+
+};
 
   // Run ATS Scan
   const handleAtsScan = () => {
@@ -403,7 +456,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
         {activeTab === 'dashboard' && (
           <div className="flex flex-col gap-6 animate-slide-in">
             {/* Welcoming banner */}
-            <div className="glass-card relative overflow-hidden p-8 flex flex-col justify-center bg-gradient-to-r from-indigo-950/40 to-purple-950/40" style={{ borderLeft: '4px solid hsl(var(--color-secondary))' }}>
+            <div className="glass-card relative overflow-hidden p-8 flex flex-col justify-center bg-linear-to-r from-indigo-950/40 to-purple-950/40" style={{ borderLeft: '4px solid hsl(var(--color-secondary))' }}>
               <div className="absolute top-0 right-0 p-8 text-indigo-500/10 pointer-events-none">
                 <Sparkles size={120} />
               </div>
@@ -610,7 +663,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                       </div>
                     </div>
 
-                    <div className="flex flex-col items-center justify-center p-4 bg-white/5 rounded-2xl min-w-[150px] border border-white/5 text-center">
+                    <div className="flex flex-col items-center justify-center p-4 bg-white/5 rounded-2xl min-w-37.5 border border-white/5 text-center">
                       {matchResult.eligible ? (
                         <>
                           <div className="text-2xl font-black text-emerald-400 font-display">{matchResult.score}%</div>
@@ -1078,6 +1131,51 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                   className="input-field"
                 />
               </div>
+
+              <div className="input-group">
+
+<label className="input-label">
+Upload Resume Document
+</label>
+
+
+<input
+ type="file"
+ accept=".pdf,.doc,.docx"
+ onChange={handleResumeUpload}
+ className="input-field"
+/>
+
+
+{
+uploadedResumeName && (
+
+<div className="mt-2 text-xs text-emerald-400">
+
+✓ Uploaded:
+{uploadedResumeName}
+
+</div>
+
+)
+}
+
+
+</div>
+
+{
+uploadedResumeName && (
+
+<button
+type="button"
+onClick={()=>setActiveTab('ats')}
+className="btn btn-secondary mt-3"
+>
+Analyze Resume in ATS
+</button>
+
+)
+}
 
               <div className="input-group mb-0">
                 <label className="input-label">Resume plain text summary (Syncs with ATS tool)</label>
