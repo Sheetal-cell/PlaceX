@@ -6,6 +6,18 @@ export interface Application {
   status: 'Applied' | 'Test Scheduled' | 'Tech Round 1' | 'Tech Round 2' | 'HR Round' | 'Selected' | 'Rejected';
   currentRoundIndex: number; // Index matching the drive's rounds array
   feedback?: string;
+  resumeFeedback?:string;
+
+  technicalFeedback?:string;
+
+  hrFeedback?:string;
+
+  overallRemark?:string;
+
+  rating?:number;
+
+  nextStep?:string;
+
 }
 
 export interface Recruiter {

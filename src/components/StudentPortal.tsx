@@ -1037,7 +1037,119 @@ const handleCVUpload = (
                         <Award size={20} />
                       </div>
                       <div>
-                        <h4 className="font-bold text-white text-sm font-display">TPO Feedback Log</h4>
+                        <div className="bg-white/5 border border-white/10 rounded-xl p-5 mt-8">
+
+<h4 className="text-lg font-bold mb-6">
+
+TPO Evaluation Report
+
+</h4>
+
+<div className="space-y-5">
+
+<div>
+
+<p className="text-indigo-400 font-semibold">
+
+Resume Review
+
+</p>
+
+<p className="text-gray-300 text-sm">
+
+{selectedApp.resumeFeedback || "Not Reviewed Yet"}
+
+</p>
+
+</div>
+
+<div>
+
+<p className="text-indigo-400 font-semibold">
+
+Technical Round
+
+</p>
+
+<p className="text-gray-300 text-sm">
+
+{selectedApp.technicalFeedback || "Pending"}
+
+</p>
+
+</div>
+
+<div>
+
+<p className="text-indigo-400 font-semibold">
+
+HR Round
+
+</p>
+
+<p className="text-gray-300 text-sm">
+
+{selectedApp.hrFeedback || "Pending"}
+
+</p>
+
+</div>
+
+<div>
+
+<p className="text-indigo-400 font-semibold">
+
+Overall Recommendation
+
+</p>
+
+<p className="text-gray-300">
+
+{selectedApp.overallRemark || "Awaiting TPO Review"}
+
+</p>
+
+</div>
+
+<div className="flex justify-between">
+
+<div>
+
+<p className="text-indigo-400 font-semibold">
+
+Rating
+
+</p>
+
+<p className="text-yellow-400 text-lg">
+
+{"⭐".repeat(selectedApp.rating || 0)}
+
+</p>
+
+</div>
+
+<div>
+
+<p className="text-indigo-400 font-semibold">
+
+Next Step
+
+</p>
+
+<p className="text-green-400">
+
+{selectedApp.nextStep || "Waiting"}
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
                         <p className="text-xs text-slate-300 mt-2 leading-relaxed">
                           {selectedApp.feedback
                             ? selectedApp.feedback
