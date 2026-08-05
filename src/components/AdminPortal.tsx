@@ -14,12 +14,18 @@ import {
   ShieldCheck,
   TrendingUp
 } from 'lucide-react';
-import type { Student, PlacementDrive } from '../mockData';
+import type {
+Student,
+PlacementDrive,
+ResumeFeedback
+} from "../mockData";
 import { Footer } from './Footer';
 import { ScrapedDrives } from "./scrapper/ScrapedDrives";
 import CalendarPage from "./calendar/CalendarPage";
 
 import HROutreach from "./hr/HROutreach";
+
+
 interface AdminPortalProps {
   students: Student[];
   drives: PlacementDrive[];
@@ -30,11 +36,16 @@ interface AdminPortalProps {
   onPromoteStudent: (studentId: string, driveId: string, newRoundIndex: number, isFinalSelection: boolean) => void;
   onRejectStudent: (studentId: string, driveId: string) => void;
   onSeedData?: () => void;
+  onSaveFeedback: (
+studentId:string,
+feedback:ResumeFeedback
+)=>void;
 }
 
 export const AdminPortal: React.FC<AdminPortalProps> = ({
   students,
   drives,
+  onSaveFeedback,
   onLogout,
   onAddDrive,
   onToggleDriveActive,
@@ -58,7 +69,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const [jobDesc, setJobDesc] = useState('');
   const [skillsRequiredText, setSkillsRequiredText] = useState('React, JavaScript, Node.js');
   // State
-  const [feedback, setFeedback] = useState<Record<string,string>>({});
+  
   const [roundsText, setRoundsText] = useState('Aptitude Test, Technical Interview, HR Interview');
 
   // Student Database Filter State
@@ -69,6 +80,23 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
   // Selected student for resume view
   const [selectedStudentForResume, setSelectedStudentForResume] = useState<Student | null>(null);
+  const [review,setReview]=useState({
+
+score:80,
+
+status:"Good",
+
+projects:"",
+
+skills:"",
+
+experience:"",
+
+ats:"",
+
+overall:""
+
+});
 
   // Manual Status Change state
   const [statusChangeStudentId, setStatusChangeStudentId] = useState<string | null>(null);
@@ -994,38 +1022,142 @@ activeTab==="hr" &&
             </div>
 
             <h4 className="text-xs font-bold uppercase text-gray-400 tracking-wider mb-2 mt-4">Candidate Skills</h4>
-            <div className="mt-6">
-    <h4 className="text-xs font-bold uppercase text-gray-400 tracking-wider mb-2">
-        TPO Feedback
-    </h4>
+            <div className="glass-card mt-6 p-5">
 
-    <textarea
-        rows={5}
-        placeholder="Write resume feedback for the student..."
-        value={feedback[selectedStudentForResume.id] || ""}
-        onChange={(e)=>
-            setFeedback({
-                ...feedback,
-                [selectedStudentForResume.id]:e.target.value
-            })
-        }
-        className="input-field resize-none"
-    />
+<h3 className="text-lg font-bold text-white mb-4">
 
-    <button
-        className="btn btn-primary mt-3"
-        onClick={()=>{
-            alert("Feedback Saved!");
-        }}
-    >
-        Save Feedback
-    </button>
+Resume Review
+
+</h3>
+
+<input
+type="number"
+className="input-field mb-3"
+placeholder="Resume Score"
+value={review.score}
+onChange={(e)=>
+setReview({
+...review,
+score:Number(e.target.value)
+})
+}
+/>
+
+<select
+className="input-field mb-3"
+value={review.status}
+onChange={(e)=>
+setReview({
+...review,
+status:e.target.value
+})
+}
+>
+
+<option>Excellent</option>
+<option>Good</option>
+<option>Needs Improvement</option>
+
+</select>
+
+<textarea
+rows={2}
+placeholder="Projects Feedback"
+className="input-field mb-3"
+value={review.projects}
+onChange={(e)=>
+setReview({
+...review,
+projects:e.target.value
+})
+}
+/>
+
+<textarea
+rows={2}
+placeholder="Skills Feedback"
+className="input-field mb-3"
+value={review.skills}
+onChange={(e)=>
+setReview({
+...review,
+skills:e.target.value
+})
+}
+/>
+
+<textarea
+rows={2}
+placeholder="Experience Feedback"
+className="input-field mb-3"
+value={review.experience}
+onChange={(e)=>
+setReview({
+...review,
+experience:e.target.value
+})
+}
+/>
+
+<textarea
+rows={2}
+placeholder="ATS Suggestions"
+className="input-field mb-3"
+value={review.ats}
+onChange={(e)=>
+setReview({
+...review,
+ats:e.target.value
+})
+}
+/>
+
+<textarea
+rows={4}
+placeholder="Overall Feedback"
+className="input-field"
+value={review.overall}
+onChange={(e)=>
+setReview({
+...review,
+overall:e.target.value
+})
+}
+/>
+
+<button
+
+className="btn btn-primary w-full mt-4"
+
+onClick={()=>{
+
+if(!selectedStudentForResume) return;
+
+            onSaveFeedback(
+              selectedStudentForResume.id,
+              {
+                ...review,
+                // ensure status conforms to ResumeFeedback union
+                status: (() => {
+                  const allowed = ['Good', 'Excellent', 'Needs Improvement'] as const;
+                  return (allowed as readonly string[]).includes(review.status)
+                    ? (review.status as 'Good' | 'Excellent' | 'Needs Improvement')
+                    : 'Needs Improvement';
+                })(),
+                reviewedBy: 'TPO Admin',
+                reviewedOn: new Date().toLocaleDateString(),
+              }
+            );
+
+}}
+
+>
+
+Save Feedback
+
+</button>
+
 </div>
-            <div className="flex flex-wrap gap-1">
-              {selectedStudentForResume.skills.map(s => (
-                <span key={s} className="px-2.5 py-0.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 rounded text-[10px]">{s}</span>
-              ))}
-            </div>
 
             <button
               onClick={() => setSelectedStudentForResume(null)}

@@ -8,6 +8,7 @@ import type { ToastType } from './components/Notification';
 import { INITIAL_STUDENTS, INITIAL_DRIVES, INITIAL_RECRUITERS } from './mockData';
 import type { Student, PlacementDrive, Application, Recruiter } from './mockData';
 import { GraduationCap, LogOut, Shield, Building2 } from 'lucide-react';
+import type { ResumeFeedback } from "./mockData";
 
 
 function App() {
@@ -311,6 +312,21 @@ function App() {
     triggerToast(`${student.name} marked as Rejected for ${drive.companyName}.`, 'warning');
   };
 
+  const saveFeedback = (studentId: string, feedback: ResumeFeedback) => {
+
+    setStudents(prev =>
+        prev.map(student =>
+            student.id === studentId
+                ? {
+                      ...student,
+                      resumeFeedback: feedback
+                  }
+                : student
+        )
+    );
+
+};
+
   // Get active logged in student object
   const loggedInStudent = session?.role === 'student'
     ? students.find(s => s.id === session.studentId)
@@ -354,7 +370,7 @@ function App() {
             {session.role === 'student' && loggedInStudent ? (
               <div className="flex items-center gap-3">
                 <div className="hidden sm:flex flex-col text-right">
-                  <span className="text-xs font-semibold text-white truncate max-w-[120px]">{loggedInStudent.name}</span>
+                  <span className="text-xs font-semibold text-white truncate max-w-30">{loggedInStudent.name}</span>
                   <span className="text-[10px] text-gray-500 font-semibold uppercase">{loggedInStudent.branch}</span>
                 </div>
                 <div className="avatar">{loggedInStudent.name.charAt(0)}</div>
@@ -362,10 +378,10 @@ function App() {
             ) : session.role === 'recruiter' && loggedInRecruiter ? (
               <div className="flex items-center gap-3">
                 <div className="hidden sm:flex flex-col text-right">
-                  <span className="text-xs font-semibold text-white truncate max-w-[120px]">{loggedInRecruiter.name}</span>
+                  <span className="text-xs font-semibold text-white truncate max-w-30">{loggedInRecruiter.name}</span>
                   <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">{loggedInRecruiter.companyName} Recruiter</span>
                 </div>
-                <div className="avatar bg-gradient-to-br from-emerald-500 to-teal-600">
+                <div className="avatar bg-linear-to-br from-emerald-500 to-teal-600">
                   <Building2 size={16} className="text-white" />
                 </div>
               </div>
@@ -375,7 +391,7 @@ function App() {
                   <span className="text-xs font-semibold text-white">TPO Coordinator</span>
                   <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Administrator</span>
                 </div>
-                <div className="avatar bg-gradient-to-br from-indigo-500 to-purple-600">
+                <div className="avatar bg-linear-to-br from-indigo-500 to-purple-600">
                   <Shield size={16} className="text-white" />
                 </div>
               </div>
@@ -435,6 +451,7 @@ function App() {
             onPromoteStudent={handlePromoteStudent}
             onRejectStudent={handleRejectStudent}
             onSeedData={handleSeedData}
+            onSaveFeedback={saveFeedback}
           />
         )}
       </div>

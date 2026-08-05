@@ -20,6 +20,20 @@ export interface Application {
 
 }
 
+export interface ResumeFeedback {
+    score: number;
+    status: "Excellent" | "Good" | "Needs Improvement";
+
+    projects: string;
+    skills: string;
+    experience: string;
+    ats: string;
+    overall: string;
+
+    reviewedBy: string;
+    reviewedOn: string;
+}
+
 export interface Recruiter {
   id: string;
   name: string;
@@ -46,6 +60,8 @@ export interface Student {
   projectsCount: number;
   resumeText: string;
   applications: Application[];
+
+  resumeFeedback?: ResumeFeedback;
 }
 
 export interface PlacementDrive {

@@ -1037,117 +1037,75 @@ const handleCVUpload = (
                         <Award size={20} />
                       </div>
                       <div>
-                        <div className="bg-white/5 border border-white/10 rounded-xl p-5 mt-8">
+                        <div className="glass-card p-5 mt-4">
 
-<h4 className="text-lg font-bold mb-6">
+<h3 className="font-bold text-white mb-4">
 
-TPO Evaluation Report
+Resume Feedback
 
-</h4>
+</h3>
 
-<div className="space-y-5">
+{
 
-<div>
+currentStudent.resumeFeedback ?
 
-<p className="text-indigo-400 font-semibold">
+<>
 
-Resume Review
+<p><b>Score:</b> {currentStudent.resumeFeedback.score}/100</p>
 
-</p>
+<p><b>Status:</b> {currentStudent.resumeFeedback.status}</p>
 
-<p className="text-gray-300 text-sm">
+<hr className="my-3"/>
 
-{selectedApp.resumeFeedback || "Not Reviewed Yet"}
+<p><b>Projects</b></p>
 
-</p>
+<p>{currentStudent.resumeFeedback.projects}</p>
 
-</div>
+<hr className="my-3"/>
 
-<div>
+<p><b>Skills</b></p>
 
-<p className="text-indigo-400 font-semibold">
+<p>{currentStudent.resumeFeedback.skills}</p>
 
-Technical Round
+<hr className="my-3"/>
 
-</p>
+<p><b>Experience</b></p>
 
-<p className="text-gray-300 text-sm">
+<p>{currentStudent.resumeFeedback.experience}</p>
 
-{selectedApp.technicalFeedback || "Pending"}
+<hr className="my-3"/>
 
-</p>
+<p><b>ATS Suggestions</b></p>
 
-</div>
+<p>{currentStudent.resumeFeedback.ats}</p>
 
-<div>
+<hr className="my-3"/>
 
-<p className="text-indigo-400 font-semibold">
+<p><b>Overall Feedback</b></p>
 
-HR Round
+<p>{currentStudent.resumeFeedback.overall}</p>
 
-</p>
+<div className="text-xs text-gray-400 mt-4">
 
-<p className="text-gray-300 text-sm">
+Reviewed by {currentStudent.resumeFeedback.reviewedBy}
 
-{selectedApp.hrFeedback || "Pending"}
+<br/>
 
-</p>
-
-</div>
-
-<div>
-
-<p className="text-indigo-400 font-semibold">
-
-Overall Recommendation
-
-</p>
-
-<p className="text-gray-300">
-
-{selectedApp.overallRemark || "Awaiting TPO Review"}
-
-</p>
+{currentStudent.resumeFeedback.reviewedOn}
 
 </div>
 
-<div className="flex justify-between">
+</>
 
-<div>
+:
 
-<p className="text-indigo-400 font-semibold">
+<p className="text-gray-400">
 
-Rating
-
-</p>
-
-<p className="text-yellow-400 text-lg">
-
-{"⭐".repeat(selectedApp.rating || 0)}
+No feedback yet.
 
 </p>
 
-</div>
-
-<div>
-
-<p className="text-indigo-400 font-semibold">
-
-Next Step
-
-</p>
-
-<p className="text-green-400">
-
-{selectedApp.nextStep || "Waiting"}
-
-</p>
-
-</div>
-
-</div>
-
-</div>
+}
 
 </div>
                         <p className="text-xs text-slate-300 mt-2 leading-relaxed">
