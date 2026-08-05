@@ -48,7 +48,9 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   const [profileProjects, setProfileProjects] = useState(currentStudent.projectsCount.toString());
   const [profileResume, setProfileResume] = useState(currentStudent.resumeText || '');
   const [uploadedResumeName, setUploadedResumeName] = useState('');
-  const [, setUploadedResumeFile] = useState<File | null>(null);
+  const [uploadedResumeFile, setUploadedResumeFile] = useState<File | null>(null);
+  const [uploadedCVFile, setUploadedCVFile] = useState<File | null>(null);
+  const [uploadedCVName, setUploadedCVName] = useState('');
 
   // Reset fields if logged-in student changes
   useEffect(() => {
@@ -175,6 +177,33 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
 
   reader.readAsText(file);
 
+};
+
+const handleCVUpload = (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = e.target.files?.[0];
+
+  if (!file) return;
+
+  const allowedTypes = [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ];
+
+  if (!allowedTypes.includes(file.type)) {
+    alert("Please upload only PDF, DOC or DOCX files.");
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    alert("Maximum CV size is 5 MB.");
+    return;
+  }
+
+  setUploadedCVFile(file);
+  setUploadedCVName(file.name);
 };
 
   // Run ATS Scan
@@ -1163,6 +1192,14 @@ uploadedResumeName && (
 
 </div>
 
+{uploadedResumeFile && (
+  <div className="mt-2 rounded-lg bg-white/5 border border-white/10 p-3 text-xs">
+    <p><strong>Name:</strong> {uploadedResumeFile.name}</p>
+    <p><strong>Size:</strong> {(uploadedResumeFile.size / 1024).toFixed(1)} KB</p>
+    <p><strong>Type:</strong> {uploadedResumeFile.type}</p>
+  </div>
+)}
+
 {
 uploadedResumeName && (
 
@@ -1176,6 +1213,34 @@ Analyze Resume in ATS
 
 )
 }
+
+<div className="input-group">
+
+  <label className="input-label">
+    Upload CV
+  </label>
+
+  <input
+    type="file"
+    accept=".pdf,.doc,.docx"
+    onChange={handleCVUpload}
+    className="input-field"
+  />
+
+  {uploadedCVName && (
+    <div className="mt-2 text-xs text-emerald-400">
+      ✓ Uploaded: {uploadedCVName}
+    </div>
+  )}
+
+</div>
+{uploadedCVFile && (
+  <div className="mt-2 rounded-lg bg-white/5 border border-white/10 p-3 text-xs">
+    <p><strong>Name:</strong> {uploadedCVFile.name}</p>
+    <p><strong>Size:</strong> {(uploadedCVFile.size / 1024).toFixed(1)} KB</p>
+    <p><strong>Type:</strong> {uploadedCVFile.type}</p>
+  </div>
+)}
 
               <div className="input-group mb-0">
                 <label className="input-label">Resume plain text summary (Syncs with ATS tool)</label>
