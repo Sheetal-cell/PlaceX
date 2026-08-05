@@ -7,11 +7,8 @@ import { useState } from "react";
 import EventForm from "./EventForm";
 export default function CalendarPage() {
 
-    const events = placementEvents.map(event => ({
-        id: event.id,
-        title: event.title,
-        date: event.date
-    }));
+    const [events,setEvents] = useState(placementEvents);
+    
 
     const [showEventForm, setShowEventForm] = useState(false);
     
@@ -68,8 +65,21 @@ events={events}
 
             {showEventForm && (
                 <EventForm
-                    onClose={() => setShowEventForm(false)}
-                />
+    onClose={()=>setShowEventForm(false)}
+
+    onSave={(newEvent)=>{
+
+    setEvents([
+        ...events,
+        {
+            ...newEvent,
+            title: `${newEvent.company} - ${newEvent.role}`,
+            start: `${newEvent.date}T${newEvent.time}`
+        }
+    ]);
+
+}}
+/>
             )}
  </div>
 
