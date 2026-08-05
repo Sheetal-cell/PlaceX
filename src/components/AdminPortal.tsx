@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import type { Student, PlacementDrive } from '../mockData';
 import { Footer } from './Footer';
+import { ScrapedDrives } from "./scrapper/ScrapedDrives";
 
 interface AdminPortalProps {
   students: Student[];
@@ -40,7 +41,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   onRejectStudent,
   onSeedData
 }) => {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'drives' | 'students' | 'tracker'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'drives' |'scraped'| 'students' | 'tracker'>('dashboard');
 
   // New Drive Form State
   const [showDriveForm, setShowDriveForm] = useState(false);
@@ -209,6 +210,15 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
             Recruitment Drives
           </button>
           <button
+    onClick={() => setActiveTab("scraped")}
+    className={`menu-item ${
+        activeTab === "scraped" ? "active" : ""
+    }`}
+>
+    🌐
+    Recruitment Feed
+</button>
+          <button
             onClick={() => setActiveTab('students')}
             className={`menu-item ${activeTab === 'students' ? 'active' : ''}`}
           >
@@ -374,7 +384,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       </div>
                       <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-white/5">
                         <div
-                          className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-1000"
+                          className="h-full bg-linear-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-1000"
                           style={{ width: `${data.pct}%` }}
                         ></div>
                       </div>
@@ -606,6 +616,13 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
           </div>
         )}
 
+        {
+activeTab==="scraped" &&
+(
+<ScrapedDrives/>
+)
+}
+
         {/* TAB 3: STUDENT DATABASE */}
         {activeTab === 'students' && (
           <div className="flex flex-col gap-6 animate-slide-in">
@@ -700,7 +717,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       >
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white">
+                            <div className="w-10 h-10 rounded-full bg-linear-to-r from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white">
                               {student.name.charAt(0)}
                             </div>
 
@@ -723,7 +740,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                           {student.placementStatus === 'Placed' ? (
                             <div className="flex flex-col gap-0.5">
                               <span className="badge badge-success">Placed</span>
-                              <span className="text-[10px] text-slate-400 font-semibold truncate max-w-[120px]" title={student.placedCompany}>
+                              <span className="text-[10px] text-slate-400 font-semibold truncate max-w-30" title={student.placedCompany}>
                                 @ {student.placedCompany} ({student.placedPackage})
                               </span>
                             </div>
@@ -855,7 +872,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                         className="tracker-column animate-slide-in hover:border-indigo-500/30 transition-all duration-300"
                       >
                         <div className="column-header">
-                          <h4 className="column-title truncate max-w-[140px]" title={roundName}>{roundName}</h4>
+                          <h4 className="column-title truncate max-w-35" title={roundName}>{roundName}</h4>
                           <span className="column-count">{columnApplications.length}</span>
                         </div>
 
