@@ -45,9 +45,9 @@ Schedule and manage all placement activities.
 
 </div>
 
-<div className="grid grid-cols-4 gap-6">
+<div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-<div className="col-span-3 glass-card p-5 rounded-xl">
+<div className="col-span-1 lg:col-span-3 glass-card p-5 rounded-xl">
 
 <FullCalendar
 

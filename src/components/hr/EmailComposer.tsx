@@ -70,7 +70,7 @@ Training & Placement Office`}
 
 />
 
-<div className="flex justify-end gap-3 mt-5">
+<div className="flex flex-wrap justify-end gap-3 mt-5">
 
 <button className="btn btn-secondary">
 

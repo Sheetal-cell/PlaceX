@@ -45,16 +45,16 @@ export default function EventForm({ onClose, onSave }: Props) {
 
     return (
 
-<div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+<div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
 
-<div className="bg-slate-800 rounded-xl p-6 w-150">
+<div className="bg-slate-800 rounded-xl p-6 w-full max-w-xl mx-auto">
 
 <h2 className="text-2xl font-bold mb-5">
 Add Placement Event
 </h2>
 
 
-<div className="grid grid-cols-2 gap-4">
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
 
 <input

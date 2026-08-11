@@ -32,9 +32,9 @@ Manage recruiter communication and outreach.
 
 <OutreachStats/>
 
-<div className="grid grid-cols-12 gap-6">
+<div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-<div className="col-span-3">
+<div className="col-span-1 lg:col-span-3">
 
 <CompanyList
 
@@ -44,7 +44,7 @@ onSelect={setSelected}
 
 </div>
 
-<div className="col-span-6">
+<div className="col-span-1 lg:col-span-6">
 
 <EmailComposer
 
@@ -54,7 +54,7 @@ selected={selected}
 
 </div>
 
-<div className="col-span-3">
+<div className="col-span-1 lg:col-span-3">
 
 <EmailTemplates/>
 

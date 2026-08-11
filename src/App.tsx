@@ -7,11 +7,28 @@ import { Notification } from './components/Notification';
 import type { ToastType } from './components/Notification';
 import { INITIAL_STUDENTS, INITIAL_DRIVES, INITIAL_RECRUITERS } from './mockData';
 import type { Student, PlacementDrive, Application, Recruiter } from './mockData';
-import { GraduationCap, LogOut, Shield, Building2 } from 'lucide-react';
+import { GraduationCap, LogOut, Shield, Building2, Sun, Moon } from 'lucide-react';
 import type { ResumeFeedback } from "./mockData";
 
 
 function App() {
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    return localStorage.getItem('theme') === 'light' ? 'light' : 'dark';
+  });
+
+  useEffect(() => {
+    if (theme === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
+
   const [students, setStudents] = useState<Student[]>(() => {
     const saved = localStorage.getItem('tpo_students');
     return saved ? JSON.parse(saved) : [];
@@ -26,6 +43,25 @@ function App() {
   });
   const [session, setSession] = useState<{ role: 'student' | 'admin' | 'recruiter'; studentId?: string; recruiterId?: string } | null>(null);
   const [toast, setToast] = useState<ToastType | null>(null);
+
+  const [headerHeight, setHeaderHeight] = useState(72);
+  useEffect(() => {
+    if (!session) return;
+    const timer = setTimeout(() => {
+      const header = document.querySelector('.app-header');
+      if (header) {
+        setHeaderHeight(header.clientHeight);
+        const resizeObserver = new ResizeObserver((entries) => {
+          for (let entry of entries) {
+            setHeaderHeight(entry.target.clientHeight);
+          }
+        });
+        resizeObserver.observe(header);
+        return () => resizeObserver.disconnect();
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [session]);
 
   // Helper to trigger toast notifications
   const triggerToast = (message: string, type: 'success' | 'error' | 'warning' | 'info') => {
@@ -359,13 +395,13 @@ function App() {
       <Notification toast={toast} onClose={() => setToast(null)} />
 
       {/* Main Header navigation bar */}
-      <header className="app-header">
-        <div className="app-logo">
-          <GraduationCap className="logo-icon animate-pulse" size={24} />
-          <span>TPOHelper</span>
-        </div>
+      {session && (
+        <header className="app-header">
+          <div className="app-logo">
+            <GraduationCap className="logo-icon animate-pulse" size={24} />
+            <span>TPOHelper</span>
+          </div>
 
-        {session && (
           <div className="user-nav-profile">
             {session.role === 'student' && loggedInStudent ? (
               <div className="flex items-center gap-3">
@@ -397,6 +433,13 @@ function App() {
               </div>
             )}
 
+            {/* Theme Change Button */}
+            <button onClick={toggleTheme} className="theme-toggle-btn mr-3" aria-label="Toggle Theme" title="Toggle Theme Mode">
+              <div className="theme-toggle-inner">
+                {theme === 'light' ? <Moon size={15} /> : <Sun size={15} />}
+              </div>
+            </button>
+
             <button
               onClick={handleLogout}
               className="btn btn-secondary btn-sm p-1.5 rounded-lg text-gray-400 hover:text-red-400 transition-colors"
@@ -405,11 +448,11 @@ function App() {
               <LogOut size={16} />
             </button>
           </div>
-        )}
-      </header>
+        </header>
+      )}
 
       {/* Layout Router Router view switcher */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col" style={session ? { paddingTop: `${headerHeight}px` } : undefined}>
         {!session ? (
           <Auth
             students={students}
