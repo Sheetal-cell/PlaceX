@@ -1,15 +1,39 @@
 import React from 'react';
-import { GraduationCap, Mail, ShieldCheck, Code2 } from 'lucide-react';
+import { GraduationCap } from 'lucide-react';
+import { ContributorAvatar, AvatarGroup, ContributorStyles } from './ContributorAvatar';
+
+const contributors = [
+  {
+    name: "Prashanjit Mishra",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKIuX8f4qOeDDA4gMlMF52IvIAQeBGGAhHkkk8-axPZA&s=10",
+    github: "https://github.com/RitochitGhosh",
+  },
+  {
+    name: "Shreyaushi Das",
+    image: "https://avatars.githubusercontent.com/u/185457484?v=4",
+    github: "https://github.com/shreyaushi-Das",
+  },
+  {
+    name: "Sheetal Bajaj",
+    image: "https://avatars.githubusercontent.com/u/183822317?v=4",
+    github: "https://github.com/Sheetal-cell",
+  },
+  {
+    name: "Arghya Roy Chowdhury",
+    image: "https://avatars.githubusercontent.com/u/183939897?v=4",
+    github: "https://github.com/roychowdhury-arghya",
+  },
+];
 
 export const Footer: React.FC = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" id="site-footer">
       <div className="site-footer-inner">
         <div className="site-footer-brand">
           <div className="flex items-center gap-2">
-            <GraduationCap size={18} className="text-indigo-400" />
+            <GraduationCap size={18} style={{ color: '#B59E7D' }} />
             <span className="font-semibold text-white text-sm">TPOHelper</span>
           </div>
           <p className="text-xs text-gray-500 max-w-xs leading-relaxed">
@@ -32,21 +56,19 @@ export const Footer: React.FC = () => {
             <a href="mailto:tpo@university.edu">Contact</a>
           </div>
         </div>
-
-        <div className="site-footer-meta">
-          <span className="hero-badge" style={{ background: 'rgba(16,185,129,.1)' }}>
-            <ShieldCheck size={12} />
-            Data stored locally on this device
-          </span>
-          <div className="flex items-center gap-3 mt-3">
-            <a href="mailto:tpo@university.edu" aria-label="Email TPO Cell" className="site-footer-icon">
-              <Mail size={15} />
-            </a>
-            <a href="https://github.com/Sheetal-cell/TPOHelper-frontend" target="_blank" rel="noreferrer"
-              aria-label="View source code" className="site-footer-icon">
-              <Code2 size={15} />
-            </a>
-          </div>
+        <div className="site-footer-contributors flex flex-col items-start md:items-end">
+          <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-4 flex gap-4 ">Built by</span>
+          <AvatarGroup>
+            {contributors.map((contrib, idx) => (
+              <ContributorAvatar
+                key={idx}
+                name={contrib.name}
+                image={contrib.image}
+                github={contrib.github}
+              />
+            ))}
+          </AvatarGroup>
+          <ContributorStyles />
         </div>
       </div>
 

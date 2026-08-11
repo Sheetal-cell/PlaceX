@@ -1,102 +1,102 @@
 //import React from "react";
-import {ExternalLink} from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 export default function ScrapedDriveCard({
 
-drive,
+    drive,
 
-onView
+    onView
 
-}:any){
+}: any) {
 
-return(
+    return (
 
-<div className="glass-card p-5 hover:scale-[1.02] transition-all">
+        <div className="glass-card p-5 hover:scale-[1.02] transition-all gap-1.5 flex flex-col">
 
-<div className="flex justify-between">
+            <div className="flex justify-between gap-1">
 
-<div>
+                <div>
 
-<h2 className="text-xl font-bold">
+                    <h2 className="text-3xl font-bold">
 
-{drive.company}
+                        {drive.company}
 
-</h2>
+                    </h2>
 
-<p className="text-indigo-400">
+                    <p className="text-indigo font-bold ">
 
-{drive.role}
+                        {drive.role}
 
-</p>
+                    </p>
 
-</div>
+                </div>
 
-<span className="badge badge-warning">
+                <span className="badge badge-warning">
 
-{drive.status}
+                    {drive.status}
 
-</span>
+                </span>
 
-</div>
+            </div>
 
-<div className="mt-4 text-sm text-gray-400">
+            <div className="mt-4 text-sm text-gray-400 flex flex-col gap-1 ">
 
-<p>📍 {drive.location}</p>
+                <p> Location -- {drive.location}</p>
 
-<p>💰 {drive.salary}</p>
+                <p>Salary -- {drive.salary}</p>
 
-<p>🌐 {drive.source}</p>
+                <p>Source --{drive.source}</p>
 
-<p>🕒 {drive.posted}</p>
+                <p>Posted --{drive.posted}</p>
 
-</div>
+            </div>
 
-<div className="flex gap-3 mt-6">
+            <div className="flex gap-3 mt-6">
 
-<button
+                <button
 
-className="btn btn-secondary"
+                    className="btn btn-secondary"
 
-onClick={()=>onView(drive)}
+                    onClick={() => onView(drive)}
 
->
+                >
 
-View
+                    View
 
-</button>
+                </button>
 
-<button className="btn btn-success">
+                <button className="btn btn-success">
 
-Approve
+                    Approve
 
-</button>
+                </button>
 
-<button className="btn btn-danger">
+                <button className="btn btn-danger">
 
-Reject
+                    Reject
 
-</button>
+                </button>
 
-<a
+                <a
 
-href={drive.applyLink}
+                    href={drive.applyLink}
 
-target="_blank"
+                    target="_blank"
 
-rel="noreferrer"
+                    rel="noreferrer"
 
-className="btn btn-primary"
+                    className="btn btn-primary"
 
->
+                >
 
-<ExternalLink size={15}/>
+                    <ExternalLink size={15} />
 
-</a>
+                </a>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
-);
+    );
 
 }

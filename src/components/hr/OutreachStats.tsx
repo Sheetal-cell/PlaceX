@@ -2,7 +2,7 @@ export default function OutreachStats(){
 
 return(
 
-<div className="grid grid-cols-4 gap-4 mb-6">
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
 <div className="glass-card p-5 rounded-xl">
 

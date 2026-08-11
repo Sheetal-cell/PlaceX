@@ -500,8 +500,8 @@ const handleCVUpload = (
                 }
               </p>
               {isPlaced && (
-                <div className="mt-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 p-4 rounded-xl flex items-center gap-3 max-w-md">
-                  <Award size={24} className="text-emerald-400 shrink-0" />
+                <div className="mt-4 status-alert status-success p-4 rounded-xl flex items-center gap-3 max-w-md">
+                  <Award size={24} className="shrink-0" />
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wider">Placed Status Secured</p>
                     <p className="text-sm font-medium mt-0.5">{currentStudent.placedCompany} (Package: {currentStudent.placedPackage})</p>
@@ -593,8 +593,8 @@ const handleCVUpload = (
 
                 <div className="flex flex-col gap-3">
                   {currentStudent.resumeScore < 75 && (
-                    <div className="flex gap-3 bg-amber-500/10 border border-amber-500/20 p-3.5 rounded-xl text-xs leading-relaxed text-amber-200">
-                      <AlertCircle className="shrink-0 text-amber-400" size={18} />
+                    <div className="flex gap-3 status-alert status-warning p-3.5 rounded-xl text-xs leading-relaxed">
+                      <AlertCircle className="shrink-0" size={18} />
                       <div>
                         <p className="font-bold">Low Resume ATS Match</p>
                         <p className="mt-1">Your score is {currentStudent.resumeScore}%. Scanning tools suggest optimizing keywords and formatting to avoid filter rejects.</p>
@@ -603,8 +603,8 @@ const handleCVUpload = (
                     </div>
                   )}
 
-                  <div className="flex gap-3 bg-indigo-500/10 border border-indigo-500/20 p-3.5 rounded-xl text-xs leading-relaxed text-indigo-200">
-                    <Sparkles className="shrink-0 text-indigo-400" size={18} />
+                  <div className="flex gap-3 status-alert status-info p-3.5 rounded-xl text-xs leading-relaxed">
+                    <Sparkles className="shrink-0" size={18} />
                     <div>
                       <p className="font-bold">Practice Interviews</p>
                       <p className="mt-1">Conduct interactive behavioral and tech simulation tests. AI feedback will rate your target skill coverage.</p>
@@ -639,7 +639,7 @@ const handleCVUpload = (
               </div>
             </div>
 
-            <div className="grid grid-template-columns: 1fr gap-4">
+            <div className="grid grid-cols-1 gap-4">
               {drives.map((drive) => {
                 const matchResult = getCompatibility(currentStudent, drive);
                 const hasApplied = currentStudent.applications.some(a => a.driveId === drive.id);
@@ -778,6 +778,7 @@ const handleCVUpload = (
                             cy="60"
                             r="50"
                             fill="transparent"
+                            className="progress-circle-track"
                             stroke="rgba(255,255,255,0.05)"
                             strokeWidth="8"
                           />
@@ -932,8 +933,8 @@ const handleCVUpload = (
                 )}
 
                 {isInterviewFinished && (
-                  <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 flex flex-col gap-3 text-center animate-slide-in">
-                    <Award size={32} className="text-emerald-400 mx-auto" />
+                  <div className="status-alert status-success rounded-xl p-4 flex flex-col gap-3 text-center animate-slide-in">
+                    <Award size={32} className="mx-auto" />
                     <h3 className="font-bold text-white font-display">Interview Finished!</h3>
                     <p className="text-xs text-slate-300 max-w-md mx-auto">
                       Your answer scoring records have been cataloged. Average Performance: {Math.round((interviewScores.reduce((a, b) => a + b, 0) / interviewScores.length) * 10)}%.
@@ -1004,8 +1005,8 @@ const handleCVUpload = (
                       <div
                         className="pipeline-progress-bar"
                         style={{
-                          width: `${(selectedApp.currentRoundIndex / (selectedDrive.rounds.length - 1)) * 90}%`
-                        }}
+                          ['--progress-pct' as any]: `${(selectedApp.currentRoundIndex / (selectedDrive.rounds.length - 1)) * 90}%`
+                        } as React.CSSProperties}
                       ></div>
 
                       {selectedDrive.rounds.map((round, index) => {
