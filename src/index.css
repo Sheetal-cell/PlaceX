@@ -413,12 +413,12 @@ select.input-field option {
 
 /* Layout views */
 .dashboard-layout {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
   padding: 2rem;
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 280px 1fr;
   gap: 2rem;
+  box-sizing: border-box;
 }
 
 @media (max-width: 1024px) {
@@ -431,7 +431,7 @@ select.input-field option {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  width: 290px;
+  width: 100%;
 }
 
 .menu-item {
@@ -519,7 +519,7 @@ select.input-field option {
   gap: 1.5rem;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .content-grid {
     grid-template-columns: 1fr;
   }
@@ -572,7 +572,7 @@ select.input-field option {
   gap: 1.5rem;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .ats-layout {
     grid-template-columns: 1fr;
   }
@@ -1646,7 +1646,7 @@ body::before {
 }
 
 .side-menu {
-  width: 280px;
+  width: 100%;
 
   background:
     rgba(15, 23, 42, .55);
@@ -1721,8 +1721,6 @@ body::before {
 }
 
 .site-footer-inner {
-  max-width: 1400px;
-  margin: 0 auto;
   display: grid;
   grid-template-columns: 1.3fr 1fr 1fr;
   gap: 2rem;
@@ -1795,8 +1793,7 @@ body::before {
 }
 
 .site-footer-bottom {
-  max-width: 1400px;
-  margin: 1.75rem auto 0;
+  margin-top: 1.75rem;
   padding-top: 1.25rem;
   border-top: 1px solid hsl(var(--border-glass));
   display: flex;

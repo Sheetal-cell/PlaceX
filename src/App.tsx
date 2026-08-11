@@ -438,7 +438,6 @@ function App() {
             onToggleDriveActive={handleToggleDriveActive}
             onPromoteStudent={handlePromoteStudent}
             onRejectStudent={handleRejectStudent}
-            onSeedData={handleSeedData}
           />
         ) : (
           <AdminPortal
