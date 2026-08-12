@@ -52,6 +52,7 @@ export interface Student {
   password?: string;
 
   department: string;
+  branch: string;
   
   cgpa: number;
   backlogs: number;
@@ -274,7 +275,8 @@ export const INITIAL_STUDENTS: Student[] = [
         feedback: 'Outstanding technical performance across all rounds. Exceptional data structures and problem-solving abilities shown.',
         jobPostingId: ""
       }
-    ]
+    ],
+    branch: ""
   },
   {
     id: 'std_2',
@@ -309,7 +311,8 @@ export const INITIAL_STUDENTS: Student[] = [
         currentRoundIndex: 0,
         jobPostingId: ""
       }
-    ]
+    ],
+    branch: ""
   },
   {
     id: 'std_3',
@@ -344,7 +347,8 @@ export const INITIAL_STUDENTS: Student[] = [
         currentRoundIndex: 0,
         jobPostingId: ""
       }
-    ]
+    ],
+    branch: ""
   },
   {
     id: 'std_4',
@@ -372,7 +376,8 @@ export const INITIAL_STUDENTS: Student[] = [
         feedback: 'Exceptional score in the Compiler test. Excellent understanding of computer hardware architecture.',
         jobPostingId: ""
       }
-    ]
+    ],
+    branch: ""
   },
   {
     id: 'std_5',
@@ -397,7 +402,8 @@ export const INITIAL_STUDENTS: Student[] = [
         currentRoundIndex: 0,
         jobPostingId: ""
       }
-    ]
+    ],
+    branch: ""
   },
   {
     id: 'std_6',
@@ -412,7 +418,8 @@ export const INITIAL_STUDENTS: Student[] = [
     skills: ['SolidWorks', 'AutoCAD', 'Excel', 'Project Management'],
     projectsCount: 2,
     resumeText: 'Mechanical Engineering enthusiast. Fluent in AutoCAD and SolidWorks drafting. Modeled a formula-student race car frame and ran structural load stress tests. Strong team coordination and operations lead.',
-    applications: []
+    applications: [],
+    branch: ""
   }
 ];
 

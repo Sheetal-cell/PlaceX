@@ -121,7 +121,8 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
         skills: regSkills.split(',').map(s => s.trim()).filter(Boolean),
         projectsCount: parseInt(regProjects) || 0,
         resumeText: regResume,
-        applications: []
+        applications: [],
+        department: ''
       };
 
       onRegister(newStudent);
@@ -367,7 +368,7 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
                     </button>
                   </>
                 ) : (
-                  <div className="max-h-[520px] overflow-y-auto pr-1 flex flex-col gap-2">
+                  <div className="max-h-130 overflow-y-auto pr-1 flex flex-col gap-2">
                     <div className="form-grid">
                       <div className="input-group">
                         <label className="input-label">Full Name</label>
@@ -587,7 +588,7 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
                     </button>
                   </>
                 ) : (
-                  <div className="max-h-[520px] overflow-y-auto pr-1 flex flex-col gap-2">
+                  <div className="max-h-130 overflow-y-auto pr-1 flex flex-col gap-2">
                     <div className="form-grid">
                       <div className="input-group">
                         <label className="input-label">Full Name</label>
