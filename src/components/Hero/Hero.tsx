@@ -29,7 +29,7 @@ export const Hero: React.FC<HeroProps> = ({ onScrollToLogin }) => {
           <GraduationCap className="hero-logo-icon" size={60} />
         </div>
         
-        <h1 className="hero-title">TPOHelper</h1>
+        <h1 className="hero-title">PlaceX</h1>
         
         <span className="hero-subtitle-badge">
           AI Powered Placement Management
