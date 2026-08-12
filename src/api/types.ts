@@ -6,6 +6,7 @@ export interface StudentResponse {
   email: string;
   phone: string;
   department: string;
+  branch: string;
   year: number;
 }
 

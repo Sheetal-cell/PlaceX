@@ -52,6 +52,7 @@ export interface Student {
   password?: string;
 
   department: string;
+  
   cgpa: number;
   backlogs: number;
   placementStatus: 'Placed' | 'Unplaced';
