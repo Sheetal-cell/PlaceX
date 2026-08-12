@@ -400,7 +400,7 @@ function App() {
         <header className="app-header">
           <div className="app-logo">
             <GraduationCap className="logo-icon animate-pulse" size={24} />
-            <span>TPOHelper</span>
+            <span>PlaceX</span>
           </div>
 
           <div className="user-nav-profile">
