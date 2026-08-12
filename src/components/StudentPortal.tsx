@@ -405,7 +405,7 @@ const handleCVUpload = (
         <div className="glass-card mb-4 flex flex-col items-center text-center p-6" style={{ borderBottom: '3px solid hsl(var(--color-primary))' }}>
           <div className="avatar mb-3 text-lg">{currentStudent.name.charAt(0)}</div>
           <h3 className="font-semibold text-white truncate max-w-full font-display" title={currentStudent.name}>{currentStudent.name}</h3>
-          <p className="text-xs text-indigo-400 mt-0.5">{currentStudent.branch}</p>
+          <p className="text-xs text-sky-400 mt-0.5">{currentStudent.branch}</p>
           <div className="flex gap-4 mt-4 text-xs border-t border-white/5 pt-4 w-full justify-around">
             <div>
               <p className="text-gray-500">CGPA</p>
@@ -485,8 +485,8 @@ const handleCVUpload = (
         {activeTab === 'dashboard' && (
           <div className="flex flex-col gap-6 animate-slide-in">
             {/* Welcoming banner */}
-            <div className="glass-card relative overflow-hidden p-8 flex flex-col justify-center bg-linear-to-r from-indigo-950/40 to-purple-950/40" style={{ borderLeft: '4px solid hsl(var(--color-secondary))' }}>
-              <div className="absolute top-0 right-0 p-8 text-indigo-500/10 pointer-events-none">
+            <div className="glass-card relative overflow-hidden p-8 flex flex-col justify-center bg-linear-to-r from-blue-950/40 to-sky-950/40" style={{ borderLeft: '4px solid hsl(var(--color-secondary))' }}>
+              <div className="absolute top-0 right-0 p-8 text-blue-500/10 pointer-events-none">
                 <Sparkles size={120} />
               </div>
               <span className="badge badge-primary self-start mb-3">Student Portal Active</span>
@@ -561,7 +561,7 @@ const handleCVUpload = (
                         <div key={app.driveId} className="list-item">
                           <div>
                             <p className="font-bold text-white text-sm">{app.companyName}</p>
-                            <p className="text-xs text-indigo-400 mt-0.5">{app.role}</p>
+                            <p className="text-xs text-sky-400 mt-0.5">{app.role}</p>
                           </div>
                           <div className="flex items-center gap-4">
                             <span className={`badge ${app.status === 'Selected' ? 'badge-success' :
@@ -598,7 +598,7 @@ const handleCVUpload = (
                       <div>
                         <p className="font-bold">Low Resume ATS Match</p>
                         <p className="mt-1">Your score is {currentStudent.resumeScore}%. Scanning tools suggest optimizing keywords and formatting to avoid filter rejects.</p>
-                        <button onClick={() => setActiveTab('ats')} className="text-indigo-400 font-semibold hover:underline mt-2 block">Optimize Now →</button>
+                        <button onClick={() => setActiveTab('ats')} className="text-sky-400 font-semibold hover:underline mt-2 block">Optimize Now →</button>
                       </div>
                     </div>
                   )}
@@ -608,7 +608,7 @@ const handleCVUpload = (
                     <div>
                       <p className="font-bold">Practice Interviews</p>
                       <p className="mt-1">Conduct interactive behavioral and tech simulation tests. AI feedback will rate your target skill coverage.</p>
-                      <button onClick={() => setActiveTab('interview')} className="text-indigo-400 font-semibold hover:underline mt-2 block">Start Simulator →</button>
+                      <button onClick={() => setActiveTab('interview')} className="text-sky-400 font-semibold hover:underline mt-2 block">Start Simulator →</button>
                     </div>
                   </div>
 
@@ -661,7 +661,7 @@ const handleCVUpload = (
                         )}
                       </div>
 
-                      <p className="text-xs font-semibold text-indigo-400">{drive.role}</p>
+                      <p className="text-xs font-semibold text-sky-400">{drive.role}</p>
                       <p className="text-xs text-gray-400 leading-relaxed max-w-2xl">{drive.jobDesc}</p>
 
                       <div className="flex items-center gap-4 flex-wrap mt-2 text-xs text-gray-400">
@@ -682,7 +682,7 @@ const handleCVUpload = (
                           return (
                             <span
                               key={skill}
-                              className={`px-2 py-0.5 rounded text-[10px] ${hasSkill ? 'bg-indigo-500/20 text-indigo-300 font-semibold' : 'bg-slate-800 text-slate-500'
+                              className={`px-2 py-0.5 rounded text-[10px] ${hasSkill ? 'bg-blue-500/20 text-blue-300 font-semibold' : 'bg-slate-800 text-slate-500'
                                 }`}
                             >
                               {skill}
@@ -824,7 +824,7 @@ const handleCVUpload = (
 
                     <div className="border-t border-white/5 pt-4">
                       <h4 className="text-xs font-bold uppercase text-gray-400 tracking-wider mb-2">Refinement Recommendations</h4>
-                      <ul className="flex flex-col gap-2 pl-4 list-disc text-xs text-indigo-300/95 leading-relaxed">
+                      <ul className="flex flex-col gap-2 pl-4 list-disc text-xs text-sky-300/95 leading-relaxed">
                         {atsReport.recommendations.map((rec, i) => (
                           <li key={i}>{rec}</li>
                         ))}
@@ -852,7 +852,7 @@ const handleCVUpload = (
 
             {!interviewRole ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="glass-card flex flex-col gap-4 p-6 hover:border-indigo-500/30 transition-all">
+                <div className="glass-card flex flex-col gap-4 p-6 hover:border-blue-500/30 transition-all">
                   <h3 className="text-lg font-bold text-white font-display">Software Engineer Track</h3>
                   <p className="text-xs text-gray-400 leading-relaxed">
                     Evaluates system designs, concurrency, DB indexes, React context state, async hooks, and basic compiler logic.
@@ -865,7 +865,7 @@ const handleCVUpload = (
                   </button>
                 </div>
 
-                <div className="glass-card flex flex-col gap-4 p-6 hover:border-indigo-500/30 transition-all">
+                <div className="glass-card flex flex-col gap-4 p-6 hover:border-blue-500/30 transition-all">
                   <h3 className="text-lg font-bold text-white font-display">Technology Consultant / Analyst Track</h3>
                   <p className="text-xs text-gray-400 leading-relaxed">
                     Evaluates metrics calculation, messy datasets imputations, funnel conversions, stakeholder communications, and root cause reviews.
@@ -987,7 +987,7 @@ const handleCVUpload = (
                     <div className="flex justify-between items-center mb-6 flex-wrap gap-2">
                       <div>
                         <h3 className="text-lg font-bold text-white font-display">{selectedDrive.companyName}</h3>
-                        <p className="text-xs text-indigo-400">{selectedDrive.role}</p>
+                        <p className="text-xs text-sky-400">{selectedDrive.role}</p>
                       </div>
                       <div>
                         <span className={`badge ${selectedApp.status === 'Selected' ? 'badge-success' :
@@ -1034,7 +1034,7 @@ const handleCVUpload = (
 
                     {/* Step details feedback */}
                     <div className="bg-white/5 border border-white/10 rounded-xl p-5 mt-8 flex gap-4">
-                      <div className="p-3 bg-indigo-500/10 rounded-xl text-indigo-400 align-self-start shrink-0">
+                      <div className="p-3 bg-blue-500/10 rounded-xl text-sky-400 align-self-start shrink-0">
                         <Award size={20} />
                       </div>
                       <div>

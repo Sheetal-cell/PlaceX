@@ -64,8 +64,8 @@ export const GravityStarsBackground: React.FC<GravityStarsBackgroundProps> = ({
     const updateColor = () => {
       const isLight = document.documentElement.classList.contains("light");
       isLightRef.current = isLight;
-      // Use Deep Moss #182015 for light theme, Soft White #FFFDF8 for dark theme
-      starColorRef.current = isLight ? "#182015" : "#FFFDF8";
+      // Use Deep Navy #071923 for light theme, Soft Blue-White #F5FAFF for dark theme
+      starColorRef.current = isLight ? "#071923" : "#F5FAFF";
     };
 
     updateColor();

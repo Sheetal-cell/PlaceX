@@ -80,7 +80,7 @@
   letter-spacing: -0.03em;
   color: hsl(var(--text-primary));
   margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, hsl(var(--text-primary)), var(--color-mahogany));
+  background: linear-gradient(135deg, hsl(var(--text-primary)), hsl(var(--color-mahogany)));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

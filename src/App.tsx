@@ -415,9 +415,9 @@ function App() {
               <div className="flex items-center gap-3">
                 <div className="hidden sm:flex flex-col text-right">
                   <span className="text-xs font-semibold text-white truncate max-w-30">{loggedInRecruiter.name}</span>
-                  <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">{loggedInRecruiter.companyName} Recruiter</span>
+                  <span className="text-[10px] text-sky-400 font-bold uppercase tracking-wider">{loggedInRecruiter.companyName} Recruiter</span>
                 </div>
-                <div className="avatar bg-linear-to-br from-emerald-500 to-teal-600">
+                <div className="avatar bg-linear-to-br from-sky-400 to-blue-600">
                   <Building2 size={16} className="text-white" />
                 </div>
               </div>
@@ -425,9 +425,9 @@ function App() {
               <div className="flex items-center gap-3">
                 <div className="hidden sm:flex flex-col text-right">
                   <span className="text-xs font-semibold text-white">TPO Coordinator</span>
-                  <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Administrator</span>
+                  <span className="text-[10px] text-blue-400 font-bold uppercase tracking-wider">Administrator</span>
                 </div>
-                <div className="avatar bg-linear-to-br from-indigo-500 to-purple-600">
+                <div className="avatar bg-linear-to-br from-blue-500 to-indigo-600">
                   <Shield size={16} className="text-white" />
                 </div>
               </div>
