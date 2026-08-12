@@ -54,3 +54,17 @@ export interface InterviewRoundResponse {
   scheduledAt: string;
   applicationId: number;
 }
+
+export interface CalendarEvent {
+  id: number;
+  title: string;
+  eventType: string;
+  companyId: number;
+  companyName: string;
+  scheduledDate: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  description: string;
+  status: string;
+}

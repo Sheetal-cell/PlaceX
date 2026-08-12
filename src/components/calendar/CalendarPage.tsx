@@ -1,8 +1,7 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-
-import { placementEvents } from "../../mockCalendar";
+import type { CalendarEvent } from "../../api/types";
 import UpcomingEvents from "./UpcomingEvents";
 import EventForm from "./EventForm";
 
@@ -11,7 +10,7 @@ import { useState } from "react";
 export default function CalendarPage() {
   // Existing mock events are used initially.
   // Later these can be replaced with backend API data.
-  const [events, setEvents] = useState(placementEvents);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
 
   // Controls the Add Event form
   const [showEventForm, setShowEventForm] = useState(false);
@@ -36,6 +35,13 @@ export default function CalendarPage() {
     // Close the form after saving
     setShowEventForm(false);
   };
+
+  const calendarEvents = events.map((event: CalendarEvent) => ({
+  id: String(event.id),
+  title: event.title,
+  start: `${event.scheduledDate}T${event.startTime}`,
+  end: `${event.scheduledDate}T${event.endTime}`,
+}));
 
   return (
     <div className="space-y-6">
@@ -84,7 +90,7 @@ export default function CalendarPage() {
             ]}
             initialView="dayGridMonth"
             height="700px"
-            events={events}
+            events={calendarEvents}
           />
 
         </div>
