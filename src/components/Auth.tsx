@@ -202,10 +202,10 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
       <header className="landing-navbar">
         <div className="landing-logo">
           <GraduationCap size={22} className="landing-logo-icon animate-pulse" />
-          <span>TPOHelper</span>
+          <span>PlaceX</span>
         </div>
         <nav className="landing-nav-links">
-          <a href="#about" onClick={(e) => { e.preventDefault(); alert("TPOHelper is a premium unified placement portal connecting students, recruiters, and the training cell."); }}>About</a>
+          <a href="#about" onClick={(e) => { e.preventDefault(); alert("PlaceX is a premium unified placement portal connecting students, recruiters, and the training cell."); }}>About</a>
           <a href="#site-footer" onClick={(e) => { e.preventDefault(); document.getElementById('site-footer')?.scrollIntoView({ behavior: 'smooth' }); }}>Contact Us</a>
 
           {/* Theme Change Button */}
@@ -234,7 +234,7 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
 
           {/* Title Section */}
           <div className="text-center mb-8">
-            <h1 className="auth-title">TPOHelper</h1>
+            <h1 className="auth-title">PlaceX</h1>
             <p className="text-sm text-gray-400 mt-1">University Placement & Training Portal</p>
           </div>
 
