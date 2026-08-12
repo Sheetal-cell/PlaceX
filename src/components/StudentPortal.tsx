@@ -41,7 +41,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   const [profileName, setProfileName] = useState(currentStudent.name);
   const [profileEmail, setProfileEmail] = useState(currentStudent.email);
   const [profilePassword, setProfilePassword] = useState(currentStudent.password || '');
-  const [profileBranch, setProfileBranch] = useState(currentStudent.branch);
+  const [profileBranch, setProfileBranch] = useState(currentStudent.department);
   const [profileCgpa, setProfileCgpa] = useState(currentStudent.cgpa.toString());
   const [profileBacklogs, setProfileBacklogs] = useState(currentStudent.backlogs.toString());
   const [profileSkills, setProfileSkills] = useState(currentStudent.skills.join(', '));
@@ -57,7 +57,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
     setProfileName(currentStudent.name);
     setProfileEmail(currentStudent.email);
     setProfilePassword(currentStudent.password || '');
-    setProfileBranch(currentStudent.branch);
+    setProfileBranch(currentStudent.department);
     setProfileCgpa(currentStudent.cgpa.toString());
     setProfileBacklogs(currentStudent.backlogs.toString());
     setProfileSkills(currentStudent.skills.join(', '));
@@ -100,7 +100,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
     // 1. Core Eligibility criteria check
     const isGpaEligible = student.cgpa >= drive.cgpaCutoff;
     const isBacklogEligible = student.backlogs <= drive.maxBacklogs;
-    const isBranchEligible = drive.allowedBranches.includes(student.branch);
+    const isBranchEligible = drive.allowedBranches.includes(student.department);
     const eligible = isGpaEligible && isBacklogEligible && isBranchEligible;
 
     if (!eligible) {
@@ -108,7 +108,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
         eligible: false, score: 0, reasons: [
           !isGpaEligible && `GPA cut-off is ${drive.cgpaCutoff} (yours: ${student.cgpa})`,
           !isBacklogEligible && `Max backlogs allowed is ${drive.maxBacklogs} (yours: ${student.backlogs})`,
-          !isBranchEligible && `Eligible branches: ${drive.allowedBranches.join(', ')} (your branch: ${student.branch})`
+          !isBranchEligible && `Eligible branches: ${drive.allowedBranches.join(', ')} (your branch: ${student.department})`
         ].filter(Boolean) as string[]
       };
     }
@@ -302,7 +302,7 @@ const handleCVUpload = (
       name: profileName.trim(),
       email: profileEmail.trim(),
       password: profilePassword,
-      branch: profileBranch,
+      department: profileBranch,
       cgpa: cgpaNum,
       backlogs: backlogsNum,
       skills: profileSkills.split(',').map(s => s.trim()).filter(Boolean),
@@ -394,7 +394,7 @@ const handleCVUpload = (
   };
 
   // Selected Application for Pipeline Visualizer
-  const selectedApp = currentStudent.applications.find(app => app.driveId === selectedApplicationId);
+  const selectedApp = currentStudent.applications.find(app => app.jobPostingId === selectedApplicationId);
   const selectedDrive = drives.find(d => d.id === selectedApplicationId);
 
   return (
@@ -405,7 +405,7 @@ const handleCVUpload = (
         <div className="glass-card mb-4 flex flex-col items-center text-center p-6" style={{ borderBottom: '3px solid hsl(var(--color-primary))' }}>
           <div className="avatar mb-3 text-lg">{currentStudent.name.charAt(0)}</div>
           <h3 className="font-semibold text-white truncate max-w-full font-display" title={currentStudent.name}>{currentStudent.name}</h3>
-          <p className="text-xs text-indigo-400 mt-0.5">{currentStudent.branch}</p>
+          <p className="text-xs text-indigo-400 mt-0.5">{currentStudent.department}</p>
           <div className="flex gap-4 mt-4 text-xs border-t border-white/5 pt-4 w-full justify-around">
             <div>
               <p className="text-gray-500">CGPA</p>
@@ -558,7 +558,7 @@ const handleCVUpload = (
                   <div className="item-list">
                     {currentStudent.applications.map((app) => {
                       return (
-                        <div key={app.driveId} className="list-item">
+                        <div key={app.jobPostingId} className="list-item">
                           <div>
                             <p className="font-bold text-white text-sm">{app.companyName}</p>
                             <p className="text-xs text-indigo-400 mt-0.5">{app.role}</p>
@@ -572,7 +572,7 @@ const handleCVUpload = (
                             </span>
                             <button
                               onClick={() => {
-                                setSelectedApplicationId(app.driveId);
+                                setSelectedApplicationId(app.jobPostingId);
                                 setActiveTab('visualizer');
                               }}
                               className="btn btn-secondary btn-sm"
@@ -650,7 +650,7 @@ const handleCVUpload = (
                     <div className="flex-1 flex flex-col gap-2">
                       <div className="flex items-center gap-3 flex-wrap">
                         <h3 className="text-lg font-bold text-white font-display">{drive.companyName}</h3>
-                        <span className="badge badge-info">{drive.package}</span>
+                        <span className="badge badge-info">{drive.salary}</span>
                         {hasApplied && (
                           <span className={`badge ${application?.status === 'Selected' ? 'badge-success' :
                             application?.status === 'Rejected' ? 'badge-danger' :
@@ -661,8 +661,8 @@ const handleCVUpload = (
                         )}
                       </div>
 
-                      <p className="text-xs font-semibold text-indigo-400">{drive.role}</p>
-                      <p className="text-xs text-gray-400 leading-relaxed max-w-2xl">{drive.jobDesc}</p>
+                      <p className="text-xs font-semibold text-indigo-400">{drive.title}</p>
+                      <p className="text-xs text-gray-400 leading-relaxed max-w-2xl">{drive.description}</p>
 
                       <div className="flex items-center gap-4 flex-wrap mt-2 text-xs text-gray-400">
                         <div>
@@ -975,7 +975,7 @@ const handleCVUpload = (
                     className="input-field"
                   >
                     {currentStudent.applications.map((app) => (
-                      <option key={app.driveId} value={app.driveId}>
+                      <option key={app.jobPostingId} value={app.jobPostingId}>
                         {app.companyName} - {app.role}
                       </option>
                     ))}
@@ -987,7 +987,7 @@ const handleCVUpload = (
                     <div className="flex justify-between items-center mb-6 flex-wrap gap-2">
                       <div>
                         <h3 className="text-lg font-bold text-white font-display">{selectedDrive.companyName}</h3>
-                        <p className="text-xs text-indigo-400">{selectedDrive.role}</p>
+                        <p className="text-xs text-indigo-400">{selectedDrive.title}</p>
                       </div>
                       <div>
                         <span className={`badge ${selectedApp.status === 'Selected' ? 'badge-success' :

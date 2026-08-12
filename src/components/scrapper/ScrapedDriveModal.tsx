@@ -38,7 +38,7 @@ onClick={onClose}
 
 <div className="mt-6 space-y-3">
 
-<p><b>Role:</b> {drive.role}</p>
+<p><b>Role:</b> {drive.title}</p>
 
 <p><b>Location:</b> {drive.location}</p>
 

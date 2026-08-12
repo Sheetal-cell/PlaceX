@@ -68,7 +68,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
 
   const myApplications = students.flatMap(s =>
     s.applications
-      .filter(app => myDrives.some(d => d.id === app.driveId))
+      .filter(app => myDrives.some(d => d.id === app.jobPostingId))
       .map(app => ({ student: s, app }))
   );
   const totalApplicants = myApplications.length;
@@ -88,14 +88,19 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
       role,
       package: pkg.includes('LPA') ? pkg : `${pkg} LPA`,
       numericPackage: Number(numericPkg),
-      cgpaCutoff: Number(cgpaCutoff),
+      cgpaCutoff: Number(cgpaCutoff ),
       maxBacklogs: Number(maxBacklogs),
       allowedBranches,
       deadline,
       jobDesc,
       skillsRequired: skillsRequiredText.split(',').map(s => s.trim()).filter(Boolean),
       rounds: roundsText.split(',').map(s => s.trim()).filter(Boolean),
-      active: true
+      active: true,
+      title: role,      
+      description: jobDesc,
+      salary: Number(numericPkg),
+      status: 'Open',
+      companyId: 0
     });
 
     // Reset form
@@ -123,7 +128,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
   const activeTrackerDrive = myDrives.find(d => d.id === trackerDriveId);
   const activeTrackerApplications = students.flatMap(s =>
     s.applications
-      .filter(app => app.driveId === trackerDriveId && app.status !== 'Rejected' && app.status !== 'Selected')
+      .filter(app => app.jobPostingId === trackerDriveId && app.status !== 'Rejected' && app.status !== 'Selected')
       .map(app => ({ student: s, app }))
   );
 
@@ -431,14 +436,14 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
                 <div
                   key={drive.id}
                   className="glass-card flex flex-col md:flex-row justify-between md:items-center gap-4 hover:scale-[1.01] transition-all duration-300"
-                  style={{ borderLeft: drive.active ? "4px solid #6366f1" : "4px solid #ef4444" }}
+                  style={{ borderLeft: drive.status === "OPEN" ? "4px solid #6366f1" : "4px solid #ef4444" }}
                 >
                   <div>
                     <div className="flex items-center gap-3">
-                      <h3 className="font-bold text-xl text-white font-display">{drive.role}</h3>
-                      <span className="badge badge-info">{drive.package}</span>
-                      <span className={`badge ${drive.active ? 'badge-success' : 'badge-danger'}`}>
-                        {drive.active ? 'Active' : 'Closed'}
+                      <h3 className="font-bold text-xl text-white font-display">{drive.title}</h3>
+                      <span className="badge badge-info">{drive.salary}</span>
+                      <span className={`badge ${drive.status === "OPEN" ? 'badge-success' : 'badge-danger'}`}>
+                        {drive.status === "OPEN" ? 'Active' : 'Closed'}
                       </span>
                     </div>
                     <div className="flex gap-2 mt-3 flex-wrap">
@@ -459,9 +464,9 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
                   <div className="flex md:flex-col gap-2 shrink-0">
                     <button
                       onClick={() => onToggleDriveActive(drive.id)}
-                      className={`btn btn-sm ${drive.active ? 'btn-danger' : 'btn-success'}`}
+                      className={`btn btn-sm ${drive.status === "OPEN" ? 'btn-danger' : 'btn-success'}`}
                     >
-                      {drive.active ? 'Suspend Drive' : 'Reactivate'}
+                      {drive.status === "OPEN" ? 'Suspend Drive' : 'Reactivate'}
                     </button>
                   </div>
                 </div>
@@ -498,10 +503,10 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
               <div className="flex flex-col gap-4">
                 <div className="glass-card p-4 bg-slate-900/50 flex gap-4 text-xs">
                   <div className="flex-1">
-                    <span className="text-gray-500 font-semibold">Role:</span> <span className="text-white font-bold">{activeTrackerDrive.role}</span>
+                    <span className="text-gray-500 font-semibold">Role:</span> <span className="text-white font-bold">{activeTrackerDrive.title}</span>
                   </div>
                   <div className="flex-1">
-                    <span className="text-gray-500 font-semibold">Package:</span> <span className="text-white font-bold">{activeTrackerDrive.package}</span>
+                    <span className="text-gray-500 font-semibold">Package:</span> <span className="text-white font-bold">{activeTrackerDrive.salary}</span>
                   </div>
                   <div className="flex-1">
                     <span className="text-gray-500 font-semibold">Pipeline:</span> <span className="text-indigo-400 font-bold">{activeTrackerDrive.rounds.join(' ➔ ')}</span>
@@ -535,7 +540,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
                                 >
                                   {student.name}
                                 </button>
-                                <p className="candidate-details mt-0.5">{student.branch} (CGPA: {student.cgpa})</p>
+                                <p className="candidate-details mt-0.5">{student.department} (CGPA: {student.cgpa})</p>
 
                                 <div className="candidate-actions">
                                   <button
@@ -588,7 +593,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
               <FileText size={24} className="text-indigo-400" />
               <div>
                 <h3 className="text-lg font-bold text-white font-display">Candidate Resume</h3>
-                <p className="text-xs text-gray-400">{selectedStudentForResume.name} ({selectedStudentForResume.branch})</p>
+                <p className="text-xs text-gray-400">{selectedStudentForResume.name} ({selectedStudentForResume.department})</p>
               </div>
             </div>
 

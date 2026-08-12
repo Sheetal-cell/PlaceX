@@ -25,7 +25,7 @@ export default function ScrapedDriveCard({
 
                     <p className="text-indigo font-bold ">
 
-                        {drive.role}
+                        {drive.title}
 
                     </p>
 
