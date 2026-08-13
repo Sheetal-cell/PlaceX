@@ -123,7 +123,7 @@ function App() {
 
     // Check if already applied
     const student = students.find(s => s.id === studentId);
-    if (student?.applications.some(app => app.driveId === driveId)) {
+    if (student?.applications.some(app => app.jobPostingId === driveId)) {
       triggerToast('You have already applied for this placement drive.', 'warning');
       return;
     }
@@ -131,10 +131,11 @@ function App() {
     const newApplication: Application = {
       driveId,
       companyName: drive.companyName,
-      role: drive.role,
+      role: drive.title,
       appliedDate: new Date().toISOString().split('T')[0],
       status: 'Applied',
-      currentRoundIndex: 0
+      currentRoundIndex: 0,
+      jobPostingId: ''
     };
 
     // Update students list state
@@ -270,13 +271,13 @@ function App() {
       prevStudents.map(s => {
         if (s.id === studentId) {
           const updatedApps = s.applications.map(app => {
-            if (app.driveId === driveId) {
+            if (app.jobPostingId === driveId) {
               if (isFinalSelection) {
                 return {
                   ...app,
                   status: 'Selected' as const,
                   currentRoundIndex: newRoundIndex - 1,
-                  feedback: `Offer issued! Selected for the role of ${drive.role} with a salary package of ${drive.package}.`
+                  feedback: `Offer issued! Selected for the role of ${drive.title} with a salary package of ${drive.salary}.`
                 };
               } else {
                 const nextRoundName = drive.rounds[newRoundIndex];
@@ -297,7 +298,7 @@ function App() {
               ...s,
               placementStatus: 'Placed' as const,
               placedCompany: drive.companyName,
-              placedPackage: drive.package,
+              placedPackage: String(drive.salary),
               applications: updatedApps
             };
           }
@@ -330,7 +331,7 @@ function App() {
           return {
             ...s,
             applications: s.applications.map(app => {
-              if (app.driveId === driveId) {
+              if (app.jobPostingId === driveId) {
                 return {
                   ...app,
                   status: 'Rejected' as const,
@@ -399,7 +400,7 @@ function App() {
         <header className="app-header">
           <div className="app-logo">
             <GraduationCap className="logo-icon animate-pulse" size={24} />
-            <span>TPOHelper</span>
+            <span>PlaceX</span>
           </div>
 
           <div className="user-nav-profile">
@@ -407,7 +408,7 @@ function App() {
               <div className="flex items-center gap-3">
                 <div className="hidden sm:flex flex-col text-right">
                   <span className="text-xs font-semibold text-white truncate max-w-30">{loggedInStudent.name}</span>
-                  <span className="text-[10px] text-gray-500 font-semibold uppercase">{loggedInStudent.branch}</span>
+                  <span className="text-[10px] text-gray-500 font-semibold uppercase">{loggedInStudent.department}</span>
                 </div>
                 <div className="avatar">{loggedInStudent.name.charAt(0)}</div>
               </div>

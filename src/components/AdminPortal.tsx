@@ -129,7 +129,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   // Compute Branch Distribution data
   const branches = ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Electrical'];
   const branchData = branches.map(br => {
-    const branchStudents = students.filter(s => s.branch === br);
+    const branchStudents = students.filter(s => s.department === br);
     const branchPlaced = branchStudents.filter(s => s.placementStatus === 'Placed');
     const pct = branchStudents.length > 0 ? Math.round((branchPlaced.length / branchStudents.length) * 100) : 0;
     return { name: br, pct, total: branchStudents.length, placed: branchPlaced.length };
@@ -152,7 +152,12 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
       jobDesc,
       skillsRequired: skillsRequiredText.split(',').map(s => s.trim()).filter(Boolean),
       rounds: roundsText.split(',').map(s => s.trim()).filter(Boolean),
-      active: true
+      active: true,
+      title: '',
+      description: '',
+      salary: 0,
+      status: '',
+      companyId: 0
     });
 
     // Reset Form
@@ -182,7 +187,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const filteredStudents = students.filter(student => {
     const matchesSearch = student.name.toLowerCase().includes(studentSearch.toLowerCase()) ||
       student.email.toLowerCase().includes(studentSearch.toLowerCase());
-    const matchesBranch = branchFilter === 'All' || student.branch === branchFilter;
+    const matchesBranch = branchFilter === 'All' || student.department === branchFilter;
     const matchesStatus = statusFilter === 'All' || student.placementStatus === statusFilter;
     const matchesCgpa = student.cgpa >= minCgpaFilter;
     return matchesSearch && matchesBranch && matchesStatus && matchesCgpa;
@@ -200,7 +205,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const activeTrackerDrive = drives.find(d => d.id === trackerDriveId);
   const activeTrackerApplications = students.flatMap(s =>
     s.applications
-      .filter(app => app.driveId === trackerDriveId && app.status !== 'Rejected' && app.status !== 'Selected')
+      .filter(app => app.jobPostingId === trackerDriveId && app.status !== 'Rejected' && app.status !== 'Selected')
       .map(app => ({ student: s, app }))
   );
 
@@ -398,7 +403,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                         <div key={drive.id} className="flex flex-col items-center group w-12 relative">
                           {/* Tooltip value */}
                           <span className="absolute -top-6 bg-slate-900 border border-indigo-500/20 text-[10px] text-white px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity font-mono z-10">
-                            {drive.package}
+                            {drive.salary}
                           </span>
 
                           {/* SVG Bar */}
@@ -619,7 +624,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                     key={drive.id}
                     className="glass-card flex flex-col md:flex-row justify-between md:items-center gap-4 hover:scale-[1.01] transition-all duration-300"
                     style={{
-                      borderLeft: drive.active
+                      borderLeft: drive.status === "OPEN"
                         ? "4px solid #6366f1"
                         : "4px solid #ef4444"
                     }}
@@ -627,12 +632,12 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                     <div>
                       <div className="flex items-center gap-3">
                         <h3 className="font-bold text-xl text-white font-display">{drive.companyName}</h3>
-                        <span className="badge badge-info">{drive.package}</span>
-                        <span className={`badge ${drive.active ? 'badge-success' : 'badge-danger'}`}>
-                          {drive.active ? 'Active' : 'Closed'}
+                        <span className="badge badge-info">{drive.salary}</span>
+                        <span className={`badge ${drive.status === "OPEN" ? 'badge-success' : 'badge-danger'}`}>
+                          {drive.status === "OPEN" ? 'Active' : 'Closed'}
                         </span>
                       </div>
-                      <p className="text-xs text-sky-400 mt-1 font-semibold">{drive.role}
+                      <p className="text-xs text-indigo-400 mt-1 font-semibold">{drive.title}
                         <div className="flex gap-2 mt-3 flex-wrap">
                           {drive.skillsRequired.slice(0, 4).map(skill => (
                             <span
@@ -644,7 +649,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                           ))}
                         </div>
                       </p>
-                      <p className="text-xs text-slate-400 leading-relaxed max-w-3xl mt-1.5">{drive.jobDesc}</p>
+                      <p className="text-xs text-slate-400 leading-relaxed max-w-3xl mt-1.5">{drive.description}</p>
 
                       <div className="flex gap-4 flex-wrap mt-3 text-[10px] text-gray-500 font-semibold">
                         <span>Cut-off: {drive.cgpaCutoff} CGPA</span>
@@ -657,9 +662,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                     <div className="flex md:flex-col gap-2 shrink-0">
                       <button
                         onClick={() => onToggleDriveActive(drive.id)}
-                        className={`btn btn-sm ${drive.active ? 'btn-danger' : 'btn-success'}`}
+                        className={`btn btn-sm ${drive.status === "OPEN" ? 'btn-danger' : 'btn-success'}`}
                       >
-                        {drive.active ? 'Suspend Drive' : 'Reactivate'}
+                        {drive.status === "OPEN" ? 'Suspend Drive' : 'Reactivate'}
                       </button>
                     </div>
                   </div>
@@ -786,7 +791,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                               </div>
                             </div>
                           </td>
-                          <td className="p-4">{student.branch}</td>
+                          <td className="p-4">{student.department}</td>
                           <td className="p-4 font-mono font-medium">
                             {student.cgpa} CGPA / {student.backlogs} Backlogs
                           </td>
@@ -892,7 +897,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                             {student.name}
                           </span>
                           <span className="text-[10px] text-gray-500 truncate student-mobile-secondary w-full block">
-                            {student.branch}
+                            {student.department}
                           </span>
                         </div>
                         <div className="flex items-center gap-2 shrink-0 min-w-0">
@@ -911,7 +916,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
               {/* Responsive Student Detail Dialog popup (Sheet style for mobile) */}
               {activePopoverStudent && (
-                <div className="fixed inset-0 z-[1100] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-1100 flex items-center justify-center p-4">
                   {/* Backdrop */}
                   <div
                     className="fixed inset-0 bg-black/60 backdrop-blur-xs animate-fade-in"
@@ -953,7 +958,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       <div className="grid grid-cols-2 gap-4">
                         <div className="min-w-0">
                           <span className="text-[10px] text-gray-500 block uppercase font-bold tracking-wider">Branch/Dept</span>
-                          <span className="font-semibold text-white truncate block">{activePopoverStudent.branch}</span>
+                          <span className="font-semibold text-white truncate block">{activePopoverStudent.department}</span>
                         </div>
                         <div>
                           <span className="text-[10px] text-gray-500 block uppercase font-bold tracking-wider">ATS Score</span>
@@ -1178,7 +1183,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       <span className="text-gray-500 font-semibold">Recruiting:</span> <span className="text-white font-bold">{activeTrackerDrive.companyName}</span>
                     </div>
                     <div className="flex-1">
-                      <span className="text-gray-500 font-semibold">Package:</span> <span className="text-white font-bold">{activeTrackerDrive.package}</span>
+                      <span className="text-gray-500 font-semibold">Package:</span> <span className="text-white font-bold">{activeTrackerDrive.salary}</span>
                     </div>
                     <div className="flex-1">
                       <span className="text-gray-500 font-semibold">Total Steps:</span> <span className="text-blue-400 font-bold">{activeTrackerDrive.rounds.join(' ➔ ')}</span>
@@ -1214,7 +1219,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                               columnApplications.map(({ student }) => (
                                 <div key={student.id} className="candidate-card hover:scale-[1.02] hover:border-indigo-500/30 transition-all duration-300">
                                   <p className="candidate-name text-white truncate">{student.name}</p>
-                                  <p className="candidate-details mt-0.5">{student.branch} (CGPA: {student.cgpa})</p>
+                                  <p className="candidate-details mt-0.5">{student.department} (CGPA: {student.cgpa})</p>
 
                                   <div className="candidate-actions">
                                     <button
@@ -1278,7 +1283,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 <FileText size={24} className="text-blue-400" />
                 <div>
                   <h3 className="text-lg font-bold text-white font-display">Resume Analyzer Report</h3>
-                  <p className="text-xs text-gray-400">Candidate: {selectedStudentForResume.name} ({selectedStudentForResume.branch})</p>
+                  <p className="text-xs text-gray-400">Candidate: {selectedStudentForResume.name} ({selectedStudentForResume.department})</p>
                 </div>
               </div>
 

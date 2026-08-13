@@ -1,4 +1,5 @@
 export interface Application {
+  jobPostingId: string;
   driveId: string;
   companyName: string;
   role: string;
@@ -49,7 +50,10 @@ export interface Student {
   name: string;
   email: string;
   password?: string;
-  branch: 'Computer Science' | 'Information Technology' | 'Electronics' | 'Mechanical' | 'Electrical';
+
+  department: string;
+  branch: string;
+  
   cgpa: number;
   backlogs: number;
   placementStatus: 'Placed' | 'Unplaced';
@@ -81,6 +85,16 @@ export interface PlacementDrive {
   registeredCount: number;
   recruiterId?: string; // Owning recruiter, if posted via the Recruiter Portal
 }
+export interface PlacementDrive {
+
+  title: string;
+  description: string;
+  salary: number;
+  deadline: string;
+  status: string;
+  companyId: number;
+  companyName: string;
+}
 
 export const INITIAL_DRIVES: PlacementDrive[] = [
   {
@@ -98,7 +112,12 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     rounds: ['Online Coding Test', 'Technical Round 1', 'Technical Round 2', 'HR Interview'],
     active: true,
     registeredCount: 42,
-    recruiterId: 'rec_1'
+    recruiterId: 'rec_1',
+    title: "",
+    description: "",
+    salary: 0,
+    status: "",
+    companyId: 0
   },
   {
     id: 'drv_2',
@@ -115,7 +134,12 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     rounds: ['Online Assessment', 'Technical Coding Round', 'System Architecture Round', 'HR Round'],
     active: true,
     registeredCount: 68,
-    recruiterId: 'rec_2'
+    recruiterId: 'rec_2',
+    title: "",
+    description: "",
+    salary: 0,
+    status: "",
+    companyId: 0
   },
   {
     id: 'drv_3',
@@ -131,7 +155,12 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     skillsRequired: ['C++', 'LLVM', 'GPU Architecture', 'Algorithms', 'Assembly'],
     rounds: ['Compiler Basics MCQ Test', 'Technical Round 1 (C++)', 'Technical Round 2 (LLVM)', 'Managerial Fitment'],
     active: true,
-    registeredCount: 25
+    registeredCount: 25,
+    title: "",
+    description: "",
+    salary: 0,
+    status: "",
+    companyId: 0
   },
   {
     id: 'drv_4',
@@ -147,7 +176,12 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     skillsRequired: ['AWS', 'Linux', 'Python', 'Networking', 'Troubleshooting'],
     rounds: ['Aptitude & Coding Test', 'Technical Core Round', 'Bar Raiser Interview'],
     active: true,
-    registeredCount: 110
+    registeredCount: 110,
+    title: "",
+    description: "",
+    salary: 0,
+    status: "",
+    companyId: 0
   },
   {
     id: 'drv_5',
@@ -163,7 +197,12 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     skillsRequired: ['Communication', 'SQL', 'Excel', 'Agile Methodology', 'Analytical Thinking'],
     rounds: ['Aptitude Assessment', 'Group Discussion', 'Case Study Round', 'Partner Interview'],
     active: true,
-    registeredCount: 185
+    registeredCount: 185,
+    title: "",
+    description: "",
+    salary: 0,
+    status: "",
+    companyId: 0
   },
   {
     id: 'drv_6',
@@ -179,7 +218,12 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     skillsRequired: ['Embedded C', 'RTOS', 'CAN Bus', 'Microcontrollers', 'Python'],
     rounds: ['Embedded Coding Assessment', 'Hardware Design Round', 'Deep Technical Round', 'Director Fitment'],
     active: true,
-    registeredCount: 19
+    registeredCount: 19,
+    title: "",
+    description: "",
+    salary: 0,
+    status: "",
+    companyId: 0
   }
 ];
 
@@ -210,7 +254,7 @@ export const INITIAL_STUDENTS: Student[] = [
     name: 'Aravind Sharma',
     email: 'aravind.sharma@univ.edu',
     password: 'student123',
-    branch: 'Computer Science',
+    department: 'Computer Science',
     cgpa: 9.1,
     backlogs: 0,
     placementStatus: 'Placed',
@@ -228,16 +272,18 @@ export const INITIAL_STUDENTS: Student[] = [
         appliedDate: '2026-06-10',
         status: 'Selected',
         currentRoundIndex: 3,
-        feedback: 'Outstanding technical performance across all rounds. Exceptional data structures and problem-solving abilities shown.'
+        feedback: 'Outstanding technical performance across all rounds. Exceptional data structures and problem-solving abilities shown.',
+        jobPostingId: ""
       }
-    ]
+    ],
+    branch: ""
   },
   {
     id: 'std_2',
     name: 'Rohan Mehra',
     email: 'rohan.mehra@univ.edu',
     password: 'student123',
-    branch: 'Computer Science',
+    department: 'Computer Science',
     cgpa: 8.3,
     backlogs: 0,
     placementStatus: 'Unplaced',
@@ -253,7 +299,8 @@ export const INITIAL_STUDENTS: Student[] = [
         appliedDate: '2026-06-12',
         status: 'Tech Round 1',
         currentRoundIndex: 1,
-        feedback: 'Cleared the online test with 95% score. Moving to the technical coding interviews.'
+        feedback: 'Cleared the online test with 95% score. Moving to the technical coding interviews.',
+        jobPostingId: ""
       },
       {
         driveId: 'drv_2',
@@ -261,16 +308,18 @@ export const INITIAL_STUDENTS: Student[] = [
         role: 'Software Engineer - Azure IoT',
         appliedDate: '2026-06-14',
         status: 'Test Scheduled',
-        currentRoundIndex: 0
+        currentRoundIndex: 0,
+        jobPostingId: ""
       }
-    ]
+    ],
+    branch: ""
   },
   {
     id: 'std_3',
     name: 'Sneha Reddy',
     email: 'sneha.reddy@univ.edu',
     password: 'student123',
-    branch: 'Information Technology',
+    department: 'Information Technology',
     cgpa: 7.9,
     backlogs: 0,
     placementStatus: 'Unplaced',
@@ -286,7 +335,8 @@ export const INITIAL_STUDENTS: Student[] = [
         appliedDate: '2026-06-13',
         status: 'Tech Round 1',
         currentRoundIndex: 1,
-        feedback: 'Demonstrated solid understanding of AWS systems and basic automation concepts.'
+        feedback: 'Demonstrated solid understanding of AWS systems and basic automation concepts.',
+        jobPostingId: ""
       },
       {
         driveId: 'drv_5',
@@ -294,16 +344,18 @@ export const INITIAL_STUDENTS: Student[] = [
         role: 'Technology Consultant',
         appliedDate: '2026-06-14',
         status: 'Applied',
-        currentRoundIndex: 0
+        currentRoundIndex: 0,
+        jobPostingId: ""
       }
-    ]
+    ],
+    branch: ""
   },
   {
     id: 'std_4',
     name: 'Karan Malhotra',
     email: 'karan.malhotra@univ.edu',
     password: 'student123',
-    branch: 'Electronics',
+    department: 'Electronics',
     cgpa: 8.6,
     backlogs: 0,
     placementStatus: 'Placed',
@@ -321,16 +373,18 @@ export const INITIAL_STUDENTS: Student[] = [
         appliedDate: '2026-06-11',
         status: 'Selected',
         currentRoundIndex: 3,
-        feedback: 'Exceptional score in the Compiler test. Excellent understanding of computer hardware architecture.'
+        feedback: 'Exceptional score in the Compiler test. Excellent understanding of computer hardware architecture.',
+        jobPostingId: ""
       }
-    ]
+    ],
+    branch: ""
   },
   {
     id: 'std_5',
     name: 'Priyanka Das',
     email: 'priyanka.das@univ.edu',
     password: 'student123',
-    branch: 'Electrical',
+    department: 'Electrical',
     cgpa: 7.2,
     backlogs: 1,
     placementStatus: 'Unplaced',
@@ -345,16 +399,18 @@ export const INITIAL_STUDENTS: Student[] = [
         role: 'Technology Consultant',
         appliedDate: '2026-06-15',
         status: 'Applied',
-        currentRoundIndex: 0
+        currentRoundIndex: 0,
+        jobPostingId: ""
       }
-    ]
+    ],
+    branch: ""
   },
   {
     id: 'std_6',
     name: 'Vikram Aditya',
     email: 'vikram.aditya@univ.edu',
     password: 'student123',
-    branch: 'Mechanical',
+    department: 'Mechanical',
     cgpa: 6.8,
     backlogs: 2,
     placementStatus: 'Unplaced',
@@ -362,7 +418,8 @@ export const INITIAL_STUDENTS: Student[] = [
     skills: ['SolidWorks', 'AutoCAD', 'Excel', 'Project Management'],
     projectsCount: 2,
     resumeText: 'Mechanical Engineering enthusiast. Fluent in AutoCAD and SolidWorks drafting. Modeled a formula-student race car frame and ran structural load stress tests. Strong team coordination and operations lead.',
-    applications: []
+    applications: [],
+    branch: ""
   }
 ];
 
