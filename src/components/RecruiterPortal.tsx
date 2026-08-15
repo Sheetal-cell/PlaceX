@@ -448,7 +448,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
                     </div>
                     <div className="flex gap-2 mt-3 flex-wrap">
                       {drive.skillsRequired.slice(0, 4).map(skill => (
-                        <span key={skill} className="px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-300 text-[10px]">
+                        <span key={skill} className="px-2 py-1 rounded-full bg-blue-500/10 text-blue-300 text-[10px]">
                           {skill}
                         </span>
                       ))}
@@ -509,7 +509,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
                     <span className="text-gray-500 font-semibold">Package:</span> <span className="text-white font-bold">{activeTrackerDrive.salary}</span>
                   </div>
                   <div className="flex-1">
-                    <span className="text-gray-500 font-semibold">Pipeline:</span> <span className="text-indigo-400 font-bold">{activeTrackerDrive.rounds.join(' ➔ ')}</span>
+                    <span className="text-gray-500 font-semibold">Pipeline:</span> <span className="text-blue-400 font-bold">{activeTrackerDrive.rounds.join(' ➔ ')}</span>
                   </div>
                 </div>
 
@@ -521,7 +521,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
                     const isLastCol = colIndex === activeTrackerDrive.rounds.length - 1;
 
                     return (
-                      <div key={roundName} className="tracker-column animate-slide-in hover:border-indigo-500/30 transition-all duration-300">
+                      <div key={roundName} className="tracker-column animate-slide-in hover:border-blue-500/30 transition-all duration-300">
                         <div className="column-header">
                           <h4 className="column-title truncate max-w-35" title={roundName}>{roundName}</h4>
                           <span className="column-count">{columnApplications.length}</span>
@@ -532,10 +532,10 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
                             <div className="text-center py-8 text-gray-600 text-[10px]">Empty Stage</div>
                           ) : (
                             columnApplications.map(({ student }) => (
-                              <div key={student.id} className="candidate-card hover:scale-[1.02] hover:border-indigo-500/30 transition-all duration-300">
+                              <div key={student.id} className="candidate-card hover:scale-[1.02] hover:border-blue-500/30 transition-all duration-300">
                                 <button
                                   onClick={() => setSelectedStudentForResume(student)}
-                                  className="candidate-name text-white truncate text-left hover:text-indigo-300 transition-colors"
+                                  className="candidate-name text-white truncate text-left hover:text-blue-300 transition-colors"
                                   title="View resume"
                                 >
                                   {student.name}
@@ -590,7 +590,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
             </button>
 
             <div className="flex items-center gap-3 mb-4">
-              <FileText size={24} className="text-indigo-400" />
+              <FileText size={24} className="text-blue-400" />
               <div>
                 <h3 className="text-lg font-bold text-white font-display">Candidate Resume</h3>
                 <p className="text-xs text-gray-400">{selectedStudentForResume.name} ({selectedStudentForResume.department})</p>
@@ -600,7 +600,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
             <div className="flex gap-6 items-center p-3 bg-white/5 border border-white/10 rounded-xl mb-4 text-xs">
               <div>
                 <span className="text-gray-500 font-semibold">ATS Score:</span>{' '}
-                <span className="font-mono font-bold text-indigo-400 text-sm">{selectedStudentForResume.resumeScore}%</span>
+                <span className="font-mono font-bold text-blue-400 text-sm">{selectedStudentForResume.resumeScore}%</span>
               </div>
               <div>
                 <span className="text-gray-500 font-semibold">Projects:</span>{' '}
@@ -620,7 +620,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
             <h4 className="text-xs font-bold uppercase text-gray-400 tracking-wider mb-2 mt-4">Skills</h4>
             <div className="flex flex-wrap gap-1">
               {selectedStudentForResume.skills.map(s => (
-                <span key={s} className="px-2.5 py-0.5 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 rounded text-[10px]">{s}</span>
+                <span key={s} className="px-2.5 py-0.5 bg-blue-500/10 border border-blue-500/20 text-blue-300 rounded text-[10px]">{s}</span>
               ))}
             </div>
 

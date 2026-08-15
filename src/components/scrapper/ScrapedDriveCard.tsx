@@ -23,7 +23,7 @@ export default function ScrapedDriveCard({
 
                     </h2>
 
-                    <p className="text-indigo font-bold ">
+                    <p className="text-blue-400 font-bold ">
 
                         {drive.title}
 

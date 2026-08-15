@@ -303,7 +303,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
             {onSeedData && (
               <button
                 onClick={onSeedData}
-                className="menu-item hover:bg-indigo-500/10 hover:text-indigo-400 text-gray-400 mt-2"
+                className="menu-item hover:bg-blue-500/10 hover:text-blue-400 text-gray-400 mt-2"
                 title="Reset & Load Sample Data"
               >
                 <Plus size={18} />
@@ -428,7 +428,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 {/* Chart 2: Branch Placements rate */}
                 <div className="glass-card flex flex-col gap-4">
                   <h3 className="text-base font-bold text-white font-display flex items-center gap-2">
-                    <Users size={16} className="text-purple-400" />
+                    <Users size={16} className="text-sky-400" />
                     Placement Rates by Department
                   </h3>
 
@@ -437,11 +437,11 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       <div key={data.name} className="flex flex-col gap-1.5">
                         <div className="flex justify-between text-[11px]">
                           <span className="text-gray-300 font-medium">{data.name}</span>
-                          <span className="text-indigo-300 font-bold font-mono">{data.pct}% ({data.placed}/{data.total})</span>
+                          <span className="text-sky-300 font-bold font-mono">{data.pct}% ({data.placed}/{data.total})</span>
                         </div>
                         <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden border border-white/5">
                           <div
-                            className="h-full bg-linear-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-1000"
+                            className="h-full bg-linear-to-r from-sky-400 to-blue-600 rounded-full transition-all duration-1000"
                             style={{ width: `${data.pct}%` }}
                           ></div>
                         </div>
@@ -642,7 +642,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                           {drive.skillsRequired.slice(0, 4).map(skill => (
                             <span
                               key={skill}
-                              className="px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-300 text-[10px]"
+                              className="px-2 py-1 rounded-full bg-blue-500/10 text-blue-300 text-[10px]"
                             >
                               {skill}
                             </span>
@@ -733,7 +733,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 <div className="input-group mb-0">
                   <label className="input-label flex justify-between">
                     <span>Minimum CGPA</span>
-                    <span className="font-bold text-indigo-400">{minCgpaFilter.toFixed(1)}</span>
+                    <span className="font-bold text-sky-400">{minCgpaFilter.toFixed(1)}</span>
                   </label>
                   <input
                     type="range"
@@ -742,7 +742,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                     step="0.1"
                     value={minCgpaFilter}
                     onChange={(e) => setMinCgpaFilter(Number(e.target.value))}
-                    className="accent-indigo-500 mt-2.5"
+                    className="accent-blue-500 mt-2.5"
                   />
                 </div>
               </div>
@@ -772,11 +772,11 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       filteredStudents.map(student => (
                         <tr
                           key={student.id}
-                          className="hover:bg-indigo-500/5 transition-all duration-300"
+                          className="hover:bg-blue-500/5 transition-all duration-300"
                         >
                           <td className="p-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-linear-to-r from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white">
+                              <div className="w-10 h-10 rounded-full bg-linear-to-r from-blue-500 to-sky-500 flex items-center justify-center font-bold text-white">
                                 {student.name.charAt(0)}
                               </div>
 
@@ -807,7 +807,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                               <span className="badge badge-warning">Unplaced</span>
                             )}
                           </td>
-                          <td className="p-4 font-mono font-bold text-indigo-400">
+                          <td className="p-4 font-mono font-bold text-blue-400">
                             {student.resumeScore}%
                           </td>
                           <td className="p-4 text-right">
@@ -890,7 +890,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                           setActivePopoverStudent(student);
                           setStatusChangeStudentId(null);
                         }}
-                        className="flex justify-between items-center p-4 hover:bg-indigo-500/5 cursor-pointer transition-colors student-mobile-row w-full max-w-full min-w-0"
+                        className="flex justify-between items-center p-4 hover:bg-blue-500/5 cursor-pointer transition-colors student-mobile-row w-full max-w-full min-w-0"
                       >
                         <div className="flex flex-col gap-1 min-w-0 flex-1 pr-3">
                           <span className="font-semibold text-white truncate student-mobile-name w-full block">
@@ -945,7 +945,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                     <div className="space-y-4 text-xs">
                       {/* Name and Email */}
                       <div className="flex items-center gap-3 border-b border-white/5 pb-3">
-                        <div className="w-12 h-12 rounded-full bg-linear-to-r from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white text-lg shrink-0">
+                        <div className="w-12 h-12 rounded-full bg-linear-to-r from-blue-500 to-sky-500 flex items-center justify-center font-bold text-white text-lg shrink-0">
                           {activePopoverStudent.name.charAt(0)}
                         </div>
                         <div className="min-w-0 flex-1">
@@ -962,7 +962,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                         </div>
                         <div>
                           <span className="text-[10px] text-gray-500 block uppercase font-bold tracking-wider">ATS Score</span>
-                          <span className="font-semibold text-indigo-400 font-mono">{activePopoverStudent.resumeScore}%</span>
+                          <span className="font-semibold text-blue-400 font-mono">{activePopoverStudent.resumeScore}%</span>
                         </div>
                         <div>
                           <span className="text-[10px] text-gray-500 block uppercase font-bold tracking-wider">CGPA</span>
@@ -1186,7 +1186,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       <span className="text-gray-500 font-semibold">Package:</span> <span className="text-white font-bold">{activeTrackerDrive.salary}</span>
                     </div>
                     <div className="flex-1">
-                      <span className="text-gray-500 font-semibold">Total Steps:</span> <span className="text-indigo-400 font-bold">{activeTrackerDrive.rounds.join(' ➔ ')}</span>
+                      <span className="text-gray-500 font-semibold">Total Steps:</span> <span className="text-blue-400 font-bold">{activeTrackerDrive.rounds.join(' ➔ ')}</span>
                     </div>
                   </div>
 
@@ -1280,7 +1280,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               </button>
 
               <div className="flex items-center gap-3 mb-4">
-                <FileText size={24} className="text-indigo-400" />
+                <FileText size={24} className="text-blue-400" />
                 <div>
                   <h3 className="text-lg font-bold text-white font-display">Resume Analyzer Report</h3>
                   <p className="text-xs text-gray-400">Candidate: {selectedStudentForResume.name} ({selectedStudentForResume.department})</p>
@@ -1290,7 +1290,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
               <div className="flex gap-6 items-center p-3 bg-white/5 border border-white/10 rounded-xl mb-4 text-xs">
                 <div>
                   <span className="text-gray-500 font-semibold">ATS Compatibility Score:</span>{' '}
-                  <span className="font-mono font-bold text-indigo-400 text-sm">{selectedStudentForResume.resumeScore}%</span>
+                  <span className="font-mono font-bold text-blue-400 text-sm">{selectedStudentForResume.resumeScore}%</span>
                 </div>
                 <div>
                   <span className="text-gray-500 font-semibold">Projects count:</span>{' '}

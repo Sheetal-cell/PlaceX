@@ -230,7 +230,7 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
       <div id="login-section" className="login-container-section py-20 px-4 flex justify-center items-center">
         <div className="auth-card animate-slide-in relative">
           {/* Decorative elements */}
-          <div className="absolute -top-10 -right-10 w-24 h-24 bg-indigo-500/10 rounded-full blur-xl"></div>
+          <div className="absolute -top-10 -right-10 w-24 h-24 bg-blue-500/10 rounded-full blur-xl"></div>
 
           {/* Title Section */}
           <div className="text-center mb-8">
@@ -759,7 +759,7 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
             <button
               type="button"
               onClick={onSeedData}
-              className="btn btn-secondary btn-sm flex items-center gap-2 text-indigo-300 hover:text-indigo-200 border-indigo-500/20 hover:border-indigo-500/40"
+              className="btn btn-secondary btn-sm flex items-center gap-2 text-blue-300 hover:text-blue-200 border-blue-500/20 hover:border-blue-500/40"
             >
               <Database size={14} />
               Seed Sample Data
