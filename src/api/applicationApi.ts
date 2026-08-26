@@ -6,8 +6,7 @@ import type {
 
 export const applicationApi = {
   getAll: () =>
-    request<ApplicationResponse[]>("/applications"),
-
+    request<ApplicationResponse[]>("/applications/all"),
   getById: (id: number) =>
     request<ApplicationResponse>(`/applications/${id}`),
 

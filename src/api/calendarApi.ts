@@ -4,7 +4,7 @@ import type { PlacementEventResponse } from "./types";
 export const calendarApi = {
   getAll: () =>
     request<PlacementEventResponse[]>(
-      "/calendar/events"
+      "/calendar/events/all"
     ),
 
   getUpcoming: () =>
@@ -24,7 +24,7 @@ export const calendarApi = {
     status: string;
   }) =>
     request<PlacementEventResponse>(
-      "/calendar/events",
+      "/calendar/events/add",
       {
         method: "POST",
         body: JSON.stringify(data),
@@ -36,7 +36,7 @@ export const calendarApi = {
     data: Partial<PlacementEventResponse>
   ) =>
     request<PlacementEventResponse>(
-      `/calendar/events/${id}`,
+      `/calendar/events/update/${id}`,
       {
         method: "PUT",
         body: JSON.stringify(data),
@@ -45,7 +45,7 @@ export const calendarApi = {
 
   delete: (id: number) =>
     request<void>(
-      `/calendar/events/${id}`,
+      `/calendar/events/delete${id}`,
       {
         method: "DELETE",
       }
