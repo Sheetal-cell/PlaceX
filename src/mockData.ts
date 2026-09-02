@@ -71,54 +71,39 @@ export interface Student {
 export interface PlacementDrive {
   id: string;
   companyName: string;
-  role: string;
-  package: string; // e.g. "18 LPA"
-  numericPackage: number; // for charts (e.g. 18)
+  title: string;                 
+  description: string;           
+  package: string;                
+  numericPackage: number;         
   cgpaCutoff: number;
   maxBacklogs: number;
   allowedBranches: string[];
   deadline: string;
-  jobDesc: string;
   skillsRequired: string[];
   rounds: string[];
-  active: boolean;
-  registeredCount: number;
-  recruiterId?: string; // Owning recruiter, if posted via the Recruiter Portal
-}
-export interface PlacementDrive {
-
-  title: string;
-  description: string;
-  salary: number;
-  deadline: string;
-  status: string;
-  companyId: number;
-  companyName: string;
-}
+  status: 'OPEN' | 'CLOSED';     
+  recruiterId?: string;           
+  companyId?: number;             
 
 export const INITIAL_DRIVES: PlacementDrive[] = [
   {
     id: 'drv_1',
     companyName: 'Google',
-    role: 'Associate Software Engineer',
+    title: 'Associate Software Engineer',            // was: role
+    description: 'Join Google as an Associate Software Engineer. You will work on massive scale services, cloud infrastructure, and next-generation search systems. Strong algorithms and system design skills required.', // was: jobDesc
     package: '32 LPA',
     numericPackage: 32,
     cgpaCutoff: 8.5,
     maxBacklogs: 0,
     allowedBranches: ['Computer Science', 'Information Technology'],
     deadline: '2026-06-25',
-    jobDesc: 'Join Google as an Associate Software Engineer. You will work on massive scale services, cloud infrastructure, and next-generation search systems. Strong algorithms and system design skills required.',
     skillsRequired: ['React', 'TypeScript', 'Node.js', 'Data Structures', 'System Design'],
     rounds: ['Online Coding Test', 'Technical Round 1', 'Technical Round 2', 'HR Interview'],
-    active: true,
+    status: 'OPEN',                                    // was: active: true + status: ""
     registeredCount: 42,
     recruiterId: 'rec_1',
-    title: "",
-    description: "",
-    salary: 0,
-    status: "",
-    companyId: 0
   },
+
   {
     id: 'drv_2',
     companyName: 'Microsoft',

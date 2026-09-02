@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { studentApi } from "../api/studentApi";
+import { jobPostingApi } from "../api/jobPostingApi";
+
 import {
   LayoutDashboard,
   Briefcase,
@@ -20,6 +23,7 @@ import type {
   PlacementDrive,
   ResumeFeedback
 } from "../mockData";
+import type { StudentWithPlacement, DriveWithCompany } from "../api/types";
 import { Footer } from './Footer';
 import { ScrapedDrives } from "./scrapper/ScrapedDrives";
 import CalendarPage from "./calendar/CalendarPage";
@@ -56,10 +60,14 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   onSeedData
 }) => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'drives' | 'scraped' | 'students' | 'tracker' | 'calendar' | 'hr'>('dashboard');
+  
 
   // New Drive Form State
   const [showDriveForm, setShowDriveForm] = useState(false);
   const [companyName, setCompanyName] = useState('');
+  const [companyLocation, setCompanyLocation] = useState('');
+  const [companyWebsite, setCompanyWebsite] = useState('');
+  const [jobLocation, setJobLocation] = useState('');
   const [role, setRole] = useState('');
   const [pkg, setPkg] = useState('');
   const [numericPkg, setNumericPkg] = useState(6);
@@ -74,13 +82,35 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const [roundsText, setRoundsText] = useState('Aptitude Test, Technical Interview, HR Interview');
 
   // Student Database Filter State
+  const [realStudents, setRealStudents] = useState<StudentWithPlacement[] | null>(null);
+
+  // Fetch real student + placement data once on mount
+  useEffect(() => {
+    studentApi.getAllWithPlacementInfo()
+      .then(setRealStudents)
+      .catch((err) => console.error("Failed to load students:", err));
+  }, []);
+
+  // Real drives (job postings + company info), replacing mock 'drives' once loaded
+  const [realDrives, setRealDrives] = useState<DriveWithCompany[] | null>(null);
+
+  useEffect(() => {
+    jobPostingApi.getAllWithCompanyInfo()
+      .then(setRealDrives)
+      .catch((err) => console.error("Failed to load drives:", err));
+  }, []);
+
+  // Falls back to mock drives until the real fetch resolves — used everywhere
+  // below instead of the raw `drives` prop.
+  const effectiveDrives: (DriveWithCompany | PlacementDrive)[] = realDrives ?? drives;
+
   const [studentSearch, setStudentSearch] = useState('');
   const [branchFilter, setBranchFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [minCgpaFilter, setMinCgpaFilter] = useState(5.0);
 
   // Selected student for resume view
-  const [selectedStudentForResume, setSelectedStudentForResume] = useState<Student | null>(null);
+  const [selectedStudentForResume, setSelectedStudentForResume] = useState<Student | StudentWithPlacement | null>(null);
   const [review, setReview] = useState({
 
     score: 80,
@@ -105,10 +135,10 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const [placedPackageInput, setPlacedPackageInput] = useState('');
 
   // Mobile popover details state
-  const [activePopoverStudent, setActivePopoverStudent] = useState<Student | null>(null);
+  const [activePopoverStudent, setActivePopoverStudent] = useState<Student | StudentWithPlacement | null>(null);
 
   // Live Round Tracker Selection
-  const [trackerDriveId, setTrackerDriveId] = useState<string>(drives[0]?.id || '');
+  const [trackerDriveId, setTrackerDriveId] = useState<string>(effectiveDrives[0]?.id || '');
 
   // ----------------------------------------------------
   // Computations for Analytics & KPI
@@ -117,7 +147,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const placedStudents = students.filter(s => s.placementStatus === 'Placed');
   const placedCount = placedStudents.length;
   const placementRate = totalStudentsCount > 0 ? Math.round((placedCount / totalStudentsCount) * 100) : 0;
-  const activeDrivesCount = drives.filter(d => d.active).length;
+  const activeDrivesCount = effectiveDrives.filter(d => d.status === 'OPEN').length;
 
   const totalPackageSum = placedStudents.reduce((sum, s) => {
     if (!s.placedPackage) return sum;
@@ -135,33 +165,41 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     return { name: br, pct, total: branchStudents.length, placed: branchPlaced.length };
   });
 
-  // Handle new drive submission
-  const handleDriveSubmit = (e: React.FormEvent) => {
+  // Handle new drive submission — creates (or reuses) the company, then posts
+  // the job under it via the real backend.
+  const handleDriveSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!companyName || !role || !pkg) return;
+    if (!companyName || !role || !pkg || !companyLocation) return;
 
-    onAddDrive({
-      companyName,
-      role,
-      package: pkg.includes('LPA') ? pkg : `${pkg} LPA`,
-      numericPackage: Number(numericPkg),
-      cgpaCutoff: Number(cgpaCutoff),
-      maxBacklogs: Number(maxBacklogs),
-      allowedBranches,
-      deadline,
-      jobDesc,
-      skillsRequired: skillsRequiredText.split(',').map(s => s.trim()).filter(Boolean),
-      rounds: roundsText.split(',').map(s => s.trim()).filter(Boolean),
-      active: true,
-      title: '',
-      description: '',
-      salary: 0,
-      status: '',
-      companyId: 0
-    });
+    try {
+      const newDrive = await jobPostingApi.createDrive(
+        companyName,
+        companyLocation,
+        companyWebsite || undefined,
+        {
+          title: role,
+          description: jobDesc,
+          location: jobLocation,
+          eligibleCGPACutoff: Number(cgpaCutoff),
+          allowedBacklogs: Number(maxBacklogs),
+          allowedBranches: allowedBranches.join(', '),
+          requiredSkills: skillsRequiredText,
+          salary: Number(numericPkg),
+          deadline,
+        }
+      );
+      setRealDrives(prev => prev ? [newDrive, ...prev] : [newDrive]);
+    } catch (err) {
+      console.error("Failed to create drive:", err);
+      alert("Failed to create drive — check the console for details.");
+      return;
+    }
 
     // Reset Form
     setCompanyName('');
+    setCompanyLocation('');
+    setCompanyWebsite('');
+    setJobLocation('');
     setRole('');
     setPkg('');
     setNumericPkg(6);
@@ -184,7 +222,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   };
 
   // Filter students roster
-  const filteredStudents = students.filter(student => {
+   const filteredStudents = (realStudents ?? students).filter(student =>{
     const matchesSearch = student.name.toLowerCase().includes(studentSearch.toLowerCase()) ||
       student.email.toLowerCase().includes(studentSearch.toLowerCase());
     const matchesBranch = branchFilter === 'All' || student.department === branchFilter;
@@ -201,8 +239,27 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     setPlacedPackageInput('');
   };
 
+  // Toggle a real drive's OPEN/CLOSED status against the backend
+  const handleToggleDriveStatus = async (drive: DriveWithCompany | PlacementDrive) => {
+    const nextStatus = drive.status === 'OPEN' ? 'CLOSED' : 'OPEN';
+    if (!realDrives) {
+      // still on mock fallback — just use the original mock toggle
+      onToggleDriveActive(drive.id);
+      return;
+    }
+    try {
+      await jobPostingApi.updateStatus(Number(drive.id), nextStatus);
+      setRealDrives(prev =>
+        prev ? prev.map(d => d.id === drive.id ? { ...d, status: nextStatus } : d) : prev
+      );
+    } catch (err) {
+      console.error("Failed to update drive status:", err);
+      alert("Failed to update status — check the console for details.");
+    }
+  };
+
   // Tracker details
-  const activeTrackerDrive = drives.find(d => d.id === trackerDriveId);
+  const activeTrackerDrive = effectiveDrives.find(d => d.id === trackerDriveId);
   const activeTrackerApplications = students.flatMap(s =>
     s.applications
       .filter(app => app.jobPostingId === trackerDriveId && app.status !== 'Rejected' && app.status !== 'Selected')
@@ -394,16 +451,16 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                   </h3>
 
                   <div className="chart-container flex items-end justify-around pt-6 border-b border-l border-white/5 pb-2">
-                    {drives.map((drive) => {
+                    {effectiveDrives.map((drive) => {
                       const maxHeight = 160;
-                      const maxPackage = Math.max(...drives.map(d => d.numericPackage), 35);
+                      const maxPackage = Math.max(...effectiveDrives.map(d => d.numericPackage), 35);
                       const barHeight = (drive.numericPackage / maxPackage) * maxHeight;
 
                       return (
                         <div key={drive.id} className="flex flex-col items-center group w-12 relative">
                           {/* Tooltip value */}
                           <span className="absolute -top-6 bg-slate-900 border border-indigo-500/20 text-[10px] text-white px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity font-mono z-10">
-                            {drive.salary}
+                            {drive.package}
                           </span>
 
                           {/* SVG Bar */}
@@ -486,6 +543,29 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                   </div>
 
                   <div className="input-group">
+                    <label className="input-label">Company Location (HQ / office on file)</label>
+                    <input
+                      type="text"
+                      required
+                      value={companyLocation}
+                      onChange={(e) => setCompanyLocation(e.target.value)}
+                      placeholder="e.g. Bangalore, India"
+                      className="input-field"
+                    />
+                  </div>
+
+                  <div className="input-group">
+                    <label className="input-label">Company Website (optional)</label>
+                    <input
+                      type="text"
+                      value={companyWebsite}
+                      onChange={(e) => setCompanyWebsite(e.target.value)}
+                      placeholder="e.g. https://google.com"
+                      className="input-field"
+                    />
+                  </div>
+
+                  <div className="input-group">
                     <label className="input-label">Job Role Name</label>
                     <input
                       type="text"
@@ -493,6 +573,18 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
                       placeholder="e.g. Associate Software Engineer"
+                      className="input-field"
+                    />
+                  </div>
+
+                  <div className="input-group">
+                    <label className="input-label">Job Location (this specific posting)</label>
+                    <input
+                      type="text"
+                      required
+                      value={jobLocation}
+                      onChange={(e) => setJobLocation(e.target.value)}
+                      placeholder="e.g. Hyderabad (may differ from company HQ)"
                       className="input-field"
                     />
                   </div>
@@ -619,7 +711,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
               {/* Drives list */}
               <div className="flex flex-col gap-4">
-                {drives.map(drive => (
+                {effectiveDrives.map(drive => (
                   <div
                     key={drive.id}
                     className="glass-card flex flex-col md:flex-row justify-between md:items-center gap-4 hover:scale-[1.01] transition-all duration-300"
@@ -632,7 +724,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                     <div>
                       <div className="flex items-center gap-3">
                         <h3 className="font-bold text-xl text-white font-display">{drive.companyName}</h3>
-                        <span className="badge badge-info">{drive.salary}</span>
+                        <span className="badge badge-info">{drive.package}</span>
                         <span className={`badge ${drive.status === "OPEN" ? 'badge-success' : 'badge-danger'}`}>
                           {drive.status === "OPEN" ? 'Active' : 'Closed'}
                         </span>
@@ -652,6 +744,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       <p className="text-xs text-slate-400 leading-relaxed max-w-3xl mt-1.5">{drive.description}</p>
 
                       <div className="flex gap-4 flex-wrap mt-3 text-[10px] text-gray-500 font-semibold">
+                        <span>Location: {('location' in drive && drive.location) || 'Not specified'}</span>
                         <span>Cut-off: {drive.cgpaCutoff} CGPA</span>
                         <span>Max Backlogs: {drive.maxBacklogs}</span>
                         <span>Candidates Registered: {drive.registeredCount}</span>
@@ -661,7 +754,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
 
                     <div className="flex md:flex-col gap-2 shrink-0">
                       <button
-                        onClick={() => onToggleDriveActive(drive.id)}
+                        onClick={() => handleToggleDriveStatus(drive)}
                         className={`btn btn-sm ${drive.status === "OPEN" ? 'btn-danger' : 'btn-success'}`}
                       >
                         {drive.status === "OPEN" ? 'Suspend Drive' : 'Reactivate'}
@@ -1169,8 +1262,8 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                     onChange={(e) => setTrackerDriveId(e.target.value)}
                     className="input-field text-xs h-9 py-1"
                   >
-                    {drives.map(drv => (
-                      <option key={drv.id} value={drv.id}>{drv.companyName} - {drv.role}</option>
+                    {effectiveDrives.map(drv => (
+                      <option key={drv.id} value={drv.id}>{drv.companyName} - {drv.title}</option>
                     ))}
                   </select>
                 </div>
@@ -1183,22 +1276,22 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                       <span className="text-gray-500 font-semibold">Recruiting:</span> <span className="text-white font-bold">{activeTrackerDrive.companyName}</span>
                     </div>
                     <div className="flex-1">
-                      <span className="text-gray-500 font-semibold">Package:</span> <span className="text-white font-bold">{activeTrackerDrive.salary}</span>
+                      <span className="text-gray-500 font-semibold">Package:</span> <span className="text-white font-bold">{activeTrackerDrive.package}</span>
                     </div>
                     <div className="flex-1">
-                      <span className="text-gray-500 font-semibold">Total Steps:</span> <span className="text-blue-400 font-bold">{activeTrackerDrive.rounds.join(' ➔ ')}</span>
+                      <span className="text-gray-500 font-semibold">Total Steps:</span> <span className="text-blue-400 font-bold">{('rounds' in activeTrackerDrive ? activeTrackerDrive.rounds : []).join(' ➔ ')}</span>
                     </div>
                   </div>
 
                   {/* Kanban board layout */}
                   <div className="live-tracker-board">
-                    {activeTrackerDrive.rounds.map((roundName, colIndex) => {
+                    {('rounds' in activeTrackerDrive ? activeTrackerDrive.rounds : []).map((roundName, colIndex) => {
                       // Filter candidates in this specific round index
                       const columnApplications = activeTrackerApplications.filter(item =>
                         item.app.currentRoundIndex === colIndex
                       );
 
-                      const isLastCol = colIndex === activeTrackerDrive.rounds.length - 1;
+                      const isLastCol = colIndex === (('rounds' in activeTrackerDrive ? activeTrackerDrive.rounds.length : 0)) - 1;
 
                       return (
                         <div
