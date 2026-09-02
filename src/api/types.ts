@@ -182,15 +182,19 @@ export interface InterviewRoundResponse {
 }
 
 export interface CalendarEvent {
-  id: number;
+  id: number | string;
   title: string;
   eventType: string;
-  companyId: number;
-  companyName: string;
+  companyId?: number;
+  companyName?: string;
+  company?: string;
+  role?: string;
   scheduledDate: string;
   startTime: string;
-  endTime: string;
-  location: string;
-  description: string;
-  status: string;
+  endTime?: string;
+  location?: string;
+  venue?: string;
+  description?: string;
+  status?: string;
+  branches?: string[];
 }

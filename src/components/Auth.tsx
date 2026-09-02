@@ -327,7 +327,7 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
                           required
                           value={studentRegNo}
                           onChange={(e) => setStudentRegNo(e.target.value)}
-                          placeholder="e.g. 2026CS001"
+                          placeholder="e.g. 241000110550"
                           className="input-field"
                         />
                       </div>
@@ -390,7 +390,7 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
                           required
                           value={regRegistrationNumber}
                           onChange={(e) => setRegRegistrationNumber(e.target.value)}
-                          placeholder="2026CS001"
+                          placeholder="241000110550"
                           className="input-field"
                         />
                       </div>

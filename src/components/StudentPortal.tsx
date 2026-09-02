@@ -12,11 +12,13 @@ import {
   BookOpen,
   Send,
   GraduationCap,
-  User
+  User,
+  Calendar as CalendarIcon
 } from 'lucide-react';
 import { MOCK_RESUME_TIPS, MOCK_INTERVIEW_QAS } from '../mockData';
 import type { Student, PlacementDrive } from '../mockData';
 import { Footer } from './Footer';
+import CalendarPage from './calendar/CalendarPage';
 
 interface StudentPortalProps {
   currentStudent: Student;
@@ -35,7 +37,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   onUpdateResumeScore,
   onUpdateStudentProfile
 }) => {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'drives' | 'ats' | 'interview' | 'visualizer' | 'profile'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'drives' | 'calendar' | 'ats' | 'interview' | 'visualizer' | 'profile'>('dashboard');
 
   // Profile Settings States
   const [profileName, setProfileName] = useState(currentStudent.name);
@@ -438,6 +440,13 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
               Placement Drives
             </button>
             <button
+              onClick={() => setActiveTab('calendar')}
+              className={`menu-item ${activeTab === 'calendar' ? 'active' : ''}`}
+            >
+              <CalendarIcon size={18} />
+              Placement Calendar
+            </button>
+            <button
               onClick={() => setActiveTab('ats')}
               className={`menu-item ${activeTab === 'ats' ? 'active' : ''}`}
             >
@@ -731,11 +740,18 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                     </div >
                   );
                 })}
-              </div >
-            </div >
+              </div>
+            </div>
           )}
 
-          {/* TAB 3: ATS RESUME SCORER */}
+          {/* TAB 3: PLACEMENT CALENDAR */}
+          {activeTab === 'calendar' && (
+            <div className="animate-slide-in">
+              <CalendarPage readOnly={true} />
+            </div>
+          )}
+
+          {/* TAB 4: ATS RESUME SCORER */}
           {
             activeTab === 'ats' && (
               <div className="flex flex-col gap-6 animate-slide-in">
