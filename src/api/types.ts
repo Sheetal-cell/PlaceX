@@ -1,13 +1,28 @@
-
-
 export interface StudentResponse {
   id: string;
   name: string;
   email: string;
   phone: string;
   department: string;
-  branch: string;
+  CGPA: number;
+  activeBacklogs: number;
+  resumeUrl: string;
   year: number;
+}
+export interface CompanyResponse {
+  id: number;
+  name: string;
+  website: string;
+  location: string;
+  description: string;
+}
+
+export interface CompanyRequest {
+  id?: number;          
+  name: string;
+  website?: string;
+  location: string;
+  description?: string;
 }
 
 export interface JobPostingResponse {
@@ -16,9 +31,116 @@ export interface JobPostingResponse {
   description: string;
   salary: number;
   deadline: string;
-  status: string;
+  status: string;             
+  eligibleCGPACutoff: number;
+  allowedBacklogs: number;
+  allowedBranches: string;
+  requiredSkills: string;
+  companyId: number;
+  location: string;            
+
+export interface JobPostingRequest {
+  title: string;
+  description?: string;
+  eligibleCGPACutoff?: number;
+  allowedBacklogs?: number;
+  allowedBranches?: string;
+  requiredSkills?: string;
+  salary?: number;
+  deadline: string;
+  companyId?: number;
+  location?: string;           
+}
+
+export interface DriveWithCompany {
+  id: string;
   companyId: number;
   companyName: string;
+  title: string;
+  description: string;
+  location: string;
+  package: string;
+  numericPackage: number;
+  cgpaCutoff: number;
+  maxBacklogs: number;
+  allowedBranches: string[];
+  deadline: string;
+  skillsRequired: string[];
+  status: 'OPEN' | 'CLOSED';
+  registeredCount: number;
+}
+
+export type RecruiterStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+export interface RecruiterResponse {
+  id: number;
+  name: string;
+  email: string;
+  companyName: string;
+  designation: string;
+  industry: string;
+  recruiterStatus: RecruiterStatus;
+}
+export interface RecruiterRequest {
+  name: string;
+  email: string;
+  password: string;
+  companyName: string;
+  designation?: string;
+  industry?: string;
+}
+export type Role = "TPO" | "RECRUITER" | "STUDENT";
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+  role: Role;
+}
+
+export interface LoginResponse {
+  token: string;
+  role: Role;
+}
+
+export interface StudentDashboardResponse {
+  applicationsSubmitted: number;
+  CGPA: number;
+  activeBacklogs: number;
+}
+
+export interface DepartmentStat {
+  department: string;
+  totalStudents: number;
+  placed: number;
+  placementPercentage: number;
+}
+
+export interface SalaryRange {
+  range: string;
+  count: number;
+}
+export interface TPODashboardResponse {
+  totalStudents: number;
+  totalPlaced: number;
+  placementPercentage: number;
+  activeDrives: number;
+  averageCTC: number;
+  departmentStats: DepartmentStat[];
+  salaryDistribution: SalaryRange[];
+}
+export interface StudentWithPlacement {
+  id: string;
+  name: string;
+  email: string;
+  department: string;
+  cgpa: number;
+  backlogs: number;
+  placementStatus: "Placed" | "Unplaced";
+  placedCompany?: string;
+  placedPackage?: string;
+  resumeScore: number;
+  projectsCount: number;
+  resumeText: string;
 }
 
 export interface ApplicationResponse {

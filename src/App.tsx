@@ -210,20 +210,20 @@ function App() {
 
   // Admin suspends/reactivates drive
   const handleToggleDriveActive = (driveId: string) => {
-    setDrives(prevDrives =>
-      prevDrives.map(d => {
-        if (d.id === driveId) {
-          const nextState = !d.active;
-          triggerToast(
-            `Drive for ${d.companyName} has been ${nextState ? 'activated' : 'suspended'}.`,
-            nextState ? 'success' : 'warning'
-          );
-          return { ...d, active: nextState };
-        }
-        return d;
-      })
-    );
-  };
+  setDrives(prevDrives =>
+    prevDrives.map(d => {
+      if (d.id === driveId) {
+        const nextStatus = d.status === 'OPEN' ? 'CLOSED' : 'OPEN';
+        triggerToast(
+          `Drive for ${d.companyName} has been ${nextStatus === 'OPEN' ? 'activated' : 'suspended'}.`,
+          nextStatus === 'OPEN' ? 'success' : 'warning'
+        );
+        return { ...d, status: nextStatus as 'OPEN' | 'CLOSED' };
+      }
+      return d;
+    })
+  );
+};
 
   // Admin updates student placement status manually
   const handleUpdateStudentStatus = (studentId: string, company?: string, salaryPackage?: string) => {
