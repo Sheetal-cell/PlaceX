@@ -74,6 +74,7 @@ export interface PlacementDrive {
   companyName: string;
   title: string;
   description: string;
+  location?: string;
   package: string;
   numericPackage: number;
   cgpaCutoff: number;

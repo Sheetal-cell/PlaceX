@@ -20,9 +20,12 @@ import type { Student, PlacementDrive } from '../mockData';
 import { Footer } from './Footer';
 import CalendarPage from './calendar/CalendarPage';
 
+import type { CalendarEvent } from '../api/types';
+
 interface StudentPortalProps {
   currentStudent: Student;
   drives: PlacementDrive[];
+  calendarEvents?: CalendarEvent[];
   onLogout: () => void;
   onApply: (driveId: string) => void;
   onUpdateResumeScore: (score: number, resumeText: string) => void;
@@ -32,6 +35,7 @@ interface StudentPortalProps {
 export const StudentPortal: React.FC<StudentPortalProps> = ({
   currentStudent,
   drives,
+  calendarEvents,
   onLogout,
   onApply,
   onUpdateResumeScore,
@@ -747,7 +751,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
           {/* TAB 3: PLACEMENT CALENDAR */}
           {activeTab === 'calendar' && (
             <div className="animate-slide-in">
-              <CalendarPage readOnly={true} />
+              <CalendarPage readOnly={true} events={calendarEvents} />
             </div>
           )}
 

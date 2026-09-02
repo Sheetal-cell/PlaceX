@@ -6,7 +6,9 @@ import { RecruiterPortal } from './components/RecruiterPortal';
 import { Notification } from './components/Notification';
 import type { ToastType } from './components/Notification';
 import { INITIAL_STUDENTS, INITIAL_DRIVES, INITIAL_RECRUITERS } from './mockData';
+import { INITIAL_CALENDAR_EVENTS } from './mockCalendar';
 import type { Student, PlacementDrive, Application, Recruiter } from './mockData';
+import type { CalendarEvent } from './api/types';
 import { GraduationCap, LogOut, Shield, Building2, Sun, Moon } from 'lucide-react';
 import type { ResumeFeedback } from "./mockData";
 
@@ -41,6 +43,7 @@ function App() {
     const saved = localStorage.getItem('tpo_recruiters');
     return saved ? JSON.parse(saved) : [];
   });
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>(INITIAL_CALENDAR_EVENTS);
   const [session, setSession] = useState<{ role: 'student' | 'admin' | 'recruiter'; studentId?: string; recruiterId?: string } | null>(null);
   const [toast, setToast] = useState<ToastType | null>(null);
 
@@ -202,7 +205,31 @@ function App() {
     };
 
     setDrives(prevDrives => [newDrive, ...prevDrives]);
+
+    // Create corresponding calendar event for the new drive
+    if (newDriveData.deadline) {
+      const driveCalEvent: CalendarEvent = {
+        id: Date.now(),
+        title: `${newDriveData.companyName} - ${newDriveData.title}`,
+        eventType: 'Deadline',
+        companyName: newDriveData.companyName,
+        company: newDriveData.companyName,
+        role: newDriveData.title,
+        scheduledDate: newDriveData.deadline,
+        startTime: '23:59',
+        location: newDriveData.location || 'Campus / Online',
+        description: `Registration deadline for ${newDriveData.companyName} (${newDriveData.title}). Package: ${newDriveData.package}.`,
+        status: 'SCHEDULED'
+      };
+      setCalendarEvents(prev => [driveCalEvent, ...prev]);
+    }
+
     triggerToast(`Recruitment drive for ${newDrive.companyName} created successfully!`, 'success');
+  };
+
+  const handleAddCalendarEvent = (newEvent: CalendarEvent) => {
+    setCalendarEvents(prev => [newEvent, ...prev]);
+    triggerToast(`Calendar Event "${newEvent.title}" published!`, 'success');
   };
 
   // Admin suspends/reactivates drive
@@ -464,6 +491,7 @@ function App() {
           <StudentPortal
             currentStudent={loggedInStudent}
             drives={drives}
+            calendarEvents={calendarEvents}
             onLogout={handleLogout}
             onApply={handleApplyDrive}
             onUpdateResumeScore={handleUpdateResumeScore}
@@ -484,6 +512,8 @@ function App() {
           <AdminPortal
             students={students}
             drives={drives}
+            calendarEvents={calendarEvents}
+            onAddCalendarEvent={handleAddCalendarEvent}
             onLogout={handleLogout}
             onAddDrive={handleAddDrive}
             onToggleDriveActive={handleToggleDriveActive}

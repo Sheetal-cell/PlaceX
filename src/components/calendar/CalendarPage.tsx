@@ -10,23 +10,39 @@ import { useState, useEffect } from "react";
 
 interface CalendarPageProps {
   readOnly?: boolean;
+  events?: CalendarEvent[];
+  onAddEvent?: (newEvent: CalendarEvent) => void;
 }
 
-export default function CalendarPage({ readOnly = false }: CalendarPageProps) {
-  const [events, setEvents] = useState<CalendarEvent[]>(INITIAL_CALENDAR_EVENTS);
+export default function CalendarPage({
+  readOnly = false,
+  events: propEvents,
+  onAddEvent
+}: CalendarPageProps) {
+  const [events, setEvents] = useState<CalendarEvent[]>(
+    propEvents && propEvents.length > 0 ? propEvents : INITIAL_CALENDAR_EVENTS
+  );
   const [showEventForm, setShowEventForm] = useState(false);
 
   useEffect(() => {
-    calendarApi.getAll()
-      .then((data: any) => {
-        if (Array.isArray(data) && data.length > 0) {
-          setEvents(data);
-        }
-      })
-      .catch(() => {
-        // Fallback to INITIAL_CALENDAR_EVENTS
-      });
-  }, []);
+    if (propEvents && propEvents.length > 0) {
+      setEvents(propEvents);
+    }
+  }, [propEvents]);
+
+  useEffect(() => {
+    if (!propEvents || propEvents.length === 0) {
+      calendarApi.getAll()
+        .then((data: any) => {
+          if (Array.isArray(data) && data.length > 0) {
+            setEvents(data);
+          }
+        })
+        .catch(() => {
+          // Fallback to INITIAL_CALENDAR_EVENTS
+        });
+    }
+  }, [propEvents]);
 
   const handleSaveEvent = (newEvent: any) => {
     const calendarEvent: CalendarEvent = {
@@ -45,7 +61,11 @@ export default function CalendarPage({ readOnly = false }: CalendarPageProps) {
       branches: newEvent.branches ? newEvent.branches.split(',').map((b: string) => b.trim()) : [],
     };
 
-    setEvents((prevEvents) => [calendarEvent, ...prevEvents]);
+    if (onAddEvent) {
+      onAddEvent(calendarEvent);
+    } else {
+      setEvents((prevEvents) => [calendarEvent, ...prevEvents]);
+    }
     setShowEventForm(false);
 
     calendarApi.create({

@@ -31,9 +31,13 @@ import CalendarPage from "./calendar/CalendarPage";
 import HROutreach from "./hr/HROutreach";
 
 
+import type { CalendarEvent } from "../api/types";
+
 interface AdminPortalProps {
   students: Student[];
   drives: PlacementDrive[];
+  calendarEvents?: CalendarEvent[];
+  onAddCalendarEvent?: (newEvent: CalendarEvent) => void;
   onLogout: () => void;
   onAddDrive: (drive: Omit<PlacementDrive, 'id' | 'registeredCount'>) => void;
   onToggleDriveActive: (driveId: string) => void;
@@ -50,6 +54,8 @@ interface AdminPortalProps {
 export const AdminPortal: React.FC<AdminPortalProps> = ({
   students,
   drives,
+  calendarEvents,
+  onAddCalendarEvent,
   onSaveFeedback,
   onLogout,
   onAddDrive: _onAddDrive,
@@ -1383,7 +1389,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
           {
             activeTab === "calendar" &&
 
-            <CalendarPage />
+            <CalendarPage events={calendarEvents} onAddEvent={onAddCalendarEvent} />
 
           }
           {
