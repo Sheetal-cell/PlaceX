@@ -37,7 +37,8 @@ export interface JobPostingResponse {
   allowedBranches: string;
   requiredSkills: string;
   companyId: number;
-  location: string;            
+  location: string;
+}
 
 export interface JobPostingRequest {
   title: string;

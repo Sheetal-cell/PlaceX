@@ -35,7 +35,7 @@ export const jobPostingApi = {
       applicationApi.getAll(),
     ]);
 
-    const companyById = new Map(companies.map((c) => [c.id, c]));
+    const companyById = new Map(companies.map((c: { id: any; }) => [c.id, c]));
 
     const registeredCountByPosting = new Map<number, number>();
     for (const app of applications) {
@@ -45,7 +45,7 @@ export const jobPostingApi = {
       );
     }
 
-    return postings.map((jp): DriveWithCompany => {
+    return postings.map((jp: { companyId: number; id: number; title: any; description: any; location: any; salary: any; eligibleCGPACutoff: any; allowedBacklogs: any; allowedBranches: string; deadline: any; requiredSkills: string; status: string; }): DriveWithCompany => {
       const company = companyById.get(jp.companyId);
       return {
         id: String(jp.id),
@@ -59,11 +59,11 @@ export const jobPostingApi = {
         cgpaCutoff: jp.eligibleCGPACutoff ?? 0,
         maxBacklogs: jp.allowedBacklogs ?? 0,
         allowedBranches: jp.allowedBranches
-          ? jp.allowedBranches.split(",").map((b) => b.trim()).filter(Boolean)
+          ? jp.allowedBranches.split(",").map((b: string) => b.trim()).filter(Boolean)
           : [],
         deadline: jp.deadline,
         skillsRequired: jp.requiredSkills
-          ? jp.requiredSkills.split(",").map((s) => s.trim()).filter(Boolean)
+          ? jp.requiredSkills.split(",").map((s: string) => s.trim()).filter(Boolean)
           : [],
         status: jp.status === "OPEN" ? "OPEN" : "CLOSED",
         registeredCount: registeredCountByPosting.get(jp.id) ?? 0,
@@ -79,7 +79,7 @@ export const jobPostingApi = {
   ): Promise<DriveWithCompany> => {
     const companies = await companyApi.getAll();
     const existing = companies.find(
-      (c) => c.name.trim().toLowerCase() === companyName.trim().toLowerCase()
+      (c: { name: string; }) => c.name.trim().toLowerCase() === companyName.trim().toLowerCase()
     );
 
     const company =
@@ -104,11 +104,11 @@ export const jobPostingApi = {
       cgpaCutoff: posting.eligibleCGPACutoff ?? 0,
       maxBacklogs: posting.allowedBacklogs ?? 0,
       allowedBranches: posting.allowedBranches
-        ? posting.allowedBranches.split(",").map((b) => b.trim()).filter(Boolean)
+        ? posting.allowedBranches.split(",").map((b: string) => b.trim()).filter(Boolean)
         : [],
       deadline: posting.deadline,
       skillsRequired: posting.requiredSkills
-        ? posting.requiredSkills.split(",").map((s) => s.trim()).filter(Boolean)
+        ? posting.requiredSkills.split(",").map((s: string) => s.trim()).filter(Boolean)
         : [],
       status: "OPEN",
       registeredCount: 0,
