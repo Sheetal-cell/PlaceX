@@ -5,8 +5,8 @@ import { ContributorAvatar, AvatarGroup, ContributorStyles } from './Contributor
 const contributors = [
   {
     name: "Prashanjit Mishra",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKIuX8f4qOeDDA4gMlMF52IvIAQeBGGAhHkkk8-axPZA&s=10",
-    github: "https://github.com/RitochitGhosh",
+    image: "https://lh3.googleusercontent.com/d/1MGDVRNOt8JbFlbcWgCsY-CLdGBatzEij",
+    github: "https://github.com/Prasanjit7485",
   },
   {
     name: "Shreyaushi Das",
