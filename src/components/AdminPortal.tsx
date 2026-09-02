@@ -52,7 +52,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   drives,
   onSaveFeedback,
   onLogout,
-  onAddDrive,
+  onAddDrive: _onAddDrive,
   onToggleDriveActive,
   onUpdateStudentStatus,
   onPromoteStudent,
@@ -224,7 +224,8 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   // Filter students roster
    const filteredStudents = (realStudents ?? students).filter(student =>{
     const matchesSearch = student.name.toLowerCase().includes(studentSearch.toLowerCase()) ||
-      student.email.toLowerCase().includes(studentSearch.toLowerCase());
+      student.email.toLowerCase().includes(studentSearch.toLowerCase()) ||
+      (student.registrationNumber && student.registrationNumber.toLowerCase().includes(studentSearch.toLowerCase()));
     const matchesBranch = branchFilter === 'All' || student.department === branchFilter;
     const matchesStatus = statusFilter === 'All' || student.placementStatus === statusFilter;
     const matchesCgpa = student.cgpa >= minCgpaFilter;

@@ -35,7 +35,7 @@ export const jobPostingApi = {
       applicationApi.getAll(),
     ]);
 
-    const companyById = new Map(companies.map((c: { id: any; }) => [c.id, c]));
+    const companyById = new Map(companies.map((c) => [c.id, c]));
 
     const registeredCountByPosting = new Map<number, number>();
     for (const app of applications) {

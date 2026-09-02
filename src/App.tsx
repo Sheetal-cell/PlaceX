@@ -117,47 +117,44 @@ function App() {
   const handleApplyDrive = (driveId: string) => {
     if (!session || session.role !== 'student' || !session.studentId) return;
 
-    const studentId = session.studentId;
+    const student = students.find(s => s.id === session.studentId);
     const drive = drives.find(d => d.id === driveId);
-    if (!drive) return;
+    if (!student || !drive) return;
 
-    // Check if already applied
-    const student = students.find(s => s.id === studentId);
-    if (student?.applications.some(app => app.jobPostingId === driveId)) {
-      triggerToast('You have already applied for this placement drive.', 'warning');
+    // Verify student hasn't already applied
+    if (student.applications.some(a => a.driveId === driveId)) {
+      triggerToast('You have already submitted an application for this drive.', 'warning');
       return;
     }
 
-    const newApplication: Application = {
-      driveId,
+    const newApp: Application = {
+      driveId: drive.id,
+      jobPostingId: drive.id,
       companyName: drive.companyName,
       role: drive.title,
       appliedDate: new Date().toISOString().split('T')[0],
       status: 'Applied',
-      currentRoundIndex: 0,
-      jobPostingId: ''
+      currentRoundIndex: 0
     };
 
-    // Update students list state
     setStudents(prevStudents =>
       prevStudents.map(s => {
-        if (s.id === studentId) {
+        if (s.id === session.studentId) {
           return {
             ...s,
-            applications: [...s.applications, newApplication]
+            applications: [newApp, ...s.applications]
           };
         }
         return s;
       })
     );
 
-    // Update drives list state to bump count
     setDrives(prevDrives =>
       prevDrives.map(d => {
         if (d.id === driveId) {
           return {
             ...d,
-            registeredCount: d.registeredCount + 1
+            registeredCount: (d.registeredCount || 0) + 1
           };
         }
         return d;
@@ -277,15 +274,15 @@ function App() {
                   ...app,
                   status: 'Selected' as const,
                   currentRoundIndex: newRoundIndex - 1,
-                  feedback: `Offer issued! Selected for the role of ${drive.title} with a salary package of ${drive.salary}.`
+                  feedback: `Offer issued! Selected for the role of ${drive.title} with a salary package of ${drive.package}.`
                 };
               } else {
-                const nextRoundName = drive.rounds[newRoundIndex];
+                const nextRoundName = drive.rounds ? drive.rounds[newRoundIndex] : `Round ${newRoundIndex + 1}`;
                 return {
                   ...app,
                   status: nextRoundName as any,
                   currentRoundIndex: newRoundIndex,
-                  feedback: `Successfully cleared stage "${drive.rounds[newRoundIndex - 1]}". Promoted to "${nextRoundName}".`
+                  feedback: `Successfully cleared stage. Promoted to "${nextRoundName}".`
                 };
               }
             }
@@ -298,7 +295,7 @@ function App() {
               ...s,
               placementStatus: 'Placed' as const,
               placedCompany: drive.companyName,
-              placedPackage: String(drive.salary),
+              placedPackage: String(drive.package),
               applications: updatedApps
             };
           }

@@ -64,7 +64,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
   // ----------------------------------------------------
   // KPI computations, scoped to this recruiter's drives
   // ----------------------------------------------------
-  const activeDrivesCount = myDrives.filter(d => d.active).length;
+  const activeDrivesCount = myDrives.filter(d => d.status === 'OPEN').length;
 
   const myApplications = students.flatMap(s =>
     s.applications
@@ -95,11 +95,9 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
       jobDesc,
       skillsRequired: skillsRequiredText.split(',').map(s => s.trim()).filter(Boolean),
       rounds: roundsText.split(',').map(s => s.trim()).filter(Boolean),
-      active: true,
       title: role,      
       description: jobDesc,
-      salary: Number(numericPkg),
-      status: 'Open',
+      status: 'OPEN',
       companyId: 0
     });
 
@@ -441,7 +439,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
                   <div>
                     <div className="flex items-center gap-3">
                       <h3 className="font-bold text-xl text-white font-display">{drive.title}</h3>
-                      <span className="badge badge-info">{drive.salary}</span>
+                      <span className="badge badge-info">{drive.package}</span>
                       <span className={`badge ${drive.status === "OPEN" ? 'badge-success' : 'badge-danger'}`}>
                         {drive.status === "OPEN" ? 'Active' : 'Closed'}
                       </span>
@@ -506,7 +504,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
                     <span className="text-gray-500 font-semibold">Role:</span> <span className="text-white font-bold">{activeTrackerDrive.title}</span>
                   </div>
                   <div className="flex-1">
-                    <span className="text-gray-500 font-semibold">Package:</span> <span className="text-white font-bold">{activeTrackerDrive.salary}</span>
+                    <span className="text-gray-500 font-semibold">Package:</span> <span className="text-white font-bold">{activeTrackerDrive.package}</span>
                   </div>
                   <div className="flex-1">
                     <span className="text-gray-500 font-semibold">Pipeline:</span> <span className="text-blue-400 font-bold">{activeTrackerDrive.rounds.join(' ➔ ')}</span>

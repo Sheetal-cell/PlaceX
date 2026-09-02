@@ -405,7 +405,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
           <div className="glass-card mb-4 flex flex-col items-center text-center p-6" style={{ borderBottom: '3px solid hsl(var(--color-primary))' }}>
             <div className="avatar mb-3 text-lg">{currentStudent.name.charAt(0)}</div>
             <h3 className="font-semibold text-white truncate max-w-full font-display" title={currentStudent.name}>{currentStudent.name}</h3>
-            <p className="text-xs text-indigo-400 mt-0.5">{currentStudent.department}</p>
+            <p className="text-xs text-indigo-400 mt-0.5">{currentStudent.department} {currentStudent.registrationNumber ? `• ${currentStudent.registrationNumber}` : ''}</p>
             <div className="flex gap-4 mt-4 text-xs border-t border-white/5 pt-4 w-full justify-around">
               <div>
                 <p className="text-gray-500">CGPA</p>
@@ -650,7 +650,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                       <div className="flex-1 flex flex-col gap-2">
                         <div className="flex items-center gap-3 flex-wrap">
                           <h3 className="text-lg font-bold text-white font-display">{drive.companyName}</h3>
-                          <span className="badge badge-info">{drive.salary}</span>
+                          <span className="badge badge-info">{drive.package}</span>
                           {hasApplied && (
                             <span className={`badge ${application?.status === 'Selected' ? 'badge-success' :
                               application?.status === 'Rejected' ? 'badge-danger' :

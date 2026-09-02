@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, GraduationCap, ArrowRight, LogIn, UserPlus, Mail, Database, Eye, EyeOff, Loader2, Building2, Sun, Moon } from 'lucide-react';
+import { Shield, GraduationCap, ArrowRight, LogIn, UserPlus, Mail, Database, Eye, EyeOff, Loader2, Building2, Sun, Moon, Hash } from 'lucide-react';
 import type { Student, Recruiter } from '../mockData';
 import { Footer } from './Footer';
 import { Hero } from './Hero/Hero';
@@ -36,16 +36,16 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
   };
 
   // Student Login Fields
-  const [studentEmail, setStudentEmail] = useState('');
+  const [studentRegNo, setStudentRegNo] = useState('');
   const [studentPassword, setStudentPassword] = useState('');
 
   // Student Register Fields
   const [regName, setRegName] = useState('');
   const [regEmail, setRegEmail] = useState('');
+  const [regRegistrationNumber, setRegRegistrationNumber] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regBranch, setRegBranch] = useState<'Computer Science' | 'Information Technology' | 'Electronics' | 'Mechanical' | 'Electrical'>('Computer Science');
   const [regCgpa, setRegCgpa] = useState('8.0');
-  const [regBacklogs, setRegBacklogs] = useState('0');
   const [regSkills, setRegSkills] = useState('React, TypeScript, JavaScript');
   const [regProjects, setRegProjects] = useState('2');
   const [regResume, setRegResume] = useState('Enthusiastic developer skilled in frontend applications.');
@@ -76,21 +76,27 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
       setIsSubmitting(true);
       window.setTimeout(() => {
         const student = students.find(
-          (s) => s.email.toLowerCase().trim() === studentEmail.toLowerCase().trim()
+          (s) =>
+            (s.registrationNumber && s.registrationNumber.toLowerCase().trim() === studentRegNo.toLowerCase().trim()) ||
+            s.email.toLowerCase().trim() === studentRegNo.toLowerCase().trim()
         );
         if (student && student.password === studentPassword) {
           setError('');
           onLogin('student', student.id);
         } else {
-          setError('Invalid student credentials. Please check email/password.');
+          setError('Invalid student credentials. Please check registration number/password.');
         }
         setIsSubmitting(false);
       }, 450);
       return;
     } else {
       // Validate registration
-      if (!regName || !regEmail || !regPassword) {
+      if (!regName || !regEmail || !regRegistrationNumber || !regPassword) {
         setError('Please fill in all required fields.');
+        return;
+      }
+      if (students.some((s) => s.registrationNumber?.toLowerCase().trim() === regRegistrationNumber.toLowerCase().trim())) {
+        setError('A student with this registration number is already registered.');
         return;
       }
       if (students.some((s) => s.email.toLowerCase().trim() === regEmail.toLowerCase().trim())) {
@@ -102,31 +108,27 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
         setError('CGPA must be a number between 0 and 10.');
         return;
       }
-      const backlogsNum = parseInt(regBacklogs);
-      if (isNaN(backlogsNum) || backlogsNum < 0) {
-        setError('Backlogs cannot be negative.');
-        return;
-      }
 
       const newStudent: Student = {
         id: `std_${Math.random().toString(36).substr(2, 9)}`,
         name: regName.trim(),
         email: regEmail.trim(),
+        registrationNumber: regRegistrationNumber.trim(),
         password: regPassword,
         branch: regBranch,
         cgpa: cgpaNum,
-        backlogs: backlogsNum,
+        backlogs: 0,
         placementStatus: 'Unplaced',
         resumeScore: 0,
         skills: regSkills.split(',').map(s => s.trim()).filter(Boolean),
         projectsCount: parseInt(regProjects) || 0,
         resumeText: regResume,
         applications: [],
-        department: ''
+        department: regBranch
       };
 
       onRegister(newStudent);
-      setStudentEmail(newStudent.email);
+      setStudentRegNo(newStudent.registrationNumber || newStudent.email);
       setStudentPassword(newStudent.password || '');
       setStudentAuthMode('login');
       setError('');
@@ -316,16 +318,16 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
                 {studentAuthMode === 'login' ? (
                   <>
                     <div className="input-group">
-                      <label className="input-label">Student Email</label>
+                      <label className="input-label">Registration Number</label>
 
                       <div className="input-box">
-                        <Mail size={18} />
+                        <Hash size={18} />
                         <input
-                          type="email"
+                          type="text"
                           required
-                          value={studentEmail}
-                          onChange={(e) => setStudentEmail(e.target.value)}
-                          placeholder="student@univ.edu"
+                          value={studentRegNo}
+                          onChange={(e) => setStudentRegNo(e.target.value)}
+                          placeholder="e.g. 2026CS001"
                           className="input-field"
                         />
                       </div>
@@ -382,6 +384,20 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
                         />
                       </div>
                       <div className="input-group">
+                        <label className="input-label">Registration Number</label>
+                        <input
+                          type="text"
+                          required
+                          value={regRegistrationNumber}
+                          onChange={(e) => setRegRegistrationNumber(e.target.value)}
+                          placeholder="2026CS001"
+                          className="input-field"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-grid">
+                      <div className="input-group">
                         <label className="input-label">Email Address</label>
                         <input
                           type="email"
@@ -392,9 +408,6 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
                           className="input-field"
                         />
                       </div>
-                    </div>
-
-                    <div className="form-grid">
                       <div className="input-group">
                         <label className="input-label">Password</label>
                         <input
@@ -406,6 +419,9 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
                           className="input-field"
                         />
                       </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="input-group">
                         <label className="input-label">Branch</label>
                         <select
@@ -422,9 +438,6 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
                           <option value="Electrical">Electrical</option>
                         </select>
                       </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="input-group">
                         <label className="input-label">CGPA</label>
                         <input
@@ -436,18 +449,6 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
                           placeholder="8.5"
                           min="0"
                           max="10"
-                          className="input-field"
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label">Backlogs</label>
-                        <input
-                          type="number"
-                          required
-                          value={regBacklogs}
-                          onChange={(e) => setRegBacklogs(e.target.value)}
-                          placeholder="0"
-                          min="0"
                           className="input-field"
                         />
                       </div>

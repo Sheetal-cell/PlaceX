@@ -49,6 +49,7 @@ export interface Student {
   id: string;
   name: string;
   email: string;
+  registrationNumber?: string;
   password?: string;
 
   department: string;
@@ -87,6 +88,8 @@ export interface PlacementDrive {
   role: string;
   registeredCount?: number;
   jobDesc: string;
+  active?: boolean;
+  salary?: number;
 }
 
 export const INITIAL_DRIVES: PlacementDrive[] = [
@@ -244,6 +247,7 @@ export const INITIAL_STUDENTS: Student[] = [
     id: 'std_1',
     name: 'Aravind Sharma',
     email: 'aravind.sharma@univ.edu',
+    registrationNumber: '2026CS001',
     password: 'student123',
     department: 'Computer Science',
     cgpa: 9.1,
@@ -273,6 +277,7 @@ export const INITIAL_STUDENTS: Student[] = [
     id: 'std_2',
     name: 'Rohan Mehra',
     email: 'rohan.mehra@univ.edu',
+    registrationNumber: '2026CS002',
     password: 'student123',
     department: 'Computer Science',
     cgpa: 8.3,
@@ -309,6 +314,7 @@ export const INITIAL_STUDENTS: Student[] = [
     id: 'std_3',
     name: 'Sneha Reddy',
     email: 'sneha.reddy@univ.edu',
+    registrationNumber: '2026IT003',
     password: 'student123',
     department: 'Information Technology',
     cgpa: 7.9,
@@ -345,6 +351,7 @@ export const INITIAL_STUDENTS: Student[] = [
     id: 'std_4',
     name: 'Karan Malhotra',
     email: 'karan.malhotra@univ.edu',
+    registrationNumber: '2026EC004',
     password: 'student123',
     department: 'Electronics',
     cgpa: 8.6,
@@ -374,6 +381,7 @@ export const INITIAL_STUDENTS: Student[] = [
     id: 'std_5',
     name: 'Priyanka Das',
     email: 'priyanka.das@univ.edu',
+    registrationNumber: '2026EE005',
     password: 'student123',
     department: 'Electrical',
     cgpa: 7.2,
@@ -400,6 +408,7 @@ export const INITIAL_STUDENTS: Student[] = [
     id: 'std_6',
     name: 'Vikram Aditya',
     email: 'vikram.aditya@univ.edu',
+    registrationNumber: '2026ME006',
     password: 'student123',
     department: 'Mechanical',
     cgpa: 6.8,

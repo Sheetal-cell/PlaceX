@@ -2,6 +2,7 @@ export interface StudentResponse {
   id: string;
   name: string;
   email: string;
+  registrationNumber?: string;
   phone: string;
   department: string;
   CGPA: number;
@@ -133,6 +134,7 @@ export interface StudentWithPlacement {
   id: string;
   name: string;
   email: string;
+  registrationNumber?: string;
   department: string;
   cgpa: number;
   backlogs: number;
