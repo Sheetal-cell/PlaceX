@@ -677,15 +677,24 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                         <p className="text-xs font-semibold text-indigo-400">{drive.title}</p>
                         <p className="text-xs text-gray-400 leading-relaxed max-w-2xl">{drive.description}</p>
 
-                        <div className="flex items-center gap-4 flex-wrap mt-2 text-xs text-gray-400">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3 bg-slate-900/60 p-3 rounded-xl border border-white/5 text-xs text-gray-300">
                           <div>
-                            <span className="font-semibold text-gray-500">Cut-off GPA:</span> {drive.cgpaCutoff}
+                            <span className="text-[10px] text-gray-500 uppercase block font-semibold">Min CGPA</span>
+                            <span className="font-bold text-sky-400">{drive.cgpaCutoff} CGPA</span>
                           </div>
                           <div>
-                            <span className="font-semibold text-gray-500">Max Backlogs:</span> {drive.maxBacklogs}
+                            <span className="text-[10px] text-gray-500 uppercase block font-semibold">Max Backlogs</span>
+                            <span className="font-bold text-amber-400">{drive.maxBacklogs}</span>
                           </div>
                           <div>
-                            <span className="font-semibold text-gray-500">Registration Ends:</span> {drive.deadline}
+                            <span className="text-[10px] text-gray-500 uppercase block font-semibold">Eligible Branches</span>
+                            <span className="font-semibold text-white truncate block" title={Array.isArray(drive.allowedBranches) ? drive.allowedBranches.join(', ') : (drive.allowedBranches || 'All Branches')}>
+                              {Array.isArray(drive.allowedBranches) ? drive.allowedBranches.join(', ') : (drive.allowedBranches || 'All Branches')}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-[10px] text-gray-500 uppercase block font-semibold">Eligible Batch</span>
+                            <span className="font-bold text-indigo-400">{drive.eligibleBatch || '2026 Batch'}</span>
                           </div>
                         </div>
 

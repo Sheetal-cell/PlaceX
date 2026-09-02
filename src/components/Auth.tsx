@@ -58,7 +58,6 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
   const [recName, setRecName] = useState('');
   const [recCompany, setRecCompany] = useState('');
   const [recDesignation, setRecDesignation] = useState('Technical Recruiter');
-  const [recIndustry, setRecIndustry] = useState('Technology');
   const [recEmail, setRecEmail] = useState('');
   const [recPassword, setRecPassword] = useState('');
 
@@ -95,6 +94,7 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
         setError('Please fill in all required fields.');
         return;
       }
+      // if registration has any uppercase alphabet
       if (students.some((s) => s.registrationNumber?.toLowerCase().trim() === regRegistrationNumber.toLowerCase().trim())) {
         setError('A student with this registration number is already registered.');
         return;
@@ -168,8 +168,7 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
         email: recEmail.trim(),
         password: recPassword,
         companyName: recCompany.trim(),
-        designation: recDesignation.trim() || 'Recruiter',
-        industry: recIndustry
+        designation: recDesignation.trim() || 'Recruiter'
       };
 
       onRegisterRecruiter(newRecruiter);
@@ -327,7 +326,7 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
                           required
                           value={studentRegNo}
                           onChange={(e) => setStudentRegNo(e.target.value)}
-                          placeholder="e.g. 241000110550"
+                          placeholder="e.g. 2026CS001"
                           className="input-field"
                         />
                       </div>
@@ -390,7 +389,7 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
                           required
                           value={regRegistrationNumber}
                           onChange={(e) => setRegRegistrationNumber(e.target.value)}
-                          placeholder="241000110550"
+                          placeholder="2026CS001"
                           className="input-field"
                         />
                       </div>
@@ -650,21 +649,6 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
                           placeholder="e.g. Technical Recruiter"
                           className="input-field"
                         />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label">Industry</label>
-                        <select
-                          value={recIndustry}
-                          onChange={(e) => setRecIndustry(e.target.value)}
-                          className="input-field"
-                        >
-                          <option value="Technology">Technology</option>
-                          <option value="Finance">Finance</option>
-                          <option value="Consulting">Consulting</option>
-                          <option value="Manufacturing">Manufacturing</option>
-                          <option value="Healthcare">Healthcare</option>
-                          <option value="Other">Other</option>
-                        </select>
                       </div>
                     </div>
 

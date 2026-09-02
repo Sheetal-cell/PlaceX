@@ -9,7 +9,6 @@ import {
   GitMerge,
   LogOut,
   Plus,
-  Search,
   Check,
   X,
   FileText,

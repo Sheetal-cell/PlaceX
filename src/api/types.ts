@@ -36,6 +36,7 @@ export interface JobPostingResponse {
   eligibleCGPACutoff: number;
   allowedBacklogs: number;
   allowedBranches: string;
+  eligibleBatch?: string;
   requiredSkills: string;
   companyId: number;
   location: string;
@@ -47,6 +48,7 @@ export interface JobPostingRequest {
   eligibleCGPACutoff?: number;
   allowedBacklogs?: number;
   allowedBranches?: string;
+  eligibleBatch?: string;
   requiredSkills?: string;
   salary?: number;
   deadline: string;
@@ -66,6 +68,7 @@ export interface DriveWithCompany {
   cgpaCutoff: number;
   maxBacklogs: number;
   allowedBranches: string[];
+  eligibleBatch?: string;
   deadline: string;
   skillsRequired: string[];
   status: 'OPEN' | 'CLOSED';
@@ -80,7 +83,6 @@ export interface RecruiterResponse {
   email: string;
   companyName: string;
   designation: string;
-  industry: string;
   recruiterStatus: RecruiterStatus;
 }
 export interface RecruiterRequest {
@@ -89,7 +91,6 @@ export interface RecruiterRequest {
   password: string;
   companyName: string;
   designation?: string;
-  industry?: string;
 }
 export type Role = "TPO" | "RECRUITER" | "STUDENT";
 

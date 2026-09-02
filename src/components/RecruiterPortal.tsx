@@ -53,6 +53,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
   const [cgpaCutoff, setCgpaCutoff] = useState(7.0);
   const [maxBacklogs, setMaxBacklogs] = useState(0);
   const [allowedBranches, setAllowedBranches] = useState<string[]>(['Computer Science', 'Information Technology']);
+  const [eligibleBatch, setEligibleBatch] = useState('2026 Batch');
   const [deadline, setDeadline] = useState('2026-06-30');
   const [jobDesc, setJobDesc] = useState('');
   const [skillsRequiredText, setSkillsRequiredText] = useState('React, JavaScript, Node.js');
@@ -91,6 +92,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
       cgpaCutoff: Number(cgpaCutoff ),
       maxBacklogs: Number(maxBacklogs),
       allowedBranches,
+      eligibleBatch,
       deadline,
       jobDesc,
       skillsRequired: skillsRequiredText.split(',').map(s => s.trim()).filter(Boolean),
@@ -108,6 +110,7 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
     setCgpaCutoff(7.0);
     setMaxBacklogs(0);
     setAllowedBranches(['Computer Science', 'Information Technology']);
+    setEligibleBatch('2026 Batch');
     setDeadline('2026-06-30');
     setJobDesc('');
     setSkillsRequiredText('React, JavaScript, Node.js');
@@ -374,6 +377,20 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
                 </div>
 
                 <div className="input-group">
+                  <label className="input-label">Eligible Graduation Batch</label>
+                  <select
+                    value={eligibleBatch}
+                    onChange={(e) => setEligibleBatch(e.target.value)}
+                    className="input-field"
+                  >
+                    <option value="2026 Batch">2026 Batch</option>
+                    <option value="2025/2026 Batch">2025 / 2026 Batch</option>
+                    <option value="2027 Batch">2027 Batch</option>
+                    <option value="All Batches">All Batches</option>
+                  </select>
+                </div>
+
+                <div className="input-group">
                   <label className="input-label">Registration Deadline</label>
                   <input
                     type="date"
@@ -451,11 +468,25 @@ export const RecruiterPortal: React.FC<RecruiterPortalProps> = ({
                         </span>
                       ))}
                     </div>
-                    <div className="flex gap-4 flex-wrap mt-3 text-[10px] text-gray-500 font-semibold">
-                      <span>Cut-off: {drive.cgpaCutoff} CGPA</span>
-                      <span>Max Backlogs: {drive.maxBacklogs}</span>
-                      <span>Candidates Registered: {drive.registeredCount}</span>
-                      <span>Deadline: {drive.deadline}</span>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 bg-slate-900/60 p-3 rounded-xl border border-white/5 text-xs text-gray-300">
+                      <div>
+                        <span className="text-[10px] text-gray-500 uppercase block font-semibold">Min CGPA</span>
+                        <span className="font-bold text-sky-400">{drive.cgpaCutoff} CGPA</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-gray-500 uppercase block font-semibold">Max Backlogs</span>
+                        <span className="font-bold text-amber-400">{drive.maxBacklogs}</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-gray-500 uppercase block font-semibold">Eligible Branches</span>
+                        <span className="font-semibold text-white truncate block" title={Array.isArray(drive.allowedBranches) ? drive.allowedBranches.join(', ') : (drive.allowedBranches || 'All Branches')}>
+                          {Array.isArray(drive.allowedBranches) ? drive.allowedBranches.join(', ') : (drive.allowedBranches || 'All Branches')}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-gray-500 uppercase block font-semibold">Eligible Batch</span>
+                        <span className="font-bold text-indigo-400">{drive.eligibleBatch || '2026 Batch'}</span>
+                      </div>
                     </div>
                   </div>
 

@@ -42,7 +42,6 @@ export interface Recruiter {
   password?: string;
   companyName: string;
   designation: string;
-  industry: string;
 }
 
 export interface Student {
@@ -80,6 +79,7 @@ export interface PlacementDrive {
   cgpaCutoff: number;
   maxBacklogs: number;
   allowedBranches: string[];
+  eligibleBatch?: string;
   deadline: string;
   skillsRequired: string[];
   rounds: string[];
@@ -104,6 +104,7 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     cgpaCutoff: 8.5,
     maxBacklogs: 0,
     allowedBranches: ['Computer Science', 'Information Technology'],
+    eligibleBatch: '2026 Batch',
     deadline: '2026-06-25',
     skillsRequired: ['React', 'TypeScript', 'Node.js', 'Data Structures', 'System Design'],
     rounds: ['Online Coding Test', 'Technical Round 1', 'Technical Round 2', 'HR Interview'],
@@ -229,8 +230,7 @@ export const INITIAL_RECRUITERS: Recruiter[] = [
     email: 'ananya.iyer@google.com',
     password: 'recruiter123',
     companyName: 'Google',
-    designation: 'Senior Technical Recruiter',
-    industry: 'Technology'
+    designation: 'Senior Technical Recruiter'
   },
   {
     id: 'rec_2',
@@ -238,8 +238,7 @@ export const INITIAL_RECRUITERS: Recruiter[] = [
     email: 'wei.zhang@microsoft.com',
     password: 'recruiter123',
     companyName: 'Microsoft',
-    designation: 'Campus Recruitment Lead',
-    industry: 'Technology'
+    designation: 'Campus Recruitment Lead'
   }
 ];
 
