@@ -83,13 +83,17 @@ export interface PlacementDrive {
   rounds: string[];
   status: 'OPEN' | 'CLOSED';     
   recruiterId?: string;           
-  companyId?: number;             
+  companyId?: number;
+  role: string;
+  registeredCount?: number;
+  jobDesc: string;
+}
 
 export const INITIAL_DRIVES: PlacementDrive[] = [
   {
     id: 'drv_1',
     companyName: 'Google',
-    title: 'Associate Software Engineer',            // was: role
+    title: 'Associate Software Engineer', // was: role
     description: 'Join Google as an Associate Software Engineer. You will work on massive scale services, cloud infrastructure, and next-generation search systems. Strong algorithms and system design skills required.', // was: jobDesc
     package: '32 LPA',
     numericPackage: 32,
@@ -99,9 +103,11 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     deadline: '2026-06-25',
     skillsRequired: ['React', 'TypeScript', 'Node.js', 'Data Structures', 'System Design'],
     rounds: ['Online Coding Test', 'Technical Round 1', 'Technical Round 2', 'HR Interview'],
-    status: 'OPEN',                                    // was: active: true + status: ""
+    status: 'OPEN', // was: active: true + status: ""
     registeredCount: 42,
     recruiterId: 'rec_1',
+    role: "",
+    jobDesc: ""
   },
 
   {
@@ -123,7 +129,7 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     title: "",
     description: "",
     salary: 0,
-    status: "",
+    status: "OPEN",
     companyId: 0
   },
   {
@@ -144,7 +150,7 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     title: "",
     description: "",
     salary: 0,
-    status: "",
+    status: "OPEN",
     companyId: 0
   },
   {
@@ -165,7 +171,7 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     title: "",
     description: "",
     salary: 0,
-    status: "",
+    status: "OPEN",
     companyId: 0
   },
   {
@@ -186,7 +192,7 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     title: "",
     description: "",
     salary: 0,
-    status: "",
+    status: "OPEN",
     companyId: 0
   },
   {
@@ -207,7 +213,7 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     title: "",
     description: "",
     salary: 0,
-    status: "",
+    status: "CLOSED",
     companyId: 0
   }
 ];
