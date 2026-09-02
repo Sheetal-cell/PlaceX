@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { studentApi } from "../api/studentApi";
 import { jobPostingApi } from "../api/jobPostingApi";
 
@@ -60,7 +60,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   onSeedData
 }) => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'drives' | 'scraped' | 'students' | 'tracker' | 'calendar' | 'hr'>('dashboard');
-  
+
 
   // New Drive Form State
   const [showDriveForm, setShowDriveForm] = useState(false);
@@ -108,6 +108,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const [branchFilter, setBranchFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [minCgpaFilter, setMinCgpaFilter] = useState(5.0);
+  const [minAtsFilter, setMinAtsFilter] = useState(0);
 
   // Selected student for resume view
   const [selectedStudentForResume, setSelectedStudentForResume] = useState<Student | StudentWithPlacement | null>(null);
@@ -140,26 +141,34 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   // Live Round Tracker Selection
   const [trackerDriveId, setTrackerDriveId] = useState<string>(effectiveDrives[0]?.id || '');
 
+  // Combine real backend students with current application student list (including new sign-ups)
+  const allStudents = useMemo(() => {
+    const baseList = realStudents && realStudents.length > 0 ? realStudents : students;
+    const knownKeys = new Set(baseList.map(s => s.registrationNumber?.toLowerCase().trim() || s.email.toLowerCase().trim()));
+    const extraStudents = students.filter(s => !knownKeys.has(s.registrationNumber?.toLowerCase().trim() || s.email.toLowerCase().trim()));
+    return [...baseList, ...extraStudents];
+  }, [realStudents, students]);
+
   // ----------------------------------------------------
   // Computations for Analytics & KPI
   // ----------------------------------------------------
-  const totalStudentsCount = students.length;
-  const placedStudents = students.filter(s => s.placementStatus === 'Placed');
+  const totalStudentsCount = allStudents.length;
+  const placedStudents = allStudents.filter(s => s.placementStatus === 'Placed');
   const placedCount = placedStudents.length;
   const placementRate = totalStudentsCount > 0 ? Math.round((placedCount / totalStudentsCount) * 100) : 0;
   const activeDrivesCount = effectiveDrives.filter(d => d.status === 'OPEN').length;
 
   const totalPackageSum = placedStudents.reduce((sum, s) => {
     if (!s.placedPackage) return sum;
-    const num = parseFloat(s.placedPackage.replace(/[^\d.]/g, ''));
+    const num = parseFloat(String(s.placedPackage).replace(/[^\d.]/g, ''));
     return sum + (isNaN(num) ? 0 : num);
   }, 0);
   const averagePackage = placedCount > 0 ? (totalPackageSum / placedCount).toFixed(1) : '0.0';
 
   // Compute Branch Distribution data
-  const branches = ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Electrical'];
+  const branches = ['Computer Science', 'Information Technology', 'Electronics', 'Electrical', 'Mechanical', 'Civil', 'Chemical'];
   const branchData = branches.map(br => {
-    const branchStudents = students.filter(s => s.department === br);
+    const branchStudents = allStudents.filter(s => s.department === br);
     const branchPlaced = branchStudents.filter(s => s.placementStatus === 'Placed');
     const pct = branchStudents.length > 0 ? Math.round((branchPlaced.length / branchStudents.length) * 100) : 0;
     return { name: br, pct, total: branchStudents.length, placed: branchPlaced.length };
@@ -222,14 +231,15 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   };
 
   // Filter students roster
-   const filteredStudents = (realStudents ?? students).filter(student =>{
+  const filteredStudents = allStudents.filter(student => {
     const matchesSearch = student.name.toLowerCase().includes(studentSearch.toLowerCase()) ||
       student.email.toLowerCase().includes(studentSearch.toLowerCase()) ||
       (student.registrationNumber && student.registrationNumber.toLowerCase().includes(studentSearch.toLowerCase()));
     const matchesBranch = branchFilter === 'All' || student.department === branchFilter;
     const matchesStatus = statusFilter === 'All' || student.placementStatus === statusFilter;
     const matchesCgpa = student.cgpa >= minCgpaFilter;
-    return matchesSearch && matchesBranch && matchesStatus && matchesCgpa;
+    const matchesAts = (student.resumeScore ?? 0) >= minAtsFilter;
+    return matchesSearch && matchesBranch && matchesStatus && matchesCgpa && matchesAts;
   });
 
   const handleManualStatusSave = (studentId: string) => {
@@ -454,8 +464,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                   <div className="chart-container flex items-end justify-around pt-6 border-b border-l border-white/5 pb-2">
                     {effectiveDrives.map((drive) => {
                       const maxHeight = 160;
-                      const maxPackage = Math.max(...effectiveDrives.map(d => d.numericPackage), 35);
-                      const barHeight = (drive.numericPackage / maxPackage) * maxHeight;
+                      const pkgNum = typeof drive.numericPackage === 'number' && !isNaN(drive.numericPackage) ? drive.numericPackage : 0;
+                      const maxPackage = Math.max(...effectiveDrives.map(d => typeof d.numericPackage === 'number' && !isNaN(d.numericPackage) ? d.numericPackage : 0), 35);
+                      const barHeight = maxPackage > 0 ? (pkgNum / maxPackage) * maxHeight : 0;
 
                       return (
                         <div key={drive.id} className="flex flex-col items-center group w-12 relative">
@@ -778,33 +789,35 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
           {/* TAB 3: STUDENT DATABASE */}
           {activeTab === 'students' && (
             <div className="flex flex-col gap-6 animate-slide-in">
-              <div>
-                <h2 className="text-xl font-bold text-white font-display">Student Placement Roster</h2>
-                <p className="text-xs text-gray-400 mt-1">Review student eligibility database, check academic status, edit placements status, and view resume scoring analysis.</p>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-white font-display">Student Placement Roster</h2>
+                  <p className="text-xs text-gray-400 mt-1">Review student eligibility database, check academic status, edit placement statuses, and filter by Branch, CGPA & ATS score.</p>
+                </div>
+                <div className="px-3.5 py-1.5 bg-slate-800/80 border border-white/10 rounded-xl text-xs text-slate-300 self-start md:self-auto font-medium">
+                  Showing <span className="font-bold text-sky-400">{filteredStudents.length}</span> of <span className="font-bold text-white">{allStudents.length}</span> Students
+                </div>
               </div>
 
-              {/* Filter tools */}
-              <div className="glass-card grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-5">
+              {/* Filter tools bar */}
+              <div className="glass-card grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 p-6 rounded-2xl border border-white/10 shadow-lg">
                 <div className="input-group mb-0">
-                  <label className="input-label">Search Student</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={studentSearch}
-                      onChange={(e) => setStudentSearch(e.target.value)}
-                      placeholder="Search by name/email..."
-                      className="input-field pl-9 text-xs"
-                    />
-                    <Search className="absolute left-3 top-3.5 text-gray-500" size={14} />
-                  </div>
+                  <label className="input-label font-semibold text-gray-300">Search Student</label>
+                  <input
+                    type="text"
+                    value={studentSearch}
+                    onChange={(e) => setStudentSearch(e.target.value)}
+                    placeholder="Name, email, reg no..."
+                    className="input-field text-xs py-2.5 px-3.5 rounded-xl border border-white/10 bg-slate-900/60 focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                  />
                 </div>
 
                 <div className="input-group mb-0">
-                  <label className="input-label">Branch/Department</label>
+                  <label className="input-label font-semibold text-gray-300">Branch / Dept</label>
                   <select
                     value={branchFilter}
                     onChange={(e) => setBranchFilter(e.target.value)}
-                    className="input-field text-xs"
+                    className="input-field text-xs py-2.5 px-3.5 rounded-xl border border-white/10 bg-slate-900/60 focus:border-sky-500"
                   >
                     <option value="All">All Departments</option>
                     {branches.map(br => <option key={br} value={br}>{br}</option>)}
@@ -812,11 +825,11 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 </div>
 
                 <div className="input-group mb-0">
-                  <label className="input-label">Placement Status</label>
+                  <label className="input-label font-semibold text-gray-300">Placement Status</label>
                   <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="input-field text-xs"
+                    className="input-field text-xs py-2.5 px-3.5 rounded-xl border border-white/10 bg-slate-900/60 focus:border-sky-500"
                   >
                     <option value="All">All Status</option>
                     <option value="Placed">Placed</option>
@@ -825,9 +838,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 </div>
 
                 <div className="input-group mb-0">
-                  <label className="input-label flex justify-between">
-                    <span>Minimum CGPA</span>
-                    <span className="font-bold text-sky-400">{minCgpaFilter.toFixed(1)}</span>
+                  <label className="input-label flex justify-between font-semibold text-gray-300">
+                    <span>Min CGPA</span>
+                    <span className="font-bold text-sky-400">{minCgpaFilter.toFixed(1)}+</span>
                   </label>
                   <input
                     type="range"
@@ -836,75 +849,93 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                     step="0.1"
                     value={minCgpaFilter}
                     onChange={(e) => setMinCgpaFilter(Number(e.target.value))}
-                    className="accent-blue-500 mt-2.5"
+                    className="accent-sky-400 mt-3 w-full cursor-pointer"
+                  />
+                </div>
+
+                <div className="input-group mb-0">
+                  <label className="input-label flex justify-between font-semibold text-gray-300">
+                    <span>Min ATS Score</span>
+                    <span className="font-bold text-emerald-400">{minAtsFilter}%+</span>
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={minAtsFilter}
+                    onChange={(e) => setMinAtsFilter(Number(e.target.value))}
+                    className="accent-emerald-400 mt-3 w-full cursor-pointer"
                   />
                 </div>
               </div>
 
               {/* Student grid table */}
-              <div className="glass-card p-0 border border-white/5 w-full max-w-full">
+              <div className="glass-card p-0 border border-white/10 rounded-2xl overflow-hidden w-full shadow-xl">
                 {/* Desktop View Table */}
                 <table className="hidden md:table w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-white/5 text-gray-400 font-bold bg-slate-950/20">
-                      <th className="p-4">Name</th>
-                      <th className="p-4">Branch</th>
-                      <th className="p-4">CGPA / Backlogs</th>
-                      <th className="p-4">Placement Status</th>
-                      <th className="p-4">ATS Match</th>
-                      <th className="p-4 text-right">Actions</th>
+                    <tr className="border-b border-white/10 text-slate-300 font-bold bg-slate-900/80 uppercase tracking-wider text-[11px]">
+                      <th className="px-6 py-4">Student Info</th>
+                      <th className="px-6 py-4">Branch</th>
+                      <th className="px-6 py-4">CGPA / Backlogs</th>
+                      <th className="px-6 py-4">Placement Status</th>
+                      <th className="px-6 py-4">ATS Match</th>
+                      <th className="px-6 py-4 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5 text-gray-300">
                     {filteredStudents.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="p-8 text-center text-gray-500">
-                          No students match the selected filter parameters.
+                        <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
+                          <p className="text-sm font-semibold">No students match the selected filter parameters.</p>
+                          <p className="text-xs text-gray-500 mt-1">Try resetting or adjusting Branch, CGPA, ATS score, or search input.</p>
                         </td>
                       </tr>
                     ) : (
                       filteredStudents.map(student => (
                         <tr
                           key={student.id}
-                          className="hover:bg-blue-500/5 transition-all duration-300"
+                          className="hover:bg-sky-500/5 transition-all duration-200"
                         >
-                          <td className="p-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-linear-to-r from-blue-500 to-sky-500 flex items-center justify-center font-bold text-white">
+                          <td className="px-6 py-4.5">
+                            <div className="flex items-center gap-3.5">
+                              <div className="w-10 h-10 rounded-full bg-linear-to-r from-blue-500 to-sky-500 flex items-center justify-center font-bold text-white shrink-0 shadow-md">
                                 {student.name.charAt(0)}
                               </div>
 
                               <div>
-                                <p className="font-semibold text-white">
+                                <p className="font-semibold text-white text-sm">
                                   {student.name}
                                 </p>
 
-                                <p className="text-[10px] text-gray-500">
-                                  {student.email}
+                                <p className="text-xs text-gray-400 mt-0.5">
+                                  {student.email} {student.registrationNumber ? `• ${student.registrationNumber}` : ''}
                                 </p>
                               </div>
                             </div>
                           </td>
-                          <td className="p-4">{student.department}</td>
-                          <td className="p-4 font-mono font-medium">
-                            {student.cgpa} CGPA / {student.backlogs} Backlogs
+                          <td className="px-6 py-4.5 font-medium text-slate-300">{student.department}</td>
+                          <td className="px-6 py-4.5 font-mono text-xs">
+                            <span className="font-bold text-white">{student.cgpa}</span> CGPA
+                            <span className="text-gray-400 text-[11px] ml-1">({student.backlogs} Backlogs)</span>
                           </td>
-                          <td className="p-4">
+                          <td className="px-6 py-4.5">
                             {student.placementStatus === 'Placed' ? (
-                              <div className="flex flex-col gap-0.5">
-                                <span className="badge badge-success">Placed</span>
-                                <span className="text-[10px] text-slate-400 font-semibold truncate max-w-30" title={student.placedCompany}>
-                                  @ {student.placedCompany} ({student.placedPackage})
+                              <div className="flex flex-col gap-1">
+                                <span className="badge badge-success self-start">Placed</span>
+                                <span className="text-[11px] text-sky-400 font-semibold truncate max-w-44" title={student.placedCompany}>
+                                  {student.placedCompany} ({student.placedPackage})
                                 </span>
                               </div>
                             ) : (
-                              <span className="badge badge-warning">Unplaced</span>
+                              <span className="badge badge-warning self-start">Unplaced</span>
                             )}
                           </td>
-                          <td className="p-4 font-mono font-bold text-blue-400">
+                          <td className="px-6 py-4.5 font-mono font-bold text-emerald-400 text-sm">
                             {student.resumeScore}%
                           </td>
-                          <td className="p-4 text-right">
+                          <td className="px-6 py-4.5 text-right">
                             <div className="flex items-center justify-end gap-1">
                               <button
                                 onClick={() => setSelectedStudentForResume(student)}
