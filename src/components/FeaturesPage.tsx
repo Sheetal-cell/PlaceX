@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'motion/react';
 import {
   Sparkles,
   FileCheck2,
@@ -13,48 +14,49 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { Footer } from './Footer';
+import './FeaturesPage.css';
 
 export const FeaturesPage: React.FC = () => {
   const navigate = useNavigate();
 
   const features = [
     {
-      icon: <FileCheck2 size={32} className="text-blue-600" />,
+      icon: <FileCheck2 size={28} className="text-blue-600" />,
       title: 'AI ATS Resume Scorer',
       badge: 'AI Engine',
       description: 'Parses resumes in real-time against company job descriptions to provide keyword matching, skill gap analysis, and ATS score optimization.',
       highlights: ['Keyword density extraction', 'Skill gap suggestions', 'ATS formatting compliance']
     },
     {
-      icon: <BarChart2 size={32} className="text-purple-600" />,
+      icon: <BarChart2 size={28} className="text-purple-600" />,
       title: 'Multi-Stage Pipeline Visualizer',
       badge: 'Recruitment CRM',
       description: 'Track candidate progression stage-by-stage from Online Assessments and Technical Interviews to HR rounds and offer letters.',
       highlights: ['Visual candidate Kanban', 'Stage promotion buttons', 'Rejection feedback logs']
     },
     {
-      icon: <Building2 size={32} className="text-emerald-600" />,
+      icon: <Building2 size={28} className="text-emerald-600" />,
       title: 'Recruiter CRM & Drive Portal',
       badge: 'Corporate Suite',
       description: 'Empowers corporate recruiters to launch placement drives, set eligibility filters, evaluate applications, and export reports.',
       highlights: ['Custom drive creation', 'Branch & CGPA filters', 'CSV/Excel applicant export']
     },
     {
-      icon: <Calendar size={32} className="text-amber-600" />,
+      icon: <Calendar size={28} className="text-amber-600" />,
       title: 'Automated Placement Calendar',
       badge: 'Event Operations',
       description: 'Schedule pre-placement talks, coding tests, deadline reminders, and interview slots with automated student notifications.',
       highlights: ['Real-time deadline alerts', 'Interactive calendar view', 'Sync across all portals']
     },
     {
-      icon: <TrendingUp size={32} className="text-sky-600" />,
+      icon: <TrendingUp size={28} className="text-sky-600" />,
       title: 'TPO Analytics & Department Insights',
       badge: 'Admin Intelligence',
       description: 'Real-time department-wise placement statistics, package distribution graphs, company participation rates, and unplaced student tracking.',
       highlights: ['Branch placement ratio', 'Package range distribution', 'Unplaced student filter']
     },
     {
-      icon: <Users size={32} className="text-indigo-600" />,
+      icon: <Users size={28} className="text-indigo-600" />,
       title: 'Alumni Mentorship & Referral Network',
       badge: 'Network Hub',
       description: 'Connect verified alumni with current batches for internal referral programs, mock interview sessions, and career guidance.',
@@ -62,81 +64,144 @@ export const FeaturesPage: React.FC = () => {
     }
   ];
 
-  return (
-    <div className="flex flex-col min-h-screen relative w-full bg-[#F8FAFC] text-[hsl(var(--text-primary))] py-6">
-      {/* Hero Section Banner */}
-      <section className="py-16 px-6 max-w-6xl mx-auto w-full text-center">
-        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[hsl(var(--color-primary)/10%)] text-[hsl(var(--color-primary))] border border-[hsl(var(--color-primary)/25%)] mb-4">
-          <Sparkles size={15} /> Platform Features
-        </span>
-        <h1 className="text-4xl sm:text-6xl font-black font-display text-[hsl(var(--text-primary))] mb-4">
-          Everything You Need to Scale Placements
-        </h1>
-        <p className="text-[hsl(var(--text-secondary))] text-lg max-w-2xl mx-auto leading-relaxed">
-          Comprehensive placement management tools designed specifically for Students, TPO Administrators, Corporate Recruiters, and Alumni.
-        </p>
-      </section>
+  // Motion animation variants
+  const heroContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.18,
+        delayChildren: 0.05
+      }
+    }
+  };
 
-      {/* Grid of 6 Feature Cards */}
-      <section className="py-8 px-6 max-w-6xl mx-auto w-full mb-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  const lineVariants = {
+    hidden: { opacity: 0, y: 22, filter: 'blur(4px)' },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      transition: { duration: 0.55, ease: 'easeOut' as const }
+    }
+  };
+
+  const gridContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.97 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.5, ease: 'easeOut' as const }
+    }
+  };
+
+  return (
+    <div className="features-page-container">
+      {/* Hero Section Banner with Line-by-Line Reveal */}
+      <motion.section
+        className="features-hero-section"
+        variants={heroContainerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div variants={lineVariants} className="inline-block">
+          <span className="features-hero-badge">
+            <Sparkles size={14} /> Platform Features
+          </span>
+        </motion.div>
+
+        <motion.h1 variants={lineVariants} className="features-hero-title">
+          Everything You Need to Scale Placements
+        </motion.h1>
+
+        <motion.p variants={lineVariants} className="features-hero-subtitle">
+          Comprehensive placement management tools designed specifically for Students, TPO Administrators, Corporate Recruiters, and Alumni.
+        </motion.p>
+      </motion.section>
+
+      {/* Grid of 6 Staggered Animated Feature Cards */}
+      <section className="features-grid-section">
+        <motion.div
+          className="features-grid"
+          variants={gridContainerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {features.map((feat, idx) => (
-            <div
+            <motion.div
               key={idx}
-              className="glass-card p-8 flex flex-col justify-between hover:-translate-y-1.5 transition-all duration-300 rounded-2xl bg-white/90 border border-[hsl(var(--border-glass))] shadow-lg"
+              variants={cardVariants}
+              whileHover={{ y: -8, transition: { duration: 0.25 } }}
+              className="feature-card"
             >
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="p-3 rounded-2xl bg-blue-50/80 border border-blue-200">{feat.icon}</div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-1 rounded-full bg-blue-100/60 text-blue-800">
-                    {feat.badge}
-                  </span>
+                <div className="feature-card-header">
+                  <div className="feature-icon-box">{feat.icon}</div>
+                  <span className="feature-badge-pill">{feat.badge}</span>
                 </div>
-                <h3 className="text-xl font-bold font-display text-[hsl(var(--text-primary))] mb-2">{feat.title}</h3>
-                <p className="text-xs text-[hsl(var(--text-secondary))] leading-relaxed mb-6">{feat.description}</p>
+                <h3 className="feature-card-title">{feat.title}</h3>
+                <p className="feature-card-desc">{feat.description}</p>
               </div>
 
-              <div className="border-t border-[hsl(var(--border-glass))] pt-4">
-                <ul className="space-y-2">
+              <div className="feature-highlights">
+                <ul className="feature-highlights-list">
                   {feat.highlights.map((item, hIdx) => (
-                    <li key={hIdx} className="flex items-center gap-2 text-xs text-[hsl(var(--text-secondary))]">
-                      <CheckCircle2 size={14} className="text-emerald-600 flex-shrink-0" />
+                    <li key={hIdx} className="feature-highlight-item">
+                      <CheckCircle2 size={15} className="feature-check-icon" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       {/* Call to Action Bar */}
-      <section className="py-12 px-6 max-w-4xl mx-auto w-full mb-16">
-        <div className="glass-card p-10 text-center flex flex-col items-center bg-gradient-to-r from-blue-50 via-white to-sky-50 border border-blue-200 rounded-3xl shadow-xl">
-          <Zap size={40} className="text-blue-600 mb-3" />
-          <h2 className="text-2xl sm:text-3xl font-extrabold font-display text-[hsl(var(--text-primary))]">
+      <motion.section
+        className="features-cta-section"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      >
+        <div className="features-cta-card">
+          <Zap size={38} className="features-cta-icon" />
+          <h2 className="features-cta-title">
             Ready to test out the features?
           </h2>
-          <p className="text-sm text-[hsl(var(--text-secondary))] max-w-lg mt-2 mb-6">
+          <p className="features-cta-desc">
             Get started by creating your account or exploring our sample demonstration data.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="features-cta-buttons">
             <button
               onClick={() => navigate('/auth?mode=register')}
-              className="btn btn-primary px-7 py-3 text-sm font-bold font-display rounded-xl shadow-md flex items-center gap-2"
+              className="features-btn-primary"
             >
               Get Started Free <ArrowRight size={16} />
             </button>
             <button
               onClick={() => navigate('/auth?mode=login')}
-              className="btn btn-secondary px-7 py-3 text-sm font-bold font-display rounded-xl"
+              className="features-btn-secondary"
             >
               Sign In Now
             </button>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       <Footer />
     </div>

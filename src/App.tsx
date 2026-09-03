@@ -16,6 +16,7 @@ import { INITIAL_CALENDAR_EVENTS } from './mockCalendar';
 import type { Student, PlacementDrive, Application, Recruiter } from './mockData';
 import type { CalendarEvent } from './api/types';
 import { GraduationCap, LogOut, Shield, Building2 } from 'lucide-react';
+import { motion } from 'motion/react';
 import type { ResumeFeedback } from './mockData';
 
 // Protected route guard
@@ -37,9 +38,54 @@ const ProtectedRoute = ({
   return children;
 };
 
+function NavLinksWithSlidingUnderline() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [hoveredPath, setHoveredPath] = useState<string | null>(null);
+
+  const navItems = [
+    { path: '/', label: 'Home' },
+    { path: '/features', label: 'Features' },
+    { path: '/how-it-works', label: 'How it Works' }
+  ];
+
+  const activePath = hoveredPath !== null ? hoveredPath : location.pathname;
+
+  return (
+    <nav className="landing-nav-links" onMouseLeave={() => setHoveredPath(null)}>
+      {navItems.map((item) => {
+        const isRouteActive = location.pathname === item.path;
+        const isTargeted = activePath === item.path;
+
+        return (
+          <Link
+            key={item.path}
+            to={item.path}
+            onMouseEnter={() => setHoveredPath(item.path)}
+            className={`landing-nav-link relative py-1 px-1 transition-colors duration-200 ${
+              isRouteActive ? 'text-blue-600 font-bold' : 'text-slate-700 hover:text-blue-600'
+            }`}
+          >
+            <span className="relative z-10">{item.label}</span>
+            {isTargeted && (
+              <motion.div
+                layoutId="landing-nav-sliding-underline"
+                className="absolute bottom-[-2px] left-0 right-0 h-[2.5px] bg-blue-600 rounded-full pointer-events-none"
+                transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+              />
+            )}
+          </Link>
+        );
+      })}
+      <button onClick={() => navigate('/auth?mode=login')} className="landing-nav-btn">
+        Sign In
+      </button>
+    </nav>
+  );
+}
+
 function AppContent() {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [students, setStudents] = useState<Student[]>(() => {
     const saved = localStorage.getItem('tpo_students');
@@ -460,20 +506,7 @@ function AppContent() {
             </button>
           </div>
         ) : (
-          <nav className="landing-nav-links">
-            <Link to="/" className={`landing-nav-link ${location.pathname === '/' ? 'text-blue-600 font-bold' : ''}`}>
-              Home
-            </Link>
-            <Link to="/features" className={`landing-nav-link ${location.pathname === '/features' ? 'text-blue-600 font-bold' : ''}`}>
-              Features
-            </Link>
-            <Link to="/how-it-works" className={`landing-nav-link ${location.pathname === '/how-it-works' ? 'text-blue-600 font-bold' : ''}`}>
-              How it Works
-            </Link>
-            <button onClick={() => navigate('/auth?mode=login')} className="landing-nav-btn">
-              Sign In
-            </button>
-          </nav>
+          <NavLinksWithSlidingUnderline />
         )}
       </header>
 
