@@ -530,7 +530,7 @@ function AppContent() {
             }
           />
           <Route
-            path="/student"
+            path="/student/*"
             element={
               <ProtectedRoute allowedRole="student" session={session}>
                 {loggedInStudent ? (
@@ -550,7 +550,7 @@ function AppContent() {
             }
           />
           <Route
-            path="/recruiter"
+            path="/recruiter/*"
             element={
               <ProtectedRoute allowedRole="recruiter" session={session}>
                 {loggedInRecruiter ? (
@@ -571,7 +571,7 @@ function AppContent() {
             }
           />
           <Route
-            path="/admin"
+            path="/admin/*"
             element={
               <ProtectedRoute allowedRole="admin" session={session}>
                 <AdminPortal

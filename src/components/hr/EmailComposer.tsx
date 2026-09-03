@@ -1,99 +1,168 @@
+import { useState, useEffect } from "react";
 import type { Company } from "../../mockHR";
+import { Mail, Sparkles, Send, Save } from "lucide-react";
 
-interface Props{
-
-selected:Company|null;
-
+interface Props {
+  selected: Company | null;
+  selectedTemplate?: string | null;
 }
 
-export default function EmailComposer({selected}:Props){
+export default function EmailComposer({ selected, selectedTemplate }: Props) {
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
 
-if(!selected)
+  useEffect(() => {
+    if (!selected) return;
 
-return(
+    const companyName = selected.name;
+    const hrName = selected.hr;
 
-<div className="glass-card p-8 rounded-xl">
+    if (selectedTemplate === "Internship Invitation") {
+      setSubject(`Summer Internship Hiring Drive - ${companyName}`);
+      setBody(
+`Dear ${hrName},
 
-Select a company to compose an email.
+We would like to invite ${companyName} for our upcoming Summer Internship Hiring Season. Our top pre-final year candidates are available for 2 to 6 months internships.
 
-</div>
+We look forward to collaborating with your campus talent acquisition team.
 
-);
+Regards,
+Training & Placement Office`
+      );
+    } else if (selectedTemplate === "Placement Drive Reminder") {
+      setSubject(`Reminder: Campus Placement Drive Schedule - ${companyName}`);
+      setBody(
+`Dear ${hrName},
 
-return(
+This is a gentle reminder regarding the upcoming campus recruitment schedule for ${companyName}.
 
-<div className="glass-card rounded-xl p-6">
+Please let us know if you require any arrangements for online assessment or interview logistics.
 
-<h2 className="text-xl font-bold mb-5">
+Regards,
+Training & Placement Office`
+      );
+    } else if (selectedTemplate === "Follow-up Email") {
+      setSubject(`Follow-up: Campus Placement Engagement - ${companyName}`);
+      setBody(
+`Dear ${hrName},
 
-Compose Email
+I hope this message finds you well.
 
-</h2>
+Following up on our previous communication regarding campus hiring, we wanted to check if your team has finalized recruitment slots for this season.
 
-<input
+Regards,
+Training & Placement Office`
+      );
+    } else if (selectedTemplate === "Thank You Email") {
+      setSubject(`Thank You for Partnering with PlaceX - ${companyName}`);
+      setBody(
+`Dear ${hrName},
 
-value={selected.email}
+Thank you for conducting the placement drive at our campus for ${companyName}.
 
-readOnly
+We appreciate your team's effort and look forward to a long-term corporate relationship.
 
-className="input-field mb-4 w-full"
+Regards,
+Training & Placement Office`
+      );
+    } else {
+      // Default: Campus Recruitment
+      setSubject(`Invitation for Campus Recruitment - ${companyName}`);
+      setBody(
+`Dear ${hrName},
 
-/>
+Greetings from PlaceX Training & Placement Cell.
 
-<input
-
-placeholder="Subject"
-
-defaultValue={`Invitation for Campus Recruitment - ${selected.name}`}
-
-className="input-field mb-4 w-full"
-
-/>
-
-<textarea
-
-rows={12}
-
-className="input-field w-full"
-
-defaultValue={`Dear ${selected.hr},
-
-Greetings from XYZ Institute.
-
-The Training and Placement Cell cordially invites ${selected.name} to participate in our campus recruitment drive for the academic year 2026-27.
+The Placement Office cordially invites ${companyName} to participate in our campus recruitment drive for the upcoming batch.
 
 We would be delighted to host your recruitment team.
 
 Regards,
+Training & Placement Office`
+      );
+    }
+  }, [selected, selectedTemplate]);
 
-Training & Placement Office`}
+  const handleSendEmail = () => {
+    if (!selected) return;
+    const mailtoUrl = `mailto:${encodeURIComponent(selected.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoUrl;
+  };
 
-/>
+  if (!selected) {
+    return (
+      <div className="bg-white p-8 sm:p-12 rounded-2xl border border-slate-200 shadow-sm text-center text-slate-400 flex flex-col items-center justify-center min-h-[360px]">
+        <Mail size={48} className="opacity-20 mb-3" />
+        <p className="text-base font-bold text-slate-700 font-display">No Recruiter Selected</p>
+        <p className="text-xs text-slate-500 mt-1 max-w-xs font-medium">Select a company from the list on the left to compose an outreach email.</p>
+      </div>
+    );
+  }
 
-<div className="flex flex-wrap justify-end gap-3 mt-5">
+  return (
+    <div className="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200 shadow-sm flex flex-col gap-4">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h2 className="text-xl font-bold font-display text-slate-900 flex items-center gap-2.5">
+          <Mail size={22} className="text-blue-600" />
+          Compose Outreach Email
+        </h2>
+        <span className="sp-badge sp-badge-primary">
+          {selected.name}
+        </span>
+      </div>
 
-<button className="btn btn-secondary">
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-bold text-slate-700">Recipient Email</label>
+        <input
+          value={selected.email}
+          readOnly
+          className="input-field bg-slate-50 text-slate-600 font-medium cursor-not-allowed"
+        />
+      </div>
 
-Save Draft
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-bold text-slate-700">Subject Line</label>
+        <input
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          placeholder="Subject Line"
+          className="input-field font-semibold"
+        />
+      </div>
 
-</button>
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-bold text-slate-700">Email Message Body</label>
+        <textarea
+          rows={9}
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          className="input-field font-sans leading-relaxed resize-none"
+        />
+      </div>
 
-<button className="btn btn-warning">
+      <div className="flex flex-wrap justify-end gap-3 mt-3 pt-4 border-t border-slate-100">
+        <button
+          type="button"
+          className="btn btn-secondary h-11 px-5 rounded-xl text-sm font-bold flex items-center gap-2"
+        >
+          <Save size={16} /> Save Draft
+        </button>
 
-Generate AI Draft
+        <button
+          type="button"
+          className="btn btn-secondary h-11 px-5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border-amber-200 text-sm font-bold flex items-center gap-2"
+        >
+          <Sparkles size={16} className="text-amber-600" /> AI Polish
+        </button>
 
-</button>
-
-<button className="btn btn-primary">
-
-Send
-
-</button>
-
-</div>
-
-</div>
-
-);
-
+        <button
+          type="button"
+          onClick={handleSendEmail}
+          className="btn btn-primary h-11 px-6 rounded-xl text-sm font-bold flex items-center gap-2"
+        >
+          <Send size={16} /> Send Email
+        </button>
+      </div>
+    </div>
+  );
 }

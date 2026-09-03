@@ -170,8 +170,57 @@ h6 {
    Utility & Structural Components
    ---------------------------------------------------- */
 
-/* Glass Card */
-.glass-card {
+/* Shared Page Header Design Token */
+.sp-page-header {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 1rem; /* 16px */
+  border: 1px solid #e2e8f0; /* slate-200 */
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .sp-page-header {
+    padding: 1.75rem 2rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.sp-page-title {
+  font-size: 1.5rem; /* 24px */
+  line-height: 2rem;
+  font-weight: 800;
+  color: #0f172a; /* slate-900 */
+  font-family: var(--font-display, inherit);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  letter-spacing: -0.025em;
+}
+
+@media (min-width: 640px) {
+  .sp-page-title {
+    font-size: 1.75rem; /* 28px */
+    line-height: 2.25rem;
+  }
+}
+
+.sp-page-subtitle {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem;
+  color: #64748b; /* slate-500 */
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+/* Glass Card & Component Density Hierarchy */
+.glass-card,
+.card-standard {
   background: hsl(var(--bg-card-glass));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -182,9 +231,41 @@ h6 {
   transition: var(--transition-smooth);
 }
 
+.card-compact {
+  background: hsl(var(--bg-card));
+  border: 1px solid hsl(var(--border-glass));
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.04);
+}
+
+.card-form {
+  background: hsl(var(--bg-card));
+  border: 1px solid hsl(var(--border-glass));
+  border-radius: 20px;
+  padding: 1.75rem;
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.06);
+}
+
+.card-container {
+  background: hsl(var(--bg-card));
+  border: 1px solid hsl(var(--border-glass));
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.card-kanban {
+  background: hsl(var(--bg-card));
+  border: 1px solid hsl(var(--border-glass));
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05);
+}
+
 .glass-card:hover,
+.card-standard:hover,
 .list-item:hover {
-  border-color: hsl(var(--color-primary) / 20%);
+  border-color: hsl(var(--color-primary) / 30%);
 }
 
 .glass-card-interactive {
@@ -298,39 +379,42 @@ h6 {
 
 .input-field {
   width: 100%;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid hsl(var(--border-glass));
-  padding: 0.8rem 1rem;
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  padding: 0.75rem 1rem;
   border-radius: 10px;
-  color: white;
+  color: #0F172A;
   font-family: var(--font-primary);
   font-size: 0.95rem;
+  line-height: 1.4;
   outline: none;
   transition: var(--transition-smooth);
 }
 
 .input-field:focus {
-  border-color: hsl(var(--color-primary));
-  background: rgba(255, 255, 255, 0.07);
-  box-shadow: 0 0 0 3px hsl(var(--color-primary) / 15%);
+  border-color: #3B82F6;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .input-field::placeholder {
-  color: hsl(var(--text-muted));
+  color: #94A3B8;
 }
 
 select.input-field {
   appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-color: #FFFFFF;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 1rem center;
-  background-size: 1.2em;
+  background-size: 1.1em;
   padding-right: 2.5rem;
+  color: #0F172A;
 }
 
 select.input-field option {
-  background-color: #0b0f19;
-  color: white;
+  background-color: #FFFFFF;
+  color: #0F172A;
 }
 
 /* Glowing Badges */
@@ -1382,22 +1466,7 @@ body::before {
   opacity: 1;
 }
 
-.glass-card {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
 
-  background: rgba(15, 23, 42, 0.6);
-
-  border: 1px solid rgba(255, 255, 255, .08);
-
-  box-shadow:
-    0 10px 40px rgba(0, 0, 0, .35);
-}
-
-.glass-card:hover {
-  box-shadow:
-    0 15px 60px rgba(99, 102, 241, .15);
-}
 
 .dashboard-bg {
   position: relative;
@@ -1719,20 +1788,7 @@ body::before {
   margin-bottom: 1rem;
 }
 
-.glass-card {
-  background:
-    rgba(15, 23, 42, .65);
 
-  backdrop-filter: blur(25px);
-
-  border:
-    1px solid rgba(255, 255, 255, .08);
-
-  border-radius: 24px;
-
-  box-shadow:
-    0 10px 40px rgba(0, 0, 0, .35);
-}
 
 /* ----------------------------------------------------
    Site Footer
@@ -1740,8 +1796,8 @@ body::before {
 .site-footer {
   margin-top: 3rem;
   padding: 2rem clamp(1.25rem, 4vw, 2.5rem) 1.25rem;
-  border-top: 1px solid hsl(var(--border-glass));
-  background: rgba(8, 12, 20, 0.5);
+  border-top: 1px solid #E2E8F0;
+  background: #ffffff !important;
 }
 
 .site-footer-inner {
@@ -2183,22 +2239,15 @@ body {
 .auth-card,
 .modern-chart-card,
 .dashboard-stat-card {
-  background: hsl(var(--bg-card)) !important;
-  /* Soft White or Primary Dark Surface */
-  border: 1px solid hsl(var(--border-glass)) !important;
-  /* Blue-gray border */
-  box-shadow: var(--shadow-card) !important;
+  background: hsl(var(--bg-card));
+  border: 1px solid hsl(var(--border-glass));
+  box-shadow: var(--shadow-card);
 }
 
 .glass-card:hover,
 .dashboard-stat-card:hover {
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35) !important;
-  border-color: hsl(var(--color-primary)) !important;
-}
-
-.light .glass-card:hover,
-.light .dashboard-stat-card:hover {
-  box-shadow: 0 12px 30px rgba(7, 25, 35, 0.08) !important;
+  box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.08);
+  border-color: hsl(var(--color-primary));
 }
 
 /* ===================================
@@ -2487,54 +2536,51 @@ select.input-field option {
 }
 
 /* ----------------------------------------------------
-   Site Footer Styling (Premium dark block alignment)
+   Site Footer Styling (Clean Light White Design)
    ---------------------------------------------------- */
 .site-footer {
   margin-top: 3rem;
   padding: 2.5rem clamp(1.25rem, 4vw, 2.5rem) 1.5rem;
-  border-top: 1px solid rgba(169, 204, 228, 0.08) !important;
-  background: #071923 !important;
-  /* Dark Mode background */
+  border-top: 1px solid #E2E8F0 !important;
+  background: #FFFFFF !important;
+  color: #0F172A !important;
 }
 
 .site-footer .site-footer-heading {
-  color: #F5FAFF !important;
-  /* Soft White headings */
+  color: #0F172A !important;
   font-weight: 700 !important;
 }
 
 .site-footer p,
 .site-footer span,
 .site-footer-bottom {
-  color: #C5DFF0 !important;
-  /* Light blue text details */
+  color: #475569 !important;
 }
 
 .site-footer-links a {
-  color: #EEF6FC !important;
-  /* Soft blue-white links */
+  color: #334155 !important;
+  text-decoration: none !important;
 }
 
 .site-footer-links a:hover {
-  color: #397AA8 !important;
-  /* Blue hover Accent */
+  color: #2563EB !important;
   transform: translateX(2px) !important;
 }
 
 .site-footer-icon {
-  background: rgba(255, 255, 255, 0.06) !important;
-  color: #C5DFF0 !important;
+  background: #F1F5F9 !important;
+  color: #334155 !important;
 }
 
 .site-footer-icon:hover {
-  background: #397AA8 !important;
-  color: #071923 !important;
+  background: #2563EB !important;
+  color: #FFFFFF !important;
 }
 
-/* Light mode footer override */
+/* Light mode footer alignment */
 .light .site-footer {
-  background: #0A1F2D !important;
-  /* Deep Navy background */
+  background: #FFFFFF !important;
+  border-top: 1px solid #E2E8F0 !important;
 }
 
 /* ----------------------------------------------------
@@ -3077,71 +3123,42 @@ tr:hover td {
 .site-footer {
   margin-top: 3rem;
   padding: 2.5rem clamp(1.25rem, 4vw, 2.5rem) 1.5rem;
-  border-top: 1px solid rgba(169, 204, 228, 0.08) !important;
-  background: #071923 !important;
-  /* Dark Mode */
+  border-top: 1px solid #E2E8F0 !important;
+  background: #FFFFFF !important;
+  color: #0F172A !important;
 }
 
 .site-footer .site-footer-heading {
-  color: #F5FAFF !important;
+  color: #0F172A !important;
 }
 
 .site-footer p,
 .site-footer span,
 .site-footer-bottom {
-  color: #C5DFF0 !important;
+  color: #475569 !important;
 }
 
 .site-footer-links a {
-  color: #EEF6FC !important;
+  color: #334155 !important;
 }
 
 .site-footer-links a:hover {
-  color: #397AA8 !important;
+  color: #2563EB !important;
 }
 
 .site-footer-icon {
-  background: rgba(255, 255, 255, 0.06) !important;
-  color: #C5DFF0 !important;
+  background: #F1F5F9 !important;
+  color: #334155 !important;
 }
 
 .site-footer-icon:hover {
-  background: #397AA8 !important;
-  color: #071923 !important;
+  background: #2563EB !important;
+  color: #FFFFFF !important;
 }
 
-/* Light Mode Footer Override */
 .light .site-footer {
-  background: #0A1F2D !important;
-  border-top: 1px solid rgba(169, 204, 228, 0.08) !important;
-}
-
-.light .site-footer .site-footer-heading {
-  color: #F5FAFF !important;
-}
-
-.light .site-footer p,
-.light .site-footer span,
-.light .site-footer-bottom {
-  color: #C5DFF0 !important;
-}
-
-.light .site-footer-links a {
-  color: #EEF6FC !important;
-}
-
-.light .site-footer-links a:hover {
-  color: #397AA8 !important;
-}
-
-.light .site-footer-icon {
-  background: rgba(255, 255, 255, 0.06) !important;
-  color: #C5DFF0 !important;
-}
-
-.light .site-footer-icon:hover {
-  background: #397AA8 !important;
-  color: #0A1F2D !important;
+  background: #FFFFFF !important;
+  border-top: 1px solid #E2E8F0 !important;
 }
 
 /* --- 13. BUTTONS SEPARATION --- */
@@ -3256,4 +3273,101 @@ tr:hover td {
 .bg-slate-800.rounded-xl p,
 .bg-slate-800.rounded-xl label {
   color: #334155 !important;
+}
+
+/* ===================================
+   FULLCALENDAR ENTERPRISE SAAS REDESIGN
+   =================================== */
+
+.fc {
+  --fc-border-color: #E2E8F0;
+  --fc-button-bg-color: #F8FAFC;
+  --fc-button-border-color: #CBD5E1;
+  --fc-button-text-color: #1E293B;
+  --fc-button-hover-bg-color: #F1F5F9;
+  --fc-button-hover-border-color: #94A3B8;
+  --fc-button-active-bg-color: #2563EB;
+  --fc-button-active-border-color: #2563EB;
+  --fc-today-bg-color: #EFF6FF;
+  font-family: inherit;
+}
+
+.fc .fc-toolbar {
+  margin-bottom: 1.25rem !important;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  font-family: var(--font-display, inherit);
+  color: #0F172A !important;
+  letter-spacing: -0.02em;
+}
+
+.fc .fc-button {
+  padding: 0.5rem 1rem !important;
+  font-size: 0.8125rem !important;
+  font-weight: 700 !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.15s ease !important;
+  text-transform: capitalize !important;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  background-color: #2563EB !important;
+  border-color: #2563EB !important;
+  color: #FFFFFF !important;
+}
+
+.fc .fc-col-header-cell {
+  background-color: #F8FAFC;
+  padding: 0.625rem 0 !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748B;
+  border-bottom: 1px solid #E2E8F0 !important;
+}
+
+.fc .fc-daygrid-day-number {
+  font-size: 0.8125rem !important;
+  font-weight: 700 !important;
+  color: #334155;
+  padding: 0.375rem 0.5rem !important;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: #EFF6FF !important;
+}
+
+.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+  color: #2563EB !important;
+  font-weight: 900 !important;
+}
+
+.fc .fc-daygrid-event {
+  border-radius: 0.5rem !important;
+  padding: 3px 7px !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  margin-top: 3px !important;
+  margin-bottom: 3px !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  border: none !important;
+}
+
+.fc .fc-daygrid-event:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15) !important;
+}
+
+.fc .fc-event-title {
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
 }
