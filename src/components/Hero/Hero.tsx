@@ -1,16 +1,26 @@
 import React from 'react';
-import { GraduationCap, ArrowDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { GraduationCap, UserPlus, LogIn, ArrowRight } from 'lucide-react';
 import { GravityStarsBackground } from './GravityStarsBackground';
 import './Hero.css';
 
 interface HeroProps {
-  onScrollToLogin: () => void;
+  onSelectAction?: (mode: 'login' | 'register') => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onScrollToLogin }) => {
+export const Hero: React.FC<HeroProps> = ({ onSelectAction }) => {
+  const navigate = useNavigate();
+
+  const handleAction = (mode: 'login' | 'register') => {
+    if (onSelectAction) {
+      onSelectAction(mode);
+    }
+    navigate(`/auth?mode=${mode}`);
+  };
+
   return (
     <section className="hero-container">
-      {/* New animated gravity stars particle field from Animate UI */}
+      {/* Animated gravity stars particle field */}
       <GravityStarsBackground
         starsCount={90}
         starsSize={2.4}
@@ -23,26 +33,34 @@ export const Hero: React.FC<HeroProps> = ({ onScrollToLogin }) => {
         gravityStrength={150}
         starsInteraction={false}
       />
-      
+
+      {/* Decorative animated floating blue/purple background bubbles */}
+      <div className="hero-bubble-field" aria-hidden="true">
+        <div className="hero-bubble bubble-1"></div>
+        <div className="hero-bubble bubble-2"></div>
+        <div className="hero-bubble bubble-3"></div>
+        <div className="hero-bubble bubble-4"></div>
+      </div>
+
       <div className="hero-content-wrapper">
         <div className="hero-logo-box">
-          <GraduationCap className="hero-logo-icon" size={60} />
+          <GraduationCap className="hero-logo-icon" size={80} />
         </div>
-        
+
         <h1 className="hero-title">PlaceX</h1>
-        
+
         <span className="hero-subtitle-badge">
           AI Powered Placement Management
         </span>
-        
+
         <h2 className="hero-heading">Transform Campus Placements</h2>
-        
+
         <p className="hero-description">
           Track students, manage drives, analyze resumes,
           conduct mock interviews and improve placement rates.
         </p>
 
-        {/* Hero statistics preserved exactly from the current landing page */}
+        {/* Hero statistics */}
         <div className="hero-stats-row">
           <div className="hero-stat-item">
             <h3>5000+</h3>
@@ -58,14 +76,47 @@ export const Hero: React.FC<HeroProps> = ({ onScrollToLogin }) => {
           </div>
         </div>
 
-        {/* Scroll CTA Button */}
-        <div className="hero-cta-entrance-wrapper">
-          <div className="hero-cta-bob-wrapper">
-            <button onClick={onScrollToLogin} className="hero-cta-btn" aria-label="Scroll to Login">
-              <span>Get Started</span>
-              <ArrowDown className="hero-cta-arrow" size={16} />
-            </button>
-          </div>
+        {/* Dual Side-by-Side Action Entry Cards */}
+        <div className="hero-action-cards-wrapper">
+          <button
+            type="button"
+            onClick={() => handleAction('register')}
+            className="hero-action-card hero-action-card-register"
+            aria-label="Register New Account"
+          >
+            <div className="hero-action-icon-box">
+              <UserPlus size={24} />
+            </div>
+            <div className="hero-action-text-box">
+              <div className="hero-action-title">
+                <span>Register New Account</span>
+                <ArrowRight size={16} className="hero-action-arrow" />
+              </div>
+              <p className="hero-action-subtitle">
+                Join PlaceX as a Student, TPO, Recruiter, or Alumni
+              </p>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleAction('login')}
+            className="hero-action-card hero-action-card-login"
+            aria-label="Log In to Existing Account"
+          >
+            <div className="hero-action-icon-box">
+              <LogIn size={24} />
+            </div>
+            <div className="hero-action-text-box">
+              <div className="hero-action-title">
+                <span>Log In to Existing Account</span>
+                <ArrowRight size={16} className="hero-action-arrow" />
+              </div>
+              <p className="hero-action-subtitle">
+                Access your portal and manage recruitment drives
+              </p>
+            </div>
+          </button>
         </div>
       </div>
     </section>
