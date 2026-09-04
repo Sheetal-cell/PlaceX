@@ -5,8 +5,8 @@ import { ContributorAvatar, AvatarGroup, ContributorStyles } from './Contributor
 const contributors = [
   {
     name: "Prashanjit Mishra",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKIuX8f4qOeDDA4gMlMF52IvIAQeBGGAhHkkk8-axPZA&s=10",
-    github: "https://github.com/RitochitGhosh",
+    image: "https://lh3.googleusercontent.com/d/1MGDVRNOt8JbFlbcWgCsY-CLdGBatzEij",
+    github: "https://github.com/Prasanjit7485",
   },
   {
     name: "Shreyaushi Das",
@@ -29,14 +29,14 @@ export const Footer: React.FC = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="site-footer" id="site-footer">
+    <footer className="site-footer bg-white border-t border-slate-200 text-slate-900" id="site-footer">
       <div className="site-footer-inner">
         <div className="site-footer-brand">
           <div className="flex items-center gap-2">
-            <GraduationCap size={18} style={{ color: '#B59E7D' }} />
-            <span className="font-semibold text-white text-sm">TPOHelper</span>
+            <GraduationCap size={20} className="text-blue-600" />
+            <span className="font-extrabold text-slate-900 text-base font-display">PlaceX</span>
           </div>
-          <p className="text-xs text-gray-500 max-w-xs leading-relaxed">
+          <p className="text-xs text-slate-600 max-w-xs leading-relaxed mt-2">
             A unified placement & training portal connecting students,
             recruiters, and the Training &amp; Placement Office.
           </p>
@@ -44,20 +44,20 @@ export const Footer: React.FC = () => {
 
         <div className="site-footer-links">
           <div>
-            <span className="site-footer-heading">Product</span>
-            <a href="#">Placement Drives</a>
-            <a href="#">Resume Insights</a>
-            <a href="#">Student Directory</a>
+            <span className="site-footer-heading text-slate-900 font-bold">Product</span>
+            <a href="#" className="text-slate-600 hover:text-blue-600 font-medium">Placement Drives</a>
+            <a href="#" className="text-slate-600 hover:text-blue-600 font-medium">Resume Insights</a>
+            <a href="#" className="text-slate-600 hover:text-blue-600 font-medium">Student Directory</a>
           </div>
           <div>
-            <span className="site-footer-heading">Institution</span>
-            <a href="#">About TPO Cell</a>
-            <a href="#">Placement Policy</a>
-            <a href="mailto:tpo@university.edu">Contact</a>
+            <span className="site-footer-heading text-slate-900 font-bold">Institution</span>
+            <a href="#" className="text-slate-600 hover:text-blue-600 font-medium">About TPO Cell</a>
+            <a href="#" className="text-slate-600 hover:text-blue-600 font-medium">Placement Policy</a>
+            <a href="mailto:tpo@university.edu" className="text-blue-600 font-semibold hover:underline">Contact TPO</a>
           </div>
         </div>
         <div className="site-footer-contributors flex flex-col items-start md:items-end">
-          <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-4 flex gap-4 ">Built by</span>
+          <span className="text-[10px] text-blue-600 uppercase tracking-widest font-bold mb-4 flex gap-4">Built by</span>
           <AvatarGroup>
             {contributors.map((contrib, idx) => (
               <ContributorAvatar
@@ -72,9 +72,9 @@ export const Footer: React.FC = () => {
         </div>
       </div>
 
-      <div className="site-footer-bottom">
-        <span>© {year} TPOHelper. Built for campus placement teams.</span>
-        <span className="hidden sm:inline">v1.0 · Demo Environment</span>
+      <div className="site-footer-bottom text-slate-500 border-t border-slate-100 mt-6 pt-4 text-xs">
+        <span className="font-semibold text-slate-700">© {year} PlaceX. Built for campus placement teams.</span>
+        <span className="hidden sm:inline text-blue-600 font-bold">v1.0 · University Placement Environment</span>
       </div>
     </footer>
   );

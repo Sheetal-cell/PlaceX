@@ -2,6 +2,7 @@ export interface StudentResponse {
   id: string;
   name: string;
   email: string;
+  registrationNumber?: string;
   phone: string;
   department: string;
   CGPA: number;
@@ -35,6 +36,7 @@ export interface JobPostingResponse {
   eligibleCGPACutoff: number;
   allowedBacklogs: number;
   allowedBranches: string;
+  eligibleBatch?: string;
   requiredSkills: string;
   companyId: number;
   location: string;
@@ -46,6 +48,7 @@ export interface JobPostingRequest {
   eligibleCGPACutoff?: number;
   allowedBacklogs?: number;
   allowedBranches?: string;
+  eligibleBatch?: string;
   requiredSkills?: string;
   salary?: number;
   deadline: string;
@@ -65,6 +68,7 @@ export interface DriveWithCompany {
   cgpaCutoff: number;
   maxBacklogs: number;
   allowedBranches: string[];
+  eligibleBatch?: string;
   deadline: string;
   skillsRequired: string[];
   status: 'OPEN' | 'CLOSED';
@@ -79,7 +83,6 @@ export interface RecruiterResponse {
   email: string;
   companyName: string;
   designation: string;
-  industry: string;
   recruiterStatus: RecruiterStatus;
 }
 export interface RecruiterRequest {
@@ -88,7 +91,6 @@ export interface RecruiterRequest {
   password: string;
   companyName: string;
   designation?: string;
-  industry?: string;
 }
 export type Role = "TPO" | "RECRUITER" | "STUDENT";
 
@@ -133,6 +135,7 @@ export interface StudentWithPlacement {
   id: string;
   name: string;
   email: string;
+  registrationNumber?: string;
   department: string;
   cgpa: number;
   backlogs: number;
@@ -180,15 +183,19 @@ export interface InterviewRoundResponse {
 }
 
 export interface CalendarEvent {
-  id: number;
+  id: number | string;
   title: string;
   eventType: string;
-  companyId: number;
-  companyName: string;
+  companyId?: number;
+  companyName?: string;
+  company?: string;
+  role?: string;
   scheduledDate: string;
   startTime: string;
-  endTime: string;
-  location: string;
-  description: string;
-  status: string;
+  endTime?: string;
+  location?: string;
+  venue?: string;
+  description?: string;
+  status?: string;
+  branches?: string[];
 }
