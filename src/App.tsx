@@ -1422,6 +1422,9 @@ function AppContent() {
      ADD BLOG
   ======================================================= */
 
+
+  
+
   const handleAddBlog = (
   blogData: Omit<
     Blog,
@@ -2002,34 +2005,17 @@ function AppContent() {
                 {loggedInStudent ? (
 
                   <StudentPortal
-                    currentStudent={
-                      loggedInStudent
-                    }
-
-                    drives={
-                      drives
-                    }
-
-                    calendarEvents={
-                      calendarEvents
-                    }
-
-                    onLogout={
-                      handleLogout
-                    }
-
-                    onApply={
-                      handleApplyDrive
-                    }
-
-                    onUpdateResumeScore={
-                      handleUpdateResumeScore
-                    }
-
-                    onUpdateStudentProfile={
-                      handleUpdateStudentProfile
-                    }
-                  />
+  currentStudent={loggedInStudent}
+  drives={drives}
+  calendarEvents={calendarEvents}
+  blogs={blogs}
+  referrals={referrals}
+  alumni={alumni}
+  onLogout={handleLogout}
+  onApply={handleApplyDrive}
+  onUpdateResumeScore={handleUpdateResumeScore}
+  onUpdateStudentProfile={handleUpdateStudentProfile}
+/>
 
                 ) : (
 
@@ -2219,7 +2205,7 @@ function AppContent() {
 
                     onLogout={handleLogout}
 
-                    onAddBlog={handleAddBlog}
+                    onCreateBlog={handleAddBlog}
 
                     onUpdateBlog={handleUpdateBlog}
 
@@ -2229,16 +2215,15 @@ function AppContent() {
 
                     onToggleReferral={handleToggleReferral}
 
-                    onUpdateProfile={handleUpdateAlumniProfile} onCreateBlog={function (_blogData: Omit<Blog, 'id' | 'alumniId' | 'postedDate'>): void {
-                      throw new Error('Function not implemented.');
-                    } } onCreateReferral={function (_referralData: Omit<Referral, 'id' | 'alumniId' | 'postedDate'>): void {
+                    onUpdateProfile={handleUpdateAlumniProfile} onCreateReferral={function (_referralData: Omit<Referral, 'id' | 'alumniId' | 'postedDate'>): void {
                       throw new Error('Function not implemented.');
                     } } onUpdateReferral={function (_id: string, _data: Partial<Referral>): void {
                       throw new Error('Function not implemented.');
                     } } onDeleteReferral={function (_id: string): void {
                       throw new Error('Function not implemented.');
-                    } }
-                  />
+                    } } onAddBlog={function (_blogData: Omit<Blog, 'id' | 'alumniId' | 'postedDate'>): void {
+                      throw new Error('Function not implemented.');
+                    } }                  />
 
                 ) : (
 

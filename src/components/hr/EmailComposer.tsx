@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type MouseEvent } from "react";
 import type { Company } from "../../mockHR";
-import { Mail, Sparkles, Send, Save } from "lucide-react";
+import { Mail, Sparkles, Send } from "lucide-react";
 
 interface Props {
   selected: Company | null;
@@ -91,12 +91,36 @@ Training & Placement Office`
 
   if (!selected) {
     return (
-      <div className="bg-white p-8 sm:p-12 rounded-2xl border border-slate-200 shadow-sm text-center text-slate-400 flex flex-col items-center justify-center min-h-[360px]">
+      <div className="bg-white p-8 sm:p-12 rounded-2xl border border-slate-200 shadow-sm text-center text-slate-400 flex flex-col items-center justify-center min-h-90">
         <Mail size={48} className="opacity-20 mb-3" />
         <p className="text-base font-bold text-slate-700 font-display">No Recruiter Selected</p>
         <p className="text-xs text-slate-500 mt-1 max-w-xs font-medium">Select a company from the list on the left to compose an outreach email.</p>
       </div>
     );
+  }
+
+  function handleBlogSubmit(e: MouseEvent<HTMLButtonElement>, arg1: boolean): void {
+    e.preventDefault();
+    if (!selected) return;
+
+    const draft = {
+      recipient: selected.email,
+      company: selected.name,
+      subject,
+      body,
+      savedAt: new Date().toISOString(),
+      published: arg1,
+    };
+
+    try {
+      const drafts = JSON.parse(localStorage.getItem("placeX-email-drafts") ?? "[]");
+      const nextDrafts = Array.isArray(drafts)
+        ? [...drafts.filter((item) => item.recipient !== selected.email), draft]
+        : [draft];
+      localStorage.setItem("placeX-email-drafts", JSON.stringify(nextDrafts));
+    } catch {
+      // Storage may be unavailable; the composed email remains intact.
+    }
   }
 
   return (
@@ -142,11 +166,11 @@ Training & Placement Office`
 
       <div className="flex flex-wrap justify-end gap-3 mt-3 pt-4 border-t border-slate-100">
         <button
-          type="button"
-          className="btn btn-secondary h-11 px-5 rounded-xl text-sm font-bold flex items-center gap-2"
-        >
-          <Save size={16} /> Save Draft
-        </button>
+  type="button"
+  onClick={(e) => handleBlogSubmit(e, false)}
+>
+  Save Draft
+</button>
 
         <button
           type="button"

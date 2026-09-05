@@ -50,7 +50,7 @@ interface AlumniPortalProps {
       title: string;
       content: string;
       category: BlogCategory;
-      published: boolean;
+      published: true | false;
     }
   ) => void;
 
@@ -177,22 +177,29 @@ export const AlumniPortal: React.FC<AlumniPortalProps> = ({
     setShowReferralForm(false);
   };
 
-  const handleBlogSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleBlogSubmit = (
+  e: React.FormEvent,
+  publish: boolean
+) => {
+  e.preventDefault();
 
-    if (!blogForm.title.trim() || !blogForm.content.trim()) {
-      return;
-    }
+  if (!blogForm.title.trim() || !blogForm.content.trim()) {
+    return;
+  }
 
-    if (editingBlog) {
-      onUpdateBlog(editingBlog.id, blogForm);
-    } else {
-      onCreateBlog(blogForm);
-    }
-
-    resetBlogForm();
+  const blogData = {
+    ...blogForm,
+    published: publish,
   };
 
+  if (editingBlog) {
+    onUpdateBlog(editingBlog.id, blogData);
+  } else {
+    onCreateBlog(blogData);
+  }
+
+  resetBlogForm();
+};
   const handleReferralSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -604,7 +611,9 @@ export const AlumniPortal: React.FC<AlumniPortalProps> = ({
 
               <form
                 className="alumni-form"
-                onSubmit={handleBlogSubmit}
+                onSubmit={(e) =>
+                  handleBlogSubmit(e, blogForm.published)
+                }
               >
                 <div className="form-field">
                   <label>Blog Title</label>
@@ -696,15 +705,11 @@ export const AlumniPortal: React.FC<AlumniPortalProps> = ({
                   )}
 
                   <button
-                    type="submit"
-                    className="primary-button"
-                  >
-                    <FileText size={17} />
-
-                    {editingBlog
-                      ? 'Update Blog'
-                      : 'Publish Blog'}
-                  </button>
+  type="button"
+  onClick={(e) => handleBlogSubmit(e, true)}
+>
+  Publish Blog
+</button>
                 </div>
               </form>
             </div>

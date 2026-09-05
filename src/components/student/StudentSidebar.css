@@ -1,0 +1,314 @@
+.student-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow: hidden;
+  transition: width 0.25s ease;
+}
+
+/* =========================
+   EXPANDED
+========================= */
+
+.student-sidebar-expanded {
+  width: 250px;
+}
+
+/* =========================
+   COLLAPSED
+========================= */
+
+.student-sidebar-collapsed {
+  width: 72px;
+}
+
+/* =========================
+   BRAND
+========================= */
+
+.student-sidebar-brand {
+  height: 68px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #eef0f3;
+  flex-shrink: 0;
+}
+
+.student-sidebar-brand-icon {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6d8cff;
+  flex-shrink: 0;
+}
+
+.student-sidebar-brand-text {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+}
+
+.student-sidebar-brand-text strong {
+  font-size: 14px;
+  color: #172033;
+  line-height: 1.2;
+}
+
+.student-sidebar-brand-text span {
+  font-size: 11px;
+  color: #8a94a6;
+  margin-top: 2px;
+}
+
+/* =========================
+   USER
+========================= */
+
+.student-sidebar-user {
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #eef0f3;
+  flex-shrink: 0;
+}
+
+.student-sidebar-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #edf2ff;
+  color: #315efb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.student-sidebar-user-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.student-sidebar-user-info strong {
+  font-size: 13px;
+  color: #172033;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.student-sidebar-user-info span {
+  font-size: 11px;
+  color: #8a94a6;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+
+.student-sidebar-nav {
+  flex: 1;
+  padding: 20px 12px;
+  overflow-y: auto;
+}
+
+.student-sidebar-nav-label {
+  padding: 0 10px;
+  margin-bottom: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #9aa3b2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* =========================
+   NAV ITEMS
+========================= */
+
+.student-sidebar-item {
+  width: 100%;
+  min-height: 46px;
+  padding: 7px 10px;
+  margin-bottom: 4px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: transparent;
+  color: #596579;
+
+  cursor: pointer;
+  text-align: left;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.student-sidebar-item:hover {
+  background: #f3f6ff;
+  color: #315efb;
+}
+
+.student-sidebar-item-active {
+  background: #edf2ff;
+  color: #315efb;
+}
+
+.student-sidebar-item-icon {
+  width: 24px;
+  min-width: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.student-sidebar-item-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.student-sidebar-item-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.student-sidebar-item-content strong {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.student-sidebar-item-content small {
+  font-size: 10px;
+  color: #8a94a6;
+  line-height: 1.2;
+}
+
+/* =========================
+   COLLAPSED NAVIGATION
+========================= */
+
+.student-sidebar-collapsed .student-sidebar-brand {
+  justify-content: center;
+  padding: 0;
+}
+
+.student-sidebar-collapsed .student-sidebar-user {
+  justify-content: center;
+  padding: 16px 0;
+}
+
+.student-sidebar-collapsed .student-sidebar-nav {
+  padding: 20px 10px;
+}
+
+.student-sidebar-collapsed .student-sidebar-nav-label {
+  text-align: center;
+  padding: 0;
+  font-size: 9px;
+}
+
+.student-sidebar-collapsed .student-sidebar-item {
+  justify-content: center;
+  padding: 7px 0;
+}
+
+.student-sidebar-collapsed .student-sidebar-item-content {
+  display: none;
+}
+
+/* =========================
+   BOTTOM / TOGGLE
+========================= */
+
+.student-sidebar-bottom {
+  padding: 12px;
+  border-top: 1px solid #eef0f3;
+  flex-shrink: 0;
+}
+
+.student-sidebar-expand-button {
+  width: 100%;
+  min-height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #f7f8fa;
+  color: #697386;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.student-sidebar-expand-button:hover {
+  background: #edf2ff;
+  color: #315efb;
+}
+
+.student-sidebar-expand-button span {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+.student-sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.student-sidebar-nav::-webkit-scrollbar-thumb {
+  background: #d9dee8;
+  border-radius: 10px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 900px) {
+  .student-sidebar-expanded {
+    width: 240px;
+  }
+
+  .student-sidebar-collapsed {
+    width: 72px;
+  }
+}
