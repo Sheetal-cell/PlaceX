@@ -9,7 +9,8 @@ import {
   Mail,
   X,
   Shield,
-  Plus
+  Plus,
+  GraduationCap
 } from 'lucide-react';
 import type { AdminTabType } from './AdminSidebar';
 
@@ -36,6 +37,11 @@ export const AdminMobileDrawer: React.FC<AdminMobileDrawerProps> = ({
     { id: 'scraped' as AdminTabType, label: 'Recruitment Feed', icon: Globe },
     { id: 'calendar' as AdminTabType, label: 'Placement Calendar', icon: CalendarIcon },
     { id: 'students' as AdminTabType, label: 'Student Database', icon: Users },
+    {
+  id: 'alumni' as AdminTabType,
+  label: 'Alumni Management',
+  icon: GraduationCap
+},
     { id: 'tracker' as AdminTabType, label: 'Live Round Tracker', icon: GitMerge },
     { id: 'hr' as AdminTabType, label: 'HR Outreach', icon: Mail }
   ];
@@ -47,7 +53,7 @@ export const AdminMobileDrawer: React.FC<AdminMobileDrawerProps> = ({
         {/* Drawer Header */}
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center font-extrabold shadow-md shadow-blue-500/20 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center font-extrabold shadow-md shadow-blue-500/20 shrink-0">
               <Shield size={22} />
             </div>
             <div>

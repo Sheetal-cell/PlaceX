@@ -10,7 +10,8 @@ import {
   Users,
   GitMerge,
   Mail,
-  Plus
+  Plus,
+  GraduationCap
 } from 'lucide-react';
 
 export type AdminTabType =
@@ -20,7 +21,8 @@ export type AdminTabType =
   | 'calendar'
   | 'students'
   | 'tracker'
-  | 'hr';
+  | 'hr'
+  | 'alumni';
 
 interface AdminSidebarProps {
   activeTab: AdminTabType;
@@ -45,6 +47,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     { id: 'scraped' as AdminTabType, label: 'Recruitment Feed', icon: Globe },
     { id: 'calendar' as AdminTabType, label: 'Placement Calendar', icon: CalendarIcon },
     { id: 'students' as AdminTabType, label: 'Student Database', icon: Users },
+    {
+  id: 'alumni' as AdminTabType,
+  label: 'Alumni Management',
+  icon: GraduationCap
+},
     { id: 'tracker' as AdminTabType, label: 'Live Round Tracker', icon: GitMerge },
     { id: 'hr' as AdminTabType, label: 'HR Outreach', icon: Mail }
   ];

@@ -9,6 +9,8 @@ import { Footer } from './Footer';
 import { ScrapedDrives } from './scrapper/ScrapedDrives';
 import CalendarPage from './calendar/CalendarPage';
 import HROutreach from './hr/HROutreach';
+import { AdminAlumniManagementView } from './admin/AdminAlumniManagementView';
+import type { Alumni } from '../api/alumniApi';
 
 // Import Redesigned Admin Components & Scoped CSS
 import './admin/AdminPortal.css';
@@ -22,6 +24,10 @@ import { AdminLiveTrackerView } from './admin/AdminLiveTrackerView';
 interface AdminPortalProps {
   students: Student[];
   drives: PlacementDrive[];
+  alumni: Alumni[];
+
+  onApproveAlumni: (id: string) => void;
+  onRejectAlumni: (id: string) => void;
   calendarEvents?: CalendarEvent[];
   onAddCalendarEvent?: (newEvent: CalendarEvent) => void;
   onLogout: () => void;
@@ -37,6 +43,9 @@ interface AdminPortalProps {
 export const AdminPortal: React.FC<AdminPortalProps> = ({
   students,
   drives,
+  alumni,
+  onApproveAlumni,
+  onRejectAlumni,
   calendarEvents,
   onAddCalendarEvent,
   onSaveFeedback,
@@ -54,6 +63,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   const getTabFromPath = (path: string): AdminTabType => {
     if (path.includes('/admin/drives')) return 'drives';
     if (path.includes('/admin/students')) return 'students';
+    if (path.includes('/admin/alumni')) return 'alumni';
     if (path.includes('/admin/calendar')) return 'calendar';
     if (path.includes('/admin/tracker') || path.includes('/admin/live-tracker')) return 'tracker';
     if (path.includes('/admin/scraped')) return 'scraped';
@@ -71,7 +81,8 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
       calendar: '/admin/calendar',
       tracker: '/admin/tracker',
       scraped: '/admin/scraped',
-      hr: '/admin/hr'
+      hr: '/admin/hr',
+      alumni: '/admin/alumni'
     };
     navigate(routeMap[tab]);
   };
@@ -288,7 +299,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
   return (
     <div className="ap-layout">
       {/* Mobile Top Bar */}
-      <div className="md:hidden sticky top-[64px] z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-4 py-3 flex items-center justify-between shadow-2xs">
+      <div className="md:hidden sticky top-16 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-4 py-3 flex items-center justify-between shadow-2xs">
         <button
           onClick={() => setIsMobileDrawerOpen(true)}
           className="px-4 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-extrabold text-xs border border-blue-200/80 transition-all cursor-pointer flex items-center gap-2 shadow-2xs active:scale-95"
@@ -373,6 +384,14 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
                 handleToggleDriveStatus={handleToggleDriveStatus}
               />
             )}
+
+            {activeTab === 'alumni' && (
+  <AdminAlumniManagementView
+    alumni={alumni}
+    onApprove={onApproveAlumni}
+    onReject={onRejectAlumni}
+  />
+)}
 
             {activeTab === 'scraped' && <ScrapedDrives />}
 

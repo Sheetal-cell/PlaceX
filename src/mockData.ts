@@ -39,7 +39,7 @@ export interface Recruiter {
   id: string;
   name: string;
   email: string;
-  password?: string;
+  password: string;
   companyName: string;
   designation: string;
 }
@@ -49,7 +49,7 @@ export interface Student {
   name: string;
   email: string;
   registrationNumber?: string;
-  password?: string;
+  password: string;
 
   department: string;
   branch: string;
