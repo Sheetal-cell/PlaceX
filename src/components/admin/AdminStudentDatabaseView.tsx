@@ -196,7 +196,7 @@ export const AdminStudentDatabaseView: React.FC<AdminStudentDatabaseViewProps> =
                 <tr key={student.id} className="hover:bg-slate-50/80 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3.5">
-                      <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-extrabold text-sm flex items-center justify-center shrink-0 shadow-xs">
+                      <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-blue-600 to-indigo-700 text-white font-extrabold text-sm flex items-center justify-center shrink-0 shadow-xs">
                         {student.name.charAt(0)}
                       </div>
                       <div>
@@ -275,7 +275,7 @@ export const AdminStudentDatabaseView: React.FC<AdminStudentDatabaseViewProps> =
                 className="p-4 sm:p-5 flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-3.5">
-                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-extrabold text-sm flex items-center justify-center shrink-0 shadow-xs">
+                  <div className="w-11 h-11 rounded-2xl bg-linear-to-br from-blue-600 to-indigo-700 text-white font-extrabold text-sm flex items-center justify-center shrink-0 shadow-xs">
                     {student.name.charAt(0)}
                   </div>
                   <div>
@@ -302,12 +302,12 @@ export const AdminStudentDatabaseView: React.FC<AdminStudentDatabaseViewProps> =
 
       {/* Mobile Student Detail Popover Modal */}
       {activeMobileStudent && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in overflow-y-auto">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 flex flex-col gap-5 my-auto">
             {/* Modal Top Header */}
             <div className="flex justify-between items-start border-b border-slate-100 pb-4">
               <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-extrabold text-lg flex items-center justify-center shrink-0 shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-blue-600 to-indigo-700 text-white font-extrabold text-lg flex items-center justify-center shrink-0 shadow-sm">
                   {activeMobileStudent.name.charAt(0)}
                 </div>
                 <div>

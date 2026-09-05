@@ -330,7 +330,7 @@ export const AdminDrivesView: React.FC<AdminDrivesViewProps> = ({
                   value={jobDesc}
                   onChange={(e) => setJobDesc(e.target.value)}
                   placeholder="Provide full description of job role expectations..."
-                  className="input-field font-sans resize-none min-h-[100px]"
+                  className="input-field font-sans resize-none min-h-25"
                 />
               </div>
             </div>
@@ -368,7 +368,7 @@ export const AdminDrivesView: React.FC<AdminDrivesViewProps> = ({
             <div className="flex-1 flex flex-col gap-4 w-full">
               {/* Header Info */}
               <div className="flex items-center gap-4 flex-wrap">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-extrabold text-xl flex items-center justify-center shrink-0 shadow-md shadow-blue-500/15 border border-white/20">
+                <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-blue-600 to-indigo-700 text-white font-extrabold text-xl flex items-center justify-center shrink-0 shadow-md shadow-blue-500/15 border border-white/20">
                   {drive.companyName.charAt(0)}
                 </div>
 
