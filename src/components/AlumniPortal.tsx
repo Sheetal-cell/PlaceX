@@ -40,44 +40,32 @@ interface AlumniPortalProps {
 
   onLogout: () => void;
 
-  onAddBlog: (
-    blogData: Omit<Blog, "id" | "alumniId" | "postedDate">
-  ) => void;
+  onCreateBlog: (
+  blogData: Omit<Blog, 'id' | 'alumniId' | 'postedDate'>
+) => Promise<void>;
 
   onUpdateBlog: (
-    id: string,
-    data: {
-      title: string;
-      content: string;
-      category: BlogCategory;
-      published: true | false;
-    }
-  ) => void;
+  id: string,
+  data: {
+    title: string;
+    content: string;
+    category: BlogCategory;
+    published: boolean;
+  }
+) => Promise<void>;
 
-  onDeleteBlog: (id: string) => void;
-
-  onAddReferral: (
-    referralData: Omit<Referral, "id" | "alumniId" | "postedDate">
-  ) => void;
-
-  onToggleReferral: (id: string) => void;
-
-  onUpdateProfile: (updatedAlumni: Alumni) => void;
-  onCreateBlog: (
-  blogData: Omit<Blog, "id" | "alumniId" | "postedDate">
-) => void;
+onDeleteBlog: (id: string) => Promise<void>;
 
 onCreateReferral: (
-  referralData: Omit<Referral, "id" | "alumniId" | "postedDate">
-) => void;
+  referralData: Omit<Referral, 'id' | 'alumniId' | 'postedDate'>
+) => Promise<void>;
 
 onUpdateReferral: (
   id: string,
   data: Partial<Referral>
-) => void;
+) => Promise<void>;
 
-onDeleteReferral: (id: string) => void;
-}
+onDeleteReferral: (id: string) => Promise<void>;}
 
 const categories: BlogCategory[] = [
   'Interview Experience',

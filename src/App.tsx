@@ -44,11 +44,8 @@ import { INITIAL_CALENDAR_EVENTS } from './mockCalendar';
 import type { CalendarEvent } from './api/types';
 
 import {
-  INITIAL_ALUMNI,
-  INITIAL_BLOGS,
-  INITIAL_REFERRALS,
-} from './mockAlumni';
-
+  alumniApi,
+} from './api/alumniApi';
 import type {
   Alumni,
   Blog,
@@ -283,32 +280,14 @@ function AppContent() {
      ALUMNI
   ======================================================= */
 
-  const [alumni, setAlumni] =
-    useState<Alumni[]>(() => {
-      const saved =
-        localStorage.getItem('tpo_alumni');
-
-      return saved
-        ? JSON.parse(saved)
-        : INITIAL_ALUMNI;
-    });
+  const [alumni, setAlumni] = useState<Alumni[]>([]);
 
 
   /* =======================================================
      ALUMNI BLOGS
   ======================================================= */
 
-  const [blogs, setBlogs] =
-    useState<Blog[]>(() => {
-      const saved =
-        localStorage.getItem(
-          'tpo_alumni_blogs'
-        );
-
-      return saved
-        ? JSON.parse(saved)
-        : INITIAL_BLOGS;
-    });
+  const [blogs, setBlogs] = useState<Blog[]>([]);
 
 
   /* =======================================================
@@ -316,16 +295,39 @@ function AppContent() {
   ======================================================= */
 
   const [referrals, setReferrals] =
-    useState<Referral[]>(() => {
-      const saved =
-        localStorage.getItem(
-          'tpo_alumni_referrals'
-        );
+  useState<Referral[]>([]);
 
-      return saved
-        ? JSON.parse(saved)
-        : INITIAL_REFERRALS;
-    });
+  useEffect(() => {
+  const loadAlumniData = async () => {
+    try {
+      const [
+        alumniData,
+        blogsData,
+        referralsData,
+      ] = await Promise.all([
+        alumniApi.getAll(),
+        alumniApi.getBlogs(),
+        alumniApi.getReferrals(),
+      ]);
+
+      setAlumni(alumniData);
+      setBlogs(blogsData);
+      setReferrals(referralsData);
+    } catch (error) {
+      console.error(
+        'Failed to load alumni data:',
+        error
+      );
+
+      triggerToast(
+        'Unable to load alumni data from server.',
+        'error'
+      );
+    }
+  };
+
+  loadAlumniData();
+}, []);
 
 
   /* =======================================================
@@ -404,28 +406,7 @@ function AppContent() {
   }, [recruiters]);
 
 
-  useEffect(() => {
-    localStorage.setItem(
-      'tpo_alumni',
-      JSON.stringify(alumni)
-    );
-  }, [alumni]);
-
-
-  useEffect(() => {
-    localStorage.setItem(
-      'tpo_alumni_blogs',
-      JSON.stringify(blogs)
-    );
-  }, [blogs]);
-
-
-  useEffect(() => {
-    localStorage.setItem(
-      'tpo_alumni_referrals',
-      JSON.stringify(referrals)
-    );
-  }, [referrals]);
+  
 
 
   /* =======================================================
@@ -1425,7 +1406,7 @@ function AppContent() {
 
   
 
-  const handleAddBlog = (
+  const handleAddBlog = async (
   blogData: Omit<
     Blog,
     'id' | 'alumniId' | 'postedDate'
@@ -1435,37 +1416,47 @@ function AppContent() {
     return;
   }
 
-  const newBlog: Blog = {
-    ...blogData,
-    id:
-      `blog_${Math.random()
-        .toString(36)
-        .substring(2, 11)}`,
-    alumniId: session.alumniId,
-    postedDate:
-      new Date()
-        .toISOString()
-        .split('T')[0],
-  };
+  try {
+    const newBlog = await alumniApi.createBlog(
+      session.alumniId,
+      {
+        title: blogData.title,
+        content: blogData.content,
+        category: blogData.category,
+        published: blogData.published,
+      }
+    );
 
-  setBlogs((previousBlogs) => [
-    newBlog,
-    ...previousBlogs,
-  ]);
+    setBlogs((previousBlogs) => [
+      newBlog,
+      ...previousBlogs,
+    ]);
 
-  triggerToast(
-    newBlog.published
-      ? 'Blog published successfully.'
-      : 'Blog saved as draft.',
-    'success'
-  );
+    triggerToast(
+      newBlog.published
+        ? 'Blog published successfully.'
+        : 'Blog saved as draft.',
+      'success'
+    );
+  } catch (error) {
+    console.error(
+      'Failed to create blog:',
+      error
+    );
+
+    triggerToast(
+      error instanceof Error
+        ? error.message
+        : 'Failed to publish blog.',
+      'error'
+    );
+  }
 };
-
   /* =======================================================
      UPDATE BLOG
   ======================================================= */
 
-  const handleUpdateBlog = (
+  const handleUpdateBlog = async (
   id: string,
   data: {
     title: string;
@@ -1474,51 +1465,81 @@ function AppContent() {
     published: boolean;
   }
 ) => {
-  setBlogs((previousBlogs) =>
-    previousBlogs.map((blog) =>
-      blog.id === id
-        ? {
-            ...blog,
-            title: data.title,
-            content: data.content,
-            category: data.category,
-            published: data.published,
-          }
-        : blog
-    )
-  );
+  try {
+    const updatedBlog =
+      await alumniApi.updateBlog(id, {
+        title: data.title,
+        content: data.content,
+        category: data.category,
+        published: data.published,
+      });
 
-  triggerToast(
-    'Blog updated successfully.',
-    'success'
-  );
+    setBlogs((previousBlogs) =>
+      previousBlogs.map((blog) =>
+        blog.id === id
+          ? updatedBlog
+          : blog
+      )
+    );
+
+    triggerToast(
+      'Blog updated successfully.',
+      'success'
+    );
+  } catch (error) {
+    console.error(
+      'Failed to update blog:',
+      error
+    );
+
+    triggerToast(
+      error instanceof Error
+        ? error.message
+        : 'Failed to update blog.',
+      'error'
+    );
+  }
 };
 
   /* =======================================================
      DELETE BLOG
   ======================================================= */
 
-  const handleDeleteBlog = (
+  const handleDeleteBlog = async (
   blogId: string
 ) => {
-  setBlogs((previousBlogs) =>
-    previousBlogs.filter(
-      (blog) => blog.id !== blogId
-    )
-  );
+  try {
+    await alumniApi.deleteBlog(blogId);
 
-  triggerToast(
-    'Blog deleted.',
-    'info'
-  );
+    setBlogs((previousBlogs) =>
+      previousBlogs.filter(
+        (blog) => blog.id !== blogId
+      )
+    );
+
+    triggerToast(
+      'Blog deleted.',
+      'info'
+    );
+  } catch (error) {
+    console.error(
+      'Failed to delete blog:',
+      error
+    );
+
+    triggerToast(
+      error instanceof Error
+        ? error.message
+        : 'Failed to delete blog.',
+      'error'
+    );
+  }
 };
-
-
   /* =======================================================
      ADD REFERRAL
   ======================================================= */
 
-  const handleAddReferral = (
+  const handleAddReferral = async (
   referralData: Omit<
     Referral,
     'id' | 'alumniId' | 'postedDate'
@@ -1528,78 +1549,141 @@ function AppContent() {
     return;
   }
 
-  const newReferral: Referral = {
-    ...referralData,
-    id:
-      `ref_${Math.random()
-        .toString(36)
-        .substring(2, 11)}`,
-    alumniId: session.alumniId,
-    postedDate:
-      new Date()
-        .toISOString()
-        .split('T')[0],
-  };
+  try {
+    const newReferral =
+      await alumniApi.createReferral(
+        session.alumniId,
+        {
+          companyName:
+            referralData.companyName,
+          role: referralData.role,
+          description:
+            referralData.description,
+          active: referralData.active,
+        }
+      );
 
-  setReferrals((previousReferrals) => [
-    newReferral,
-    ...previousReferrals,
-  ]);
+    setReferrals(
+      (previousReferrals) => [
+        newReferral,
+        ...previousReferrals,
+      ]
+    );
 
-  triggerToast(
-    'Referral opportunity posted successfully.',
-    'success'
-  );
+    triggerToast(
+      'Referral opportunity posted successfully.',
+      'success'
+    );
+  } catch (error) {
+    console.error(
+      'Failed to create referral:',
+      error
+    );
+
+    triggerToast(
+      error instanceof Error
+        ? error.message
+        : 'Failed to post referral.',
+      'error'
+    );
+  }
+};
+
+const handleUpdateReferral = async (
+  id: string,
+  data: Partial<Referral>
+) => {
+  try {
+    const existingReferral = referrals.find(
+      (referral) => referral.id === id
+    );
+
+    if (!existingReferral) {
+      throw new Error('Referral not found.');
+    }
+
+    const requestData = {
+      companyName:
+        data.companyName ?? existingReferral.companyName,
+      role:
+        data.role ?? existingReferral.role,
+      description:
+        data.description ?? existingReferral.description,
+      active:
+        data.active ?? existingReferral.active,
+    };
+
+    const updatedReferral =
+      await alumniApi.updateReferral(
+        id,
+        requestData
+      );
+
+    setReferrals((previousReferrals) =>
+      previousReferrals.map((referral) =>
+        referral.id === id
+          ? updatedReferral
+          : referral
+      )
+    );
+
+    triggerToast(
+      'Referral updated successfully.',
+      'success'
+    );
+  } catch (error) {
+    console.error(
+      'Failed to update referral:',
+      error
+    );
+
+    triggerToast(
+      error instanceof Error
+        ? error.message
+        : 'Unable to update referral.',
+      'error'
+    );
+  }
+};
+
+const handleDeleteReferral = async (
+  id: string
+) => {
+  try {
+    await alumniApi.deleteReferral(id);
+
+    setReferrals((previousReferrals) =>
+      previousReferrals.filter(
+        (referral) => referral.id !== id
+      )
+    );
+
+    triggerToast(
+      'Referral deleted successfully.',
+      'success'
+    );
+  } catch (error) {
+    console.error(
+      'Failed to delete referral:',
+      error
+    );
+
+    triggerToast(
+      error instanceof Error
+        ? error.message
+        : 'Unable to delete referral.',
+      'error'
+    );
+  }
 };
   /* =======================================================
      TOGGLE REFERRAL
   ======================================================= */
 
-  const handleToggleReferral = (
-    referralId: string
-  ) => {
-
-    setReferrals(
-      (previousReferrals) =>
-        previousReferrals.map(
-          (referral) =>
-            referral.id === referralId
-              ? {
-                  ...referral,
-                  active:
-                    !referral.active,
-                }
-              : referral
-        )
-    );
-
-    triggerToast(
-      'Referral status updated.',
-      'success'
-    );
-  };
-
-
   /* =======================================================
      UPDATE ALUMNI PROFILE
   ======================================================= */
 
-  const handleUpdateAlumniProfile = (
-  updatedAlumni: Alumni
-) => {
-  setAlumni((previousAlumni) =>
-    previousAlumni.map((item) =>
-      item.id === updatedAlumni.id
-        ? updatedAlumni
-        : item
-    )
-  );
-
-  triggerToast(
-    'Alumni profile saved successfully.',
-    'success'
-  );
-};
   /* =======================================================
      GET LOGGED-IN STUDENT
   ======================================================= */
@@ -2212,18 +2296,11 @@ function AppContent() {
                     onDeleteBlog={handleDeleteBlog}
 
                     onCreateReferral={handleAddReferral}
+                       onUpdateReferral={handleUpdateReferral}
+                      onDeleteReferral={handleDeleteReferral}
+ 
 
-                    onToggleReferral={handleToggleReferral}
-
-                    onUpdateProfile={handleUpdateAlumniProfile} onAddBlog={function (_blogData: Omit<Blog, 'id' | 'alumniId' | 'postedDate'>): void {
-                      throw new Error('Function not implemented.');
-                    } } onAddReferral={function (_referralData: Omit<Referral, 'id' | 'alumniId' | 'postedDate'>): void {
-                      throw new Error('Function not implemented.');
-                    } } onUpdateReferral={function (_id: string, _data: Partial<Referral>): void {
-                      throw new Error('Function not implemented.');
-                    } } onDeleteReferral={function (_id: string): void {
-                      throw new Error('Function not implemented.');
-                    } }                  />
+                    />
 
                 ) : (
 

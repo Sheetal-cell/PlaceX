@@ -1,3 +1,45 @@
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  'http://localhost:8080';
+
+const request = async <T>(
+  endpoint: string,
+  options?: RequestInit
+): Promise<T> => {
+  const response = await fetch(
+    `${API_BASE_URL}${endpoint}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.headers || {}),
+      },
+      ...options,
+    }
+  );
+
+  if (!response.ok) {
+    let message = 'Something went wrong';
+
+    try {
+      const errorData = await response.json();
+      message =
+        errorData.message ||
+        errorData.error ||
+        message;
+    } catch {
+      // Ignore JSON parsing failure
+    }
+
+    throw new Error(message);
+  }
+
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  return response.json();
+};
+
 export type AlumniStatus = 'PENDING' | 'APPROVED';
 
 export type BlogCategory =
@@ -63,6 +105,16 @@ export interface AlumniLoginRequest {
   password: string;
 }
 
+export interface AlumniProfileRequest {
+  name: string;
+  graduationYear: number;
+  currentCompany: string;
+  currentRole: string;
+  department: string;
+  linkedIn: string;
+}
+
+
 export interface BlogRequest {
   title: string;
   content: string;
@@ -87,187 +139,167 @@ const ALUMNI_KEY = 'placex_alumni';
 const BLOG_KEY = 'placex_alumni_blogs';
 const REFERRAL_KEY = 'placex_alumni_referrals';
 
-const read = <T>(key: string, fallback: T): T => {
-  try {
-    const value = localStorage.getItem(key);
-    return value ? JSON.parse(value) : fallback;
-  } catch {
-    return fallback;
-  }
-};
-
 const write = <T>(key: string, value: T) => {
   localStorage.setItem(key, JSON.stringify(value));
 };
 
 export const alumniApi = {
-  getAll(): Alumni[] {
-    return read<Alumni[]>(ALUMNI_KEY, []);
-  },
+  async getAll(): Promise<Alumni[]> {
+  return request<Alumni[]>('/api/alumni');
+},
 
   saveAll(alumni: Alumni[]) {
     write(ALUMNI_KEY, alumni);
   },
 
-  register(request: AlumniRegistrationRequest): Alumni {
-    const alumni = this.getAll();
-
-    const existing = alumni.find(
-      (item) => item.email.toLowerCase() === request.email.toLowerCase()
-    );
-
-    if (existing) {
-      throw new Error('An account with this email already exists.');
+  async register(
+  requestData: AlumniRegistrationRequest
+): Promise<Alumni> {
+  return request<Alumni>(
+    '/api/alumni/register',
+    {
+      method: 'POST',
+      body: JSON.stringify(requestData),
     }
+  );
+},
 
-    const newAlumni: Alumni = {
-      id: `ALU-${Date.now()}`,
-      ...request,
-      alumniStatus: 'PENDING'
-    };
-
-    this.saveAll([...alumni, newAlumni]);
-
-    return newAlumni;
-  },
-
-  login(request: AlumniLoginRequest): Alumni {
-    const alumni = this.getAll();
-
-    const account = alumni.find(
-      (item) =>
-        item.email.toLowerCase() === request.email.toLowerCase() &&
-        item.password === request.password
-    );
-
-    if (!account) {
-      throw new Error('Invalid alumni email or password.');
+  async login(
+  requestData: AlumniLoginRequest
+): Promise<Alumni> {
+  return request<Alumni>(
+    '/api/alumni/login',
+    {
+      method: 'POST',
+      body: JSON.stringify(requestData),
     }
+  );
+},
 
-    if (account.alumniStatus !== 'APPROVED') {
-      throw new Error(
-        'Your alumni registration is still waiting for TPO approval.'
-      );
+  async approve(id: string): Promise<void> {
+  await request<void>(
+    `/api/alumni/${id}/approve`,
+    {
+      method: 'PUT',
     }
+  );
+},
 
-    return account;
-  },
+  async reject(id: string): Promise<void> {
+  await request<void>(
+    `/api/alumni/${id}/reject`,
+    {
+      method: 'DELETE',
+    }
+  );
+},
 
-  approve(id: string) {
-    const alumni = this.getAll();
-
-    const updated = alumni.map((item) =>
-      item.id === id
-        ? {
-            ...item,
-            alumniStatus: 'APPROVED' as AlumniStatus
-          }
-        : item
-    );
-
-    this.saveAll(updated);
-  },
-
-  reject(id: string) {
-    const alumni = this.getAll();
-
-    /*
-     * The architecture defines PENDING / APPROVED.
-     * Therefore a rejected registration is removed from
-     * the pending registration list instead of introducing
-     * an unsupported REJECTED status.
-     */
-    this.saveAll(alumni.filter((item) => item.id !== id));
-  },
-
-  getBlogs(): Blog[] {
-    return read<Blog[]>(BLOG_KEY, []);
-  },
+  async getBlogs(): Promise<Blog[]> {
+  return request<Blog[]>(
+    '/api/alumni/blogs'
+  );
+},
 
   saveBlogs(blogs: Blog[]) {
     write(BLOG_KEY, blogs);
   },
 
-  createBlog(alumniId: string, request: BlogRequest): Blog {
-    const blog: Blog = {
-      id: `BLOG-${Date.now()}`,
-      title: request.title,
-      content: request.content,
-      category: request.category,
-      published: request.published,
-      postedDate: new Date().toISOString().split('T')[0],
-      alumniId
-    };
+  async createBlog(
+  alumniId: string,
+  requestData: BlogRequest
+): Promise<Blog> {
+  return request<Blog>(
+    `/api/alumni/${alumniId}/blogs`,
+    {
+      method: 'POST',
+      body: JSON.stringify(requestData),
+    }
+  );
+},
 
-    this.saveBlogs([blog, ...this.getBlogs()]);
+  async updateBlog(
+  id: string,
+  requestData: BlogRequest
+): Promise<Blog> {
+  return request<Blog>(
+    `/api/alumni/blogs/${id}`,
+    {
+      method: 'PUT',
+      body: JSON.stringify(requestData),
+    }
+  );
+},
 
-    return blog;
-  },
+  async deleteBlog(id: string): Promise<void> {
+  await request<void>(
+    `/api/alumni/blogs/${id}`,
+    {
+      method: 'DELETE',
+    }
+  );
+},
 
-  updateBlog(id: string, request: BlogRequest) {
-    const blogs = this.getBlogs();
-
-    const updated = blogs.map((blog) =>
-      blog.id === id
-        ? {
-            ...blog,
-            ...request
-          }
-        : blog
-    );
-
-    this.saveBlogs(updated);
-  },
-
-  deleteBlog(id: string) {
-    this.saveBlogs(this.getBlogs().filter((blog) => blog.id !== id));
-  },
-
-  getReferrals(): Referral[] {
-    return read<Referral[]>(REFERRAL_KEY, []);
-  },
+  async getReferrals(): Promise<Referral[]> {
+  return request<Referral[]>(
+    '/api/alumni/referrals'
+  );
+},
 
   saveReferrals(referrals: Referral[]) {
     write(REFERRAL_KEY, referrals);
   },
 
-  createReferral(
-    alumniId: string,
-    request: ReferralRequest
-  ): Referral {
-    const referral: Referral = {
-      id: `REF-${Date.now()}`,
-      alumniId,
-      companyName: request.companyName,
-      role: request.role,
-      description: request.description,
-      active: request.active,
-      postedDate: new Date().toISOString().split('T')[0]
-    };
+  async createReferral(
+  alumniId: string,
+  requestData: ReferralRequest
+): Promise<Referral> {
+  return request<Referral>(
+    `/api/alumni/${alumniId}/referrals`,
+    {
+      method: 'POST',
+      body: JSON.stringify(requestData),
+    }
+  );
+},
 
-    this.saveReferrals([referral, ...this.getReferrals()]);
+  async updateReferral(
+  id: string,
+  requestData: ReferralRequest
+): Promise<Referral> {
+  return request<Referral>(
+    `/api/alumni/referrals/${id}`,
+    {
+      method: 'PUT',
+      body: JSON.stringify(requestData),
+    }
+  );
+},
 
-    return referral;
+  async deleteReferral(id: string): Promise<void> {
+  await request<void>(
+    `/api/alumni/referrals/${id}`,
+    {
+      method: 'DELETE',
+    }
+  );
   },
+  async getProfile(id: string): Promise<Alumni> {
+  return request<Alumni>(
+    `/api/alumni/${id}`
+  );
+},
+async updateProfile(
+  id: string,
+  requestData: AlumniProfileRequest
+): Promise<Alumni> {
+  return request<Alumni>(
+    `/api/alumni/${id}`,
+    {
+      method: 'PUT',
+      body: JSON.stringify(requestData),
+    }
+  );
+}
 
-  updateReferral(id: string, request: ReferralRequest) {
-    const referrals = this.getReferrals();
-
-    const updated = referrals.map((referral) =>
-      referral.id === id
-        ? {
-            ...referral,
-            ...request
-          }
-        : referral
-    );
-
-    this.saveReferrals(updated);
-  },
-
-  deleteReferral(id: string) {
-    this.saveReferrals(
-      this.getReferrals().filter((referral) => referral.id !== id)
-    );
-  }
 };
+
