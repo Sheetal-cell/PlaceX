@@ -2211,17 +2211,17 @@ function AppContent() {
 
                     onDeleteBlog={handleDeleteBlog}
 
-                    onAddReferral={handleAddReferral}
+                    onCreateReferral={handleAddReferral}
 
                     onToggleReferral={handleToggleReferral}
 
-                    onUpdateProfile={handleUpdateAlumniProfile} onCreateReferral={function (_referralData: Omit<Referral, 'id' | 'alumniId' | 'postedDate'>): void {
+                    onUpdateProfile={handleUpdateAlumniProfile} onAddBlog={function (_blogData: Omit<Blog, 'id' | 'alumniId' | 'postedDate'>): void {
+                      throw new Error('Function not implemented.');
+                    } } onAddReferral={function (_referralData: Omit<Referral, 'id' | 'alumniId' | 'postedDate'>): void {
                       throw new Error('Function not implemented.');
                     } } onUpdateReferral={function (_id: string, _data: Partial<Referral>): void {
                       throw new Error('Function not implemented.');
                     } } onDeleteReferral={function (_id: string): void {
-                      throw new Error('Function not implemented.');
-                    } } onAddBlog={function (_blogData: Omit<Blog, 'id' | 'alumniId' | 'postedDate'>): void {
                       throw new Error('Function not implemented.');
                     } }                  />
 
