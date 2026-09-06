@@ -1298,9 +1298,11 @@ function AppContent() {
      REGISTER ALUMNI
   ======================================================= */
 
-  const handleRegisterAlumni = (
-    newAlumni: Alumni
-  ) => {
+  const handleRegisterAlumni = async (
+    requestData: any
+  ): Promise<void> => {
+
+    const newAlumni = requestData as Alumni;
 
     /*
      * Newly registered alumni are always

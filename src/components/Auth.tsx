@@ -28,6 +28,10 @@ import {
 import type { Student, Recruiter } from '../mockData';
 import type { Alumni } from '../mockAlumni';
 
+import type {
+  AlumniRegistrationRequest,
+} from '../api/alumniApi';
+
 import { Footer } from './Footer';
 import './Auth.css';
 
@@ -43,7 +47,9 @@ interface AuthProps {
 
   onRegister: (newStudent: Student) => void;
   onRegisterRecruiter: (newRecruiter: Recruiter) => void;
-  onRegisterAlumni: (newAlumni: Alumni) => void;
+  onRegisterAlumni: (
+    requestData: AlumniRegistrationRequest
+  ) => Promise<void>;
 
   onSeedData: () => void;
 }
@@ -415,7 +421,7 @@ export const Auth: React.FC<AuthProps> = ({
      ALUMNI SUBMIT
   ========================================================= */
 
-  const handleAlumniSubmit = (
+  const handleAlumniSubmit = async (
     e: React.FormEvent
   ) => {
     e.preventDefault();
@@ -435,70 +441,25 @@ export const Auth: React.FC<AuthProps> = ({
             .toLowerCase()
             .trim();
 
-        const foundAlumni =
-          alumni.find(
+        if (activeRole === 'alumni' && authMode === 'login') {
+          const alumniAccount = alumni.find(
             (a) =>
-              a.email
-                .toLowerCase()
-                .trim() === loginValue
+              a.email.toLowerCase().trim() === loginValue &&
+              a.password === studentPassword
           );
 
-        if (!foundAlumni) {
-          setError(
-            'No alumni account found with this email address.'
-          );
+          if (!alumniAccount) {
+            setError('Invalid alumni credentials.');
+          } else if (alumniAccount.alumniStatus !== 'APPROVED') {
+            setError('Your alumni account is still awaiting TPO approval.');
+          } else {
+            setError('');
+            onLogin('alumni', alumniAccount.id);
+          }
 
           setIsSubmitting(false);
           return;
         }
-
-        /* -----------------------------------------------
-           IMPORTANT:
-           Alumni must be approved by TPO before login.
-        ------------------------------------------------ */
-
-        if (
-          foundAlumni.alumniStatus ===
-          'PENDING'
-        ) {
-          setError(
-            'Your alumni registration is pending TPO approval. Please wait until the TPO approves your account.'
-          );
-
-          setIsSubmitting(false);
-          return;
-        }
-
-        if (
-          foundAlumni.alumniStatus !==
-          'APPROVED'
-        ) {
-          setError(
-            'Your alumni account is currently not approved.'
-          );
-
-          setIsSubmitting(false);
-          return;
-        }
-
-        if (
-          foundAlumni.password !==
-          studentPassword
-        ) {
-          setError(
-            'Invalid password. Please check your credentials.'
-          );
-
-          setIsSubmitting(false);
-          return;
-        }
-
-        setError('');
-
-        onLogin(
-          'alumni',
-          foundAlumni.id
-        );
 
         setIsSubmitting(false);
       }, 400);
@@ -991,7 +952,7 @@ export const Auth: React.FC<AuthProps> = ({
                     );
                   }}
                   className={`auth-mode-btn ${
-                    authMode === 'register'
+                    authMode === ('register' as 'login' | 'register')
                       ? 'active'
                       : ''
                   }`}
