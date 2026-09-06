@@ -45,6 +45,13 @@ interface AuthProps {
     id?: string
   ) => void;
 
+  onAlumniLogin: (
+  requestData: {
+    email: string;
+    password: string;
+  }
+) => Promise<void>;
+
   onRegister: (newStudent: Student) => void;
   onRegisterRecruiter: (newRecruiter: Recruiter) => void;
   onRegisterAlumni: (
@@ -566,35 +573,38 @@ export const Auth: React.FC<AuthProps> = ({
        CREATE ALUMNI ACCOUNT
     ===================================================== */
 
-    const newAlumni: Alumni = {
-      id: `alumni_${Math.random()
-        .toString(36)
-        .substring(2, 11)}`,
+    const registrationRequest: AlumniRegistrationRequest = {
+  name: alumniName.trim(),
+  email: normalizedEmail,
+  password: alumniPassword,
+  graduationYear,
+  currentCompany: alumniCompany.trim(),
+  currentRole: alumniCurrentRole.trim(),
+  department: alumniDepartment,
+  linkedIn: alumniLinkedIn.trim(),
+};
 
-      name: alumniName.trim(),
+try {
+  setIsSubmitting(true);
 
-      email: normalizedEmail,
+  await onRegisterAlumni(registrationRequest);
 
-      password: alumniPassword,
+  setStudentRegNo(registrationRequest.email);
+  setStudentPassword('');
+  setAuthMode('login');
 
-      graduationYear,
-
-      currentCompany:
-        alumniCompany.trim(),
-
-      currentRole:
-        alumniCurrentRole.trim(),
-
-      department:
-        alumniDepartment,
-
-      linkedIn:
-        alumniLinkedIn.trim(),
-
-      alumniStatus: 'PENDING'
-    };
-
-    onRegisterAlumni(newAlumni);
+  setError(
+    'Registration submitted successfully. Please wait for TPO approval before logging in.'
+  );
+} catch (error) {
+  setError(
+    error instanceof Error
+      ? error.message
+      : 'Unable to register alumni.'
+  );
+} finally {
+  setIsSubmitting(false);
+}
 
     /*
      * After registration:
@@ -603,9 +613,7 @@ export const Auth: React.FC<AuthProps> = ({
      * - Tell user that TPO approval is required.
      */
 
-    setStudentRegNo(
-      newAlumni.email
-    );
+    
 
     setStudentPassword('');
 

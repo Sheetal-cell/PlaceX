@@ -45,11 +45,10 @@ import type { CalendarEvent } from './api/types';
 
 import {
   alumniApi,
-} from './api/alumniApi';
-import type {
-  Alumni,
-  Blog,
-  Referral,
+  type Alumni,
+  type Blog,
+  type Referral,
+  type AlumniRegistrationRequest
 } from './api/alumniApi';
 
 import {
@@ -550,6 +549,68 @@ function AppContent() {
 
     navigate('/admin');
   };
+
+  const handleAlumniLogin = async (
+  requestData: {
+    email: string;
+    password: string;
+  }
+): Promise<void> => {
+  try {
+    const loggedInAlumni =
+      await alumniApi.login(requestData);
+
+    if (
+      loggedInAlumni.alumniStatus !== 'APPROVED'
+    ) {
+      throw new Error(
+        'Your alumni registration is pending TPO approval. Please wait until the TPO approves your account.'
+      );
+    }
+
+    setAlumni((previousAlumni) => {
+      const exists = previousAlumni.some(
+        (item) => item.id === loggedInAlumni.id
+      );
+
+      if (exists) {
+        return previousAlumni.map((item) =>
+          item.id === loggedInAlumni.id
+            ? loggedInAlumni
+            : item
+        );
+      }
+
+      return [
+        ...previousAlumni,
+        loggedInAlumni
+      ];
+    });
+
+    setSession({
+      role: 'alumni',
+      alumniId: loggedInAlumni.id
+    });
+
+    triggerToast(
+      `Welcome back, ${loggedInAlumni.name}!`,
+      'success'
+    );
+
+    navigate('/alumni');
+  } catch (error) {
+    console.error(
+      'Failed to login alumni:',
+      error
+    );
+
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Unable to login alumni.'
+    );
+  }
+};
 
 
   /* =======================================================
@@ -1299,107 +1360,115 @@ function AppContent() {
   ======================================================= */
 
   const handleRegisterAlumni = async (
-    requestData: any
-  ): Promise<void> => {
-
-    const newAlumni = requestData as Alumni;
-
-    /*
-     * Newly registered alumni are always
-     * PENDING until approved by TPO.
-     */
-
-    setAlumni(
-      (previousAlumni) => [
-        ...previousAlumni,
-        {
-          ...newAlumni,
-          alumniStatus: 'PENDING',
-        },
-      ]
+  requestData: AlumniRegistrationRequest
+): Promise<void> => {
+  try {
+    const createdAlumni = await alumniApi.register(
+      requestData
     );
+
+    setAlumni((previousAlumni) => [
+      ...previousAlumni,
+      createdAlumni
+    ]);
 
     triggerToast(
       'Alumni registration submitted. TPO approval is required before portal access.',
       'success'
     );
-  };
+  } catch (error) {
+    console.error(
+      'Failed to register alumni:',
+      error
+    );
 
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Unable to register alumni.'
+    );
+  }
+};
 
   /* =======================================================
      APPROVE ALUMNI
   ======================================================= */
 
-  const handleApproveAlumni = (
-    alumniId: string
-  ) => {
+  const handleApproveAlumni = async (
+  alumniId: string
+): Promise<void> => {
+  try {
+    await alumniApi.approve(alumniId);
 
-    const person =
-      alumni.find(
-        (item) =>
-          item.id === alumniId
-      );
-
-
-    setAlumni(
-      (previousAlumni) =>
-        previousAlumni.map(
-          (item) =>
-            item.id === alumniId
-              ? {
-                  ...item,
-                  alumniStatus:
-                    'APPROVED',
-                }
-              : item
-        )
+    setAlumni((previousAlumni) =>
+      previousAlumni.map((person) =>
+        person.id === alumniId
+          ? {
+              ...person,
+              alumniStatus: 'APPROVED'
+            }
+          : person
+      )
     );
-
 
     triggerToast(
-      `${person?.name || 'Alumni'} approved successfully.`,
+      'Alumni approved successfully.',
       'success'
     );
-  };
+  } catch (error) {
+    console.error(
+      'Failed to approve alumni:',
+      error
+    );
+
+    triggerToast(
+      error instanceof Error
+        ? error.message
+        : 'Unable to approve alumni.',
+      'error'
+    );
+  }
+};
 
 
   /* =======================================================
      REJECT ALUMNI
   ======================================================= */
 
-  const handleRejectAlumni = (
-    alumniId: string
-  ) => {
-
-    const person =
-      alumni.find(
-        (item) =>
-          item.id === alumniId
-      );
-
-
-    /*
-     * Since the current AlumniStatus model
-     * only contains PENDING and APPROVED,
-     * rejection removes the pending
-     * registration from the frontend store.
-     */
-
-    setAlumni(
-      (previousAlumni) =>
-        previousAlumni.filter(
-          (item) =>
-            item.id !== alumniId
-        )
+  const handleRejectAlumni = async (
+  alumniId: string
+): Promise<void> => {
+  try {
+    const person = alumni.find(
+      (item) => item.id === alumniId
     );
 
+    await alumniApi.reject(alumniId);
+
+    setAlumni((previousAlumni) =>
+      previousAlumni.filter(
+        (item) => item.id !== alumniId
+      )
+    );
 
     triggerToast(
-      `${person?.name || 'Alumni registration'} rejected.`,
+      `${person?.name || 'Alumni'} rejected.`,
       'warning'
     );
-  };
+  } catch (error) {
+    console.error(
+      'Failed to reject alumni:',
+      error
+    );
 
+    triggerToast(
+      error instanceof Error
+        ? error.message
+        : 'Unable to reject alumni.',
+      'error'
+    );
+  }
+};
 
   /* =======================================================
      ADD BLOG
@@ -2066,6 +2135,7 @@ const handleDeleteReferral = async (
                 onRegisterAlumni={
                   handleRegisterAlumni
                 }
+                onAlumniLogin={handleAlumniLogin}
 
                 onSeedData={
                   handleSeedData
