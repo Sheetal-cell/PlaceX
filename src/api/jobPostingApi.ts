@@ -4,7 +4,7 @@ import type {
   JobPostingRequest,
   DriveWithCompany,
 } from "./types";
-import { companyApi } from "./comapnyApi";
+import { companyApi } from "./companyApi";
 import { applicationApi } from "./applicationApi";
 
 export const jobPostingApi = {
