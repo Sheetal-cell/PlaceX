@@ -43,7 +43,7 @@ export const applicationApi = {
     data: {
       roundNumber: number;
       roundType: string;
-      scheduledAt: string; 
+      scheduledAt: string;
     }
   ) =>
     request<InterviewRoundResponse>(

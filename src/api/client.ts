@@ -5,27 +5,90 @@ async function request<T>(
   endpoint: string,
   options?: RequestInit
 ): Promise<T> {
-  const token = localStorage.getItem("token");
+  const token =
+    typeof window !== "undefined"
+      ? localStorage.getItem("token")
+      : null;
+
+  const publicEndpoints = [
+    "/auth/",
+    "/users/register",
+    "/recruiters/register",
+    "/students/add",
+    "/alumni/add",
+  ];
+
+  const isPublicEndpoint = publicEndpoints.some((path) =>
+    endpoint.startsWith(path)
+  );
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...((options?.headers as Record<string, string>) || {}),
+  };
+
+  if (!isPublicEndpoint && token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options?.headers || {}),
-    },
     ...options,
+    headers,
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+        window.dispatchEvent(new Event("auth:unauthorized"));
+      }
+    }
+
     const errorText = await response.text();
-    throw new Error(errorText || `API request failed: ${response.status}`);
+
+    let errorMessage = errorText;
+
+    try {
+      const jsonErr = JSON.parse(errorText);
+
+      if (jsonErr && typeof jsonErr === "object") {
+        if (
+          typeof jsonErr.message === "string" &&
+          jsonErr.message
+        ) {
+          errorMessage = jsonErr.message;
+        } else if (
+          typeof jsonErr.error === "string" &&
+          jsonErr.error
+        ) {
+          errorMessage = jsonErr.error;
+        }
+      }
+    } catch {
+      // Not JSON, use errorText
+    }
+
+    throw new Error(
+      errorMessage ||
+        `API request failed with status ${response.status}`
+    );
   }
 
   if (response.status === 204) {
     return undefined as T;
   }
 
-  return response.json();
+  const text = await response.text();
+
+  if (!text) {
+    return undefined as T;
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text as unknown as T;
+  }
 }
 
 export default request;

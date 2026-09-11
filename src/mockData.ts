@@ -7,53 +7,53 @@ export interface Application {
   status: 'Applied' | 'Test Scheduled' | 'Tech Round 1' | 'Tech Round 2' | 'HR Round' | 'Selected' | 'Rejected';
   currentRoundIndex: number; // Index matching the drive's rounds array
   feedback?: string;
-  resumeFeedback?:string;
+  resumeFeedback?: string;
 
-  technicalFeedback?:string;
+  technicalFeedback?: string;
 
-  hrFeedback?:string;
+  hrFeedback?: string;
 
-  overallRemark?:string;
+  overallRemark?: string;
 
-  rating?:number;
+  rating?: number;
 
-  nextStep?:string;
+  nextStep?: string;
 
 }
 
 export interface ResumeFeedback {
-    score: number;
-    status: "Excellent" | "Good" | "Needs Improvement";
+  score: number;
+  status: "Excellent" | "Good" | "Needs Improvement";
 
-    projects: string;
-    skills: string;
-    experience: string;
-    ats: string;
-    overall: string;
+  projects: string;
+  skills: string;
+  experience: string;
+  ats: string;
+  overall: string;
 
-    reviewedBy: string;
-    reviewedOn: string;
+  reviewedBy: string;
+  reviewedOn: string;
 }
 
 export interface Recruiter {
   id: string;
   name: string;
   email: string;
-  password?: string;
+  password: string;
   companyName: string;
   designation: string;
-  industry: string;
 }
 
 export interface Student {
   id: string;
   name: string;
   email: string;
-  password?: string;
+  registrationNumber?: string;
+  password: string;
 
   department: string;
   branch: string;
-  
+
   cgpa: number;
   backlogs: number;
   placementStatus: 'Placed' | 'Unplaced';
@@ -70,38 +70,75 @@ export interface Student {
 
 export interface PlacementDrive {
   id: string;
-  companyName: string;
-  title: string;                 
-  description: string;           
-  package: string;                
-  numericPackage: number;         
-  cgpaCutoff: number;
-  maxBacklogs: number;
-  allowedBranches: string[];
-  deadline: string;
-  skillsRequired: string[];
-  rounds: string[];
-  status: 'OPEN' | 'CLOSED';     
-  recruiterId?: string;           
-  companyId?: number;             
 
+  companyName: string;
+  title: string;
+  description: string;
+
+  location?: string;
+
+  package: string;
+  numericPackage: number;
+
+  // Campus-only eligibility fields
+  cgpaCutoff: number | null;
+  maxBacklogs: number | null;
+  allowedBranches: string[] | null;
+  eligibleBatch?: string | null;
+  deadline: string | null;
+  skillsRequired: string[] | null;
+
+  rounds: string[];
+
+  status: 'OPEN' | 'CLOSED';
+
+  recruiterId?: string;
+  companyId?: number;
+
+  role: string;
+  registeredCount?: number;
+  jobDesc: string;
+
+  active?: boolean;
+  salary?: number;
+
+  // Backend recruitment classification
+  // CAMPUS = On Campus
+  // OFF_CAMPUS = Scraped Off Campus
+  recruitmentType: 'CAMPUS' | 'OFF_CAMPUS';
+
+  sourceType?: 'RECRUITER' | 'TPO' | 'DATASET' | 'SCRAPER';
+
+  // Off-campus / scraper fields
+  applyUrl?: string | null;
+  source?: string | null;
+  postedAt?: string | null;
+  jobType?: string | null;
+  roleCategory?: string | null;
+  scrapedDate?: string | null;
+}
 export const INITIAL_DRIVES: PlacementDrive[] = [
   {
     id: 'drv_1',
     companyName: 'Google',
-    title: 'Associate Software Engineer',            // was: role
+    title: 'Associate Software Engineer', // was: role
     description: 'Join Google as an Associate Software Engineer. You will work on massive scale services, cloud infrastructure, and next-generation search systems. Strong algorithms and system design skills required.', // was: jobDesc
     package: '32 LPA',
     numericPackage: 32,
     cgpaCutoff: 8.5,
     maxBacklogs: 0,
     allowedBranches: ['Computer Science', 'Information Technology'],
+    eligibleBatch: '2026 Batch',
     deadline: '2026-06-25',
     skillsRequired: ['React', 'TypeScript', 'Node.js', 'Data Structures', 'System Design'],
     rounds: ['Online Coding Test', 'Technical Round 1', 'Technical Round 2', 'HR Interview'],
-    status: 'OPEN',                                    // was: active: true + status: ""
+    status: 'OPEN', // was: active: true + status: ""
     registeredCount: 42,
     recruiterId: 'rec_1',
+    role: "",
+    jobDesc: "",
+    recruitmentType: 'CAMPUS',
+sourceType: 'RECRUITER',
   },
 
   {
@@ -123,8 +160,10 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     title: "",
     description: "",
     salary: 0,
-    status: "",
-    companyId: 0
+    status: "OPEN",
+    companyId: 0,
+    recruitmentType: 'CAMPUS',
+sourceType: 'RECRUITER',
   },
   {
     id: 'drv_3',
@@ -144,8 +183,10 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     title: "",
     description: "",
     salary: 0,
-    status: "",
-    companyId: 0
+    status: "OPEN",
+    companyId: 0,
+    recruitmentType: 'CAMPUS',
+    sourceType: 'RECRUITER'
   },
   {
     id: 'drv_4',
@@ -165,8 +206,10 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     title: "",
     description: "",
     salary: 0,
-    status: "",
-    companyId: 0
+    status: "OPEN",
+    companyId: 0,
+    recruitmentType: 'CAMPUS',
+    sourceType: 'RECRUITER'
   },
   {
     id: 'drv_5',
@@ -186,8 +229,10 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     title: "",
     description: "",
     salary: 0,
-    status: "",
-    companyId: 0
+    status: "OPEN",
+    companyId: 0,
+    recruitmentType: 'CAMPUS',
+    sourceType: 'RECRUITER'
   },
   {
     id: 'drv_6',
@@ -207,8 +252,10 @@ export const INITIAL_DRIVES: PlacementDrive[] = [
     title: "",
     description: "",
     salary: 0,
-    status: "",
-    companyId: 0
+    status: "CLOSED",
+    companyId: 0,
+    recruitmentType: 'CAMPUS',
+    sourceType: 'RECRUITER'
   }
 ];
 
@@ -219,8 +266,7 @@ export const INITIAL_RECRUITERS: Recruiter[] = [
     email: 'ananya.iyer@google.com',
     password: 'recruiter123',
     companyName: 'Google',
-    designation: 'Senior Technical Recruiter',
-    industry: 'Technology'
+    designation: 'Senior Technical Recruiter'
   },
   {
     id: 'rec_2',
@@ -228,8 +274,7 @@ export const INITIAL_RECRUITERS: Recruiter[] = [
     email: 'wei.zhang@microsoft.com',
     password: 'recruiter123',
     companyName: 'Microsoft',
-    designation: 'Campus Recruitment Lead',
-    industry: 'Technology'
+    designation: 'Campus Recruitment Lead'
   }
 ];
 
@@ -238,6 +283,7 @@ export const INITIAL_STUDENTS: Student[] = [
     id: 'std_1',
     name: 'Aravind Sharma',
     email: 'aravind.sharma@univ.edu',
+    registrationNumber: '241000110423',
     password: 'student123',
     department: 'Computer Science',
     cgpa: 9.1,
@@ -267,6 +313,7 @@ export const INITIAL_STUDENTS: Student[] = [
     id: 'std_2',
     name: 'Rohan Mehra',
     email: 'rohan.mehra@univ.edu',
+    registrationNumber: '241000110523',
     password: 'student123',
     department: 'Computer Science',
     cgpa: 8.3,
@@ -303,6 +350,7 @@ export const INITIAL_STUDENTS: Student[] = [
     id: 'std_3',
     name: 'Sneha Reddy',
     email: 'sneha.reddy@univ.edu',
+    registrationNumber: '241000110560',
     password: 'student123',
     department: 'Information Technology',
     cgpa: 7.9,
@@ -339,6 +387,7 @@ export const INITIAL_STUDENTS: Student[] = [
     id: 'std_4',
     name: 'Karan Malhotra',
     email: 'karan.malhotra@univ.edu',
+    registrationNumber: '241000110559',
     password: 'student123',
     department: 'Electronics',
     cgpa: 8.6,
@@ -368,6 +417,7 @@ export const INITIAL_STUDENTS: Student[] = [
     id: 'std_5',
     name: 'Priyanka Das',
     email: 'priyanka.das@univ.edu',
+    registrationNumber: '241000110674',
     password: 'student123',
     department: 'Electrical',
     cgpa: 7.2,
@@ -394,6 +444,7 @@ export const INITIAL_STUDENTS: Student[] = [
     id: 'std_6',
     name: 'Vikram Aditya',
     email: 'vikram.aditya@univ.edu',
+    registrationNumber: '241000110550',
     password: 'student123',
     department: 'Mechanical',
     cgpa: 6.8,

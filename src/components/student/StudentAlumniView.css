@@ -1,0 +1,784 @@
+.student-alumni-page {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 8px 0 40px;
+  animation: studentAlumniFadeIn 0.35s ease;
+}
+
+@keyframes studentAlumniFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* HEADER */
+
+.student-alumni-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.student-alumni-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #dbeafe;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.student-alumni-header h1 {
+  margin: 12px 0 6px;
+  color: #0f172a;
+  font-size: clamp(25px, 3vw, 34px);
+  line-height: 1.15;
+  font-weight: 850;
+  letter-spacing: -0.03em;
+}
+
+.student-alumni-header p {
+  margin: 0;
+  max-width: 720px;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.student-alumni-header-icon {
+  flex: 0 0 auto;
+}
+
+.student-alumni-graduation-icon {
+  width: 78px;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 22px;
+  color: #2563eb;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border: 1px solid #bfdbfe;
+}
+
+/* STATS */
+
+.student-alumni-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.student-alumni-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 86px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+.student-alumni-stat-icon {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+}
+
+.student-alumni-stat-icon.blue {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.student-alumni-stat-icon.green {
+  color: #059669;
+  background: #ecfdf5;
+}
+
+.student-alumni-stat-icon.amber {
+  color: #d97706;
+  background: #fffbeb;
+}
+
+.student-alumni-stat-card span {
+  display: block;
+  margin-bottom: 3px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.student-alumni-stat-card strong {
+  display: block;
+  color: #0f172a;
+  font-size: 22px;
+  font-weight: 850;
+}
+
+/* TOOLBAR */
+
+.student-alumni-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.student-alumni-tabs {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 13px;
+}
+
+.student-alumni-tabs button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.student-alumni-tabs button:hover {
+  color: #2563eb;
+}
+
+.student-alumni-tabs button.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+}
+
+.student-alumni-search {
+  width: min(310px, 100%);
+  height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  border: 1px solid #dbe3ec;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #94a3b8;
+}
+
+.student-alumni-search:focus-within {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.08);
+}
+
+.student-alumni-search input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #0f172a;
+  font-size: 13px;
+}
+
+.student-alumni-search input::placeholder {
+  color: #94a3b8;
+}
+
+/* FILTER */
+
+.student-alumni-filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 15px;
+}
+
+.student-alumni-filter-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.student-alumni-filter-label > span {
+  color: #475569;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.student-alumni-select-wrapper {
+  position: relative;
+}
+
+.student-alumni-select-wrapper select {
+  appearance: none;
+  min-width: 205px;
+  height: 38px;
+  padding: 0 34px 0 11px;
+  border: 1px solid #dbe3ec;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+}
+
+.student-alumni-select-wrapper svg {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #64748b;
+}
+
+.student-alumni-result-count {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+/* BLOG GRID */
+
+.student-alumni-blog-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.student-alumni-blog-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 310px;
+  padding: 19px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 17px;
+  box-shadow: 0 5px 18px rgba(15, 23, 42, 0.045);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.student-alumni-blog-card:hover {
+  transform: translateY(-2px);
+  border-color: #bfdbfe;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+}
+
+.student-alumni-blog-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.student-alumni-category {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.student-alumni-category.interview {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.student-alumni-category.career {
+  color: #0369a1;
+  background: #f0f9ff;
+}
+
+.student-alumni-category.referral {
+  color: #047857;
+  background: #ecfdf5;
+}
+
+.student-alumni-category.general {
+  color: #475569;
+  background: #f1f5f9;
+}
+
+.student-alumni-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.student-alumni-blog-card h2 {
+  margin: 0 0 9px;
+  color: #0f172a;
+  font-size: 19px;
+  line-height: 1.35;
+  font-weight: 850;
+  letter-spacing: -0.015em;
+}
+
+.student-alumni-blog-preview {
+  margin: 0 0 18px;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.student-alumni-author {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: auto;
+  padding-top: 13px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.student-alumni-avatar {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.student-alumni-author-info strong {
+  display: block;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.student-alumni-author-info span {
+  display: block;
+  margin-top: 2px;
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.student-alumni-read-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 850;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.student-alumni-read-button:hover {
+  background: #dbeafe;
+}
+
+/* REFERRALS */
+
+.student-alumni-referral-list {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.student-alumni-referral-card {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.04);
+}
+
+.student-alumni-referral-main {
+  display: flex;
+  gap: 13px;
+  min-width: 0;
+}
+
+.student-alumni-company-icon {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.student-alumni-referral-content {
+  min-width: 0;
+}
+
+.student-alumni-referral-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.student-alumni-referral-title-row h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 17px;
+  font-weight: 850;
+}
+
+.student-alumni-referral-title-row h3 {
+  margin: 3px 0 0;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.student-alumni-referral-content > p {
+  max-width: 760px;
+  margin: 9px 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.student-alumni-active-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 9px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.student-alumni-referral-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 13px;
+}
+
+.student-alumni-referral-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.student-alumni-contact-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-width: 125px;
+}
+
+.student-alumni-contact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 35px;
+  padding: 0 10px;
+  border-radius: 9px;
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.student-alumni-contact.linkedin {
+  color: #0369a1;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+}
+
+.student-alumni-contact.email {
+  color: #475569;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.student-alumni-contact:hover {
+  filter: brightness(0.97);
+}
+
+.student-alumni-no-contact {
+  color: #94a3b8;
+  font-size: 10px;
+  text-align: center;
+}
+
+/* EMPTY STATE */
+
+.student-alumni-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 30px;
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.student-alumni-empty-icon {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  border-radius: 17px;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.student-alumni-empty-state h3 {
+  margin: 0 0 6px;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 850;
+}
+
+.student-alumni-empty-state p {
+  max-width: 430px;
+  margin: 0;
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* MODAL */
+
+.student-alumni-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(5px);
+}
+
+.student-alumni-modal {
+  width: min(800px, 100%);
+  max-height: min(720px, 90vh);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+}
+
+.student-alumni-modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 24px 18px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.student-alumni-modal-header h2 {
+  margin: 12px 0;
+  color: #0f172a;
+  font-size: 25px;
+  line-height: 1.3;
+  font-weight: 850;
+}
+
+.student-alumni-modal-author {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.student-alumni-modal-author strong {
+  display: block;
+  color: #334155;
+  font-size: 11px;
+}
+
+.student-alumni-modal-author span {
+  display: block;
+  margin-top: 2px;
+  color: #94a3b8;
+  font-size: 10px;
+}
+
+.student-alumni-modal-close {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border: 0;
+  border-radius: 9px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.student-alumni-modal-close:hover {
+  background: #e2e8f0;
+}
+
+.student-alumni-modal-content {
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.student-alumni-modal-content p {
+  margin: 0 0 15px;
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.85;
+}
+
+@media (max-width: 900px) {
+  .student-alumni-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .student-alumni-blog-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .student-alumni-referral-card {
+    flex-direction: column;
+  }
+
+  .student-alumni-contact-actions {
+    flex-direction: row;
+    min-width: 0;
+  }
+
+  .student-alumni-contact {
+    flex: 1;
+  }
+}
+
+@media (max-width: 700px) {
+  .student-alumni-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .student-alumni-tabs {
+    width: 100%;
+  }
+
+  .student-alumni-tabs button {
+    flex: 1;
+  }
+
+  .student-alumni-search {
+    width: 100%;
+  }
+
+  .student-alumni-filter-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .student-alumni-filter-label {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .student-alumni-header-icon {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .student-alumni-page {
+    padding-bottom: 25px;
+  }
+
+  .student-alumni-blog-top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .student-alumni-referral-main {
+    align-items: flex-start;
+  }
+
+  .student-alumni-referral-title-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .student-alumni-contact-actions {
+    flex-direction: column;
+  }
+
+  .student-alumni-modal-header {
+    padding: 18px;
+  }
+
+  .student-alumni-modal-content {
+    padding: 18px;
+  }
+}

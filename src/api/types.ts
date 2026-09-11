@@ -2,12 +2,28 @@ export interface StudentResponse {
   id: string;
   name: string;
   email: string;
+  registrationNumber?: string;
   phone: string;
   department: string;
-  CGPA: number;
+  CGPA?: number;
+  cgpa?: number;
   activeBacklogs: number;
   resumeUrl: string;
   year: number;
+}
+
+export interface StudentRequest {
+  id: string;
+  name: string;
+  email: string;
+  password?: string;
+  phone: string;
+  department: string;
+  activeBacklogs?: number;
+  resumeUrl: string;
+  year: number;
+  CGPA?: number;
+  cgpa?: number;
 }
 export interface CompanyResponse {
   id: number;
@@ -27,49 +43,108 @@ export interface CompanyRequest {
 
 export interface JobPostingResponse {
   id: number;
+
   title: string;
   description: string;
-  salary: number;
-  deadline: string;
-  status: string;             
-  eligibleCGPACutoff: number;
-  allowedBacklogs: number;
-  allowedBranches: string;
-  requiredSkills: string;
-  companyId: number;
-  location: string;            
+
+  salary?: number | null;
+  deadline?: string | null;
+
+  status: string;
+
+  // Campus-only fields
+  eligibleCGPACutoff?: number | null;
+  allowedBacklogs?: number | null;
+  allowedBranches?: string | null;
+  eligibleBatch?: string | null;
+  requiredSkills?: string | null;
+
+  companyId?: number | null;
+  companyName?: string | null;
+
+  location?: string | null;
+
+  // Recruitment classification
+  recruitmentType?: 'CAMPUS' | 'OFF_CAMPUS';
+  sourceType?: 'RECRUITER' | 'TPO' | 'DATASET' | 'SCRAPER';
+
+  // Scraped/off-campus fields
+  applyUrl?: string | null;
+  source?: string | null;
+  postedAt?: string | null;
+  jobType?: string | null;
+  roleCategory?: string | null;
+  scrapedDate?: string | null;
+}
 
 export interface JobPostingRequest {
   title: string;
   description?: string;
-  eligibleCGPACutoff?: number;
-  allowedBacklogs?: number;
-  allowedBranches?: string;
-  requiredSkills?: string;
-  salary?: number;
-  deadline: string;
-  companyId?: number;
-  location?: string;           
-}
 
+  // Campus-only fields
+  eligibleCGPACutoff?: number | null;
+  allowedBacklogs?: number | null;
+  allowedBranches?: string | null;
+  eligibleBatch?: string | null;
+  requiredSkills?: string | null;
+
+  salary?: number | null;
+  deadline?: string | null;
+
+  companyId?: number | null;
+  location?: string | null;
+
+  // Recruitment classification
+  recruitmentType: 'CAMPUS' | 'OFF_CAMPUS';
+
+  sourceType?: 'RECRUITER' | 'TPO' | 'DATASET' | 'SCRAPER';
+
+  // Scraped job fields
+  applyUrl?: string | null;
+  source?: string | null;
+  postedAt?: string | null;
+  jobType?: string | null;
+  roleCategory?: string | null;
+  scrapedDate?: string | null;
+}
 export interface DriveWithCompany {
   id: string;
+
   companyId: number;
   companyName: string;
+
   title: string;
   description: string;
   location: string;
+
   package: string;
   numericPackage: number;
-  cgpaCutoff: number;
-  maxBacklogs: number;
-  allowedBranches: string[];
-  deadline: string;
-  skillsRequired: string[];
-  status: 'OPEN' | 'CLOSED';
-  registeredCount: number;
-}
 
+  // Campus fields can be null for off-campus jobs
+  cgpaCutoff: number | null;
+  maxBacklogs: number | null;
+  allowedBranches: string[] | null;
+  eligibleBatch?: string | null;
+  deadline: string | null;
+  skillsRequired: string[] | null;
+
+  status: 'OPEN' | 'CLOSED';
+
+  registeredCount: number;
+
+  // Recruitment classification
+  recruitmentType: 'CAMPUS' | 'OFF_CAMPUS';
+
+  sourceType?: 'RECRUITER' | 'TPO' | 'DATASET' | 'SCRAPER';
+
+  // Off-campus fields
+  applyUrl?: string | null;
+  source?: string | null;
+  postedAt?: string | null;
+  jobType?: string | null;
+  roleCategory?: string | null;
+  scrapedDate?: string | null;
+}
 export type RecruiterStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 export interface RecruiterResponse {
@@ -77,8 +152,8 @@ export interface RecruiterResponse {
   name: string;
   email: string;
   companyName: string;
-  designation: string;
-  industry: string;
+  designation?: string;
+  industry?: string;
   recruiterStatus: RecruiterStatus;
 }
 export interface RecruiterRequest {
@@ -89,7 +164,7 @@ export interface RecruiterRequest {
   designation?: string;
   industry?: string;
 }
-export type Role = "TPO" | "RECRUITER" | "STUDENT";
+export type Role = "TPO" | "RECRUITER" | "STUDENT" | "ALUMNI";
 
 export interface LoginRequest {
   email: string;
@@ -132,6 +207,7 @@ export interface StudentWithPlacement {
   id: string;
   name: string;
   email: string;
+  registrationNumber?: string;
   department: string;
   cgpa: number;
   backlogs: number;
@@ -179,15 +255,86 @@ export interface InterviewRoundResponse {
 }
 
 export interface CalendarEvent {
-  id: number;
+  id: number | string;
   title: string;
   eventType: string;
-  companyId: number;
-  companyName: string;
+  companyId?: number;
+  companyName?: string;
+  company?: string;
+  role?: string;
   scheduledDate: string;
   startTime: string;
-  endTime: string;
-  location: string;
-  description: string;
+  endTime?: string;
+  location?: string;
+  venue?: string;
+  description?: string;
+  status?: string;
+  branches?: string[];
+  isPrivate?: boolean;
+}
+
+export interface StudentRoundVisualizerResponse {
+  studentId: string;
+  jobPostingId: number;
+  applicationId: number;
+  interviewRoundId?: number;
+  feedback?: string;
+  scheduledAt?: string;
   status: string;
+  roundNumber?: number;
+  roundType?: string;
+  appliedDate?: string;
+}
+
+export interface TPOUserRequest {
+  name: string;
+  email: string;
+  password?: string;
+}
+
+export interface TPOUserResponse {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export interface AlumniRequest {
+  id?: number;
+  email?: string;
+  password?: string;
+  name?: string;
+  bio?: string;
+  location?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  hashNodeUrl?: string;
+  devToUrl?: string;
+}
+
+export interface AlumniResponse {
+  id: number;
+  email: string;
+  name: string;
+  bio?: string;
+  location?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  hashNodeUrl?: string;
+  devToUrl?: string;
+}
+
+export interface AlumniBlogRequest {
+  id?: number;
+  title?: string;
+  description?: string;
+  alumniId: number;
+}
+
+export interface AlumniBlogResponse {
+  id: number;
+  title: string;
+  description: string;
+  updatedAt?: string;
+  createdAt?: string;
+  alumniId: number;
 }

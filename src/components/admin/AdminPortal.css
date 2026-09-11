@@ -1,0 +1,363 @@
+/* ----------------------------------------------------
+   PlaceX Admin / TPO Portal Design System & Scoped CSS
+   ChatGPT / Gemini-style Persistent Expanding Sidebar
+   ---------------------------------------------------- */
+
+:root {
+  --ap-bg: #F8FAFC;
+  --ap-surface: #FFFFFF;
+  --ap-surface-secondary: #F1F5F9;
+  --ap-surface-tertiary: #E2E8F0;
+  --ap-border: #E2E8F0;
+  
+  --ap-primary: #2563EB;
+  --ap-primary-hover: #1D4ED8;
+  --ap-primary-light: #EFF6FF;
+  
+  --ap-text-primary: #0F172A;
+  --ap-text-secondary: #334155;
+  --ap-text-muted: #64748B;
+  
+  --ap-sidebar-collapsed-width: 72px;
+  --ap-sidebar-expanded-width: 280px;
+
+  --ap-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  --ap-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --ap-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  
+  --ap-radius-sm: 8px;
+  --ap-radius-md: 12px;
+  --ap-radius-lg: 16px;
+  --ap-radius-xl: 24px;
+}
+
+.ap-layout {
+  min-height: calc(100vh - 64px);
+  background-color: var(--ap-bg);
+  color: var(--ap-text-primary);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.ap-main-shell {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  position: relative;
+}
+
+/* Persistent Desktop Sidebar (72px -> 280px Width Transition) */
+.ap-sidebar {
+  position: fixed;
+  top: 64px;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  background-color: var(--ap-surface);
+  border-right: 1px solid var(--ap-border);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--ap-shadow-sm);
+  overflow-x: hidden;
+}
+
+.ap-sidebar-collapsed {
+  width: var(--ap-sidebar-collapsed-width);
+}
+
+.ap-sidebar-expanded {
+  width: var(--ap-sidebar-expanded-width);
+}
+
+.ap-sidebar-brand {
+  height: 64px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--ap-border);
+  flex-shrink: 0;
+}
+
+.ap-brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ap-brand-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ap-radius-md);
+  background: linear-gradient(135deg, #1E40AF, #3B82F6);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
+}
+
+.ap-brand-text {
+  font-family: var(--font-display, 'Outfit', sans-serif);
+  font-weight: 800;
+  font-size: 1.125rem;
+  color: var(--ap-text-primary);
+}
+
+.ap-sidebar-toggle-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--ap-radius-md);
+  border: 1px solid var(--ap-border);
+  background-color: var(--ap-surface);
+  color: var(--ap-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.ap-sidebar-toggle-btn:hover {
+  background-color: var(--ap-surface-secondary);
+  color: var(--ap-text-primary);
+  border-color: #CBD5E1;
+}
+
+.ap-sidebar-profile-card {
+  margin: 14px 14px 6px 14px;
+  padding: 12px;
+  background-color: var(--ap-surface-secondary);
+  border: 1px solid var(--ap-border);
+  border-radius: var(--ap-radius-md);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ap-avatar-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #1E3A8A, #2563EB);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ap-sidebar-nav {
+  flex: 1;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+
+.ap-nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: var(--ap-radius-md);
+  color: var(--ap-text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.ap-nav-item:hover {
+  background-color: var(--ap-surface-secondary);
+  color: var(--ap-text-primary);
+}
+
+.ap-nav-item.active {
+  background-color: var(--ap-primary-light);
+  color: var(--ap-primary);
+  font-weight: 700;
+}
+
+.ap-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3.5px;
+  border-radius: 0 4px 4px 0;
+  background-color: var(--ap-primary);
+}
+
+.ap-nav-icon {
+  flex-shrink: 0;
+}
+
+.ap-nav-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Fixed Hover Tooltip */
+.ap-fixed-tooltip {
+  position: fixed;
+  left: 82px;
+  transform: translateY(-50%);
+  background-color: #0F172A;
+  color: #FFFFFF;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: var(--ap-radius-sm);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 99999;
+  box-shadow: var(--ap-shadow-lg);
+  animation: apTooltipFade 0.15s ease-out;
+}
+
+@keyframes apTooltipFade {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+/* Content Container & Offset Architecture */
+.ap-content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Persistent Margined Layout Offset Rules when Sidebar is visible */
+@media (min-width: 768px) {
+  .ap-sidebar-collapsed ~ .ap-content-wrapper {
+    margin-left: var(--ap-sidebar-collapsed-width) !important;
+  }
+
+  .ap-sidebar-expanded ~ .ap-content-wrapper {
+    margin-left: var(--ap-sidebar-expanded-width) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .ap-sidebar {
+    display: none !important;
+  }
+  .ap-sidebar-collapsed ~ .ap-content-wrapper,
+  .ap-sidebar-expanded ~ .ap-content-wrapper,
+  .ap-content-wrapper {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
+
+.ap-workspace {
+  padding: 36px 32px;
+  flex: 1;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.ap-card {
+  background-color: var(--ap-surface);
+  border: 1px solid var(--ap-border);
+  border-radius: var(--ap-radius-lg);
+  padding: 28px;
+  box-shadow: var(--ap-shadow-sm);
+}
+
+@media (max-width: 768px) {
+  .ap-workspace {
+    padding: 20px 16px;
+  }
+  .ap-card {
+    padding: 20px;
+  }
+}
+
+.ap-kanban-board {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 14px;
+}
+
+.ap-kanban-column {
+  flex: 1;
+  min-width: 280px;
+  background-color: #F8FAFC;
+  border: 1px solid var(--ap-border);
+  border-radius: var(--ap-radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ap-candidate-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--ap-border);
+  border-radius: var(--ap-radius-md);
+  padding: 18px;
+  box-shadow: var(--ap-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ap-mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000000 !important;
+}
+
+.ap-mobile-drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  height: 100vh;
+  height: 100dvh;
+  width: 290px;
+  max-width: 85vw;
+  background-color: #ffffff;
+  z-index: 1000005 !important;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow-y: auto;
+}

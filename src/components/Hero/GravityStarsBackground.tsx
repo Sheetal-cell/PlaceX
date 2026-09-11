@@ -44,8 +44,7 @@ export const GravityStarsBackground: React.FC<GravityStarsBackgroundProps> = ({
   const starsRef = useRef<Star[]>([]);
   const mouseRef = useRef({ x: 0, y: 0, active: false });
   const [reducedMotion, setReducedMotion] = useState(false);
-  const starColorRef = useRef("#FFFDF8");
-  const isLightRef = useRef(false);
+  const starColorRef = useRef("#18577F");
 
   // Detect prefers-reduced-motion
   useEffect(() => {
@@ -54,29 +53,6 @@ export const GravityStarsBackground: React.FC<GravityStarsBackgroundProps> = ({
     const handleQueryChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     mediaQuery.addEventListener("change", handleQueryChange);
     return () => mediaQuery.removeEventListener("change", handleQueryChange);
-  }, []);
-
-  // Update dynamic color based on container computed text style
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const updateColor = () => {
-      const isLight = document.documentElement.classList.contains("light");
-      isLightRef.current = isLight;
-      // Use Deep Navy #071923 for light theme, Soft Blue-White #F5FAFF for dark theme
-      starColorRef.current = isLight ? "#071923" : "#F5FAFF";
-    };
-
-    updateColor();
-
-    const observer = new MutationObserver(updateColor);
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class"]
-    });
-
-    return () => observer.disconnect();
   }, []);
 
   // Mouse move listener
@@ -229,12 +205,8 @@ export const GravityStarsBackground: React.FC<GravityStarsBackgroundProps> = ({
           star.alpha = star.originalAlpha;
         }
 
-        // Draw glow (disable shadow blur in light mode to keep dark stars crisp and visible)
+        // Draw star particle
         ctx.save();
-        if (glowIntensity > 0 && !reducedMotion && !isLightRef.current) {
-          ctx.shadowBlur = glowIntensity * star.size;
-          ctx.shadowColor = color;
-        }
 
         ctx.fillStyle = color;
         ctx.globalAlpha = star.alpha * starsOpacity;
