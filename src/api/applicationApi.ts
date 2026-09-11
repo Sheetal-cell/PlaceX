@@ -44,6 +44,7 @@ export const applicationApi = {
       roundNumber: number;
       roundType: string;
       scheduledAt: string; 
+    }
   ) =>
     request<InterviewRoundResponse>(
       `/applications/${applicationId}/rounds`,

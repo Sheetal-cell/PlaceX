@@ -3,6 +3,7 @@ import { Shield, GraduationCap, ArrowRight, LogIn, UserPlus, Mail, Database, Eye
 import type { Student, Recruiter } from '../mockData';
 import { Footer } from './Footer';
 import { Hero } from './Hero/Hero';
+import { authApi } from '../api/authApi';
 
 interface AuthProps {
   students: Student[];
@@ -70,22 +71,24 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleStudentSubmit = (e: React.FormEvent) => {
+  const handleStudentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (studentAuthMode === 'login') {
       setIsSubmitting(true);
-      window.setTimeout(() => {
-        const student = students.find(
-          (s) => s.email.toLowerCase().trim() === studentEmail.toLowerCase().trim()
-        );
-        if (student && student.password === studentPassword) {
-          setError('');
-          onLogin('student', student.id);
-        } else {
-          setError('Invalid student credentials. Please check email/password.');
-        }
-        setIsSubmitting(false);
-      }, 450);
+        try {
+               const response = await authApi.login({
+                 email: studentEmail,
+                 password: studentPassword,
+                 role: "STUDENT"
+               });
+               localStorage.setItem("token", response.token);
+               localStorage.setItem("role", response.role);
+               setError('');
+               onLogin('student');
+            }              catch (err) {
+               setError('Invalid student credentials. Please check email/password.');
+             }
+             setIsSubmitting(false);
       return;
     } else {
       // Validate registration
@@ -133,22 +136,26 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
     }
   };
 
-  const handleRecruiterSubmit = (e: React.FormEvent) => {
+  const handleRecruiterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (recruiterAuthMode === 'login') {
       setIsSubmitting(true);
-      window.setTimeout(() => {
-        const recruiter = recruiters.find(
-          (r) => r.email.toLowerCase().trim() === recruiterEmail.toLowerCase().trim()
-        );
-        if (recruiter && recruiter.password === recruiterPassword) {
-          setError('');
-          onLogin('recruiter', recruiter.id);
-        } else {
-          setError('Invalid recruiter credentials. Please check email/password.');
-        }
-        setIsSubmitting(false);
-      }, 450);
+
+           try {
+  const response = await authApi.login({
+    email: recruiterEmail,
+    password: recruiterPassword,
+    role: "RECRUITER"
+  });
+  localStorage.setItem("token"
+    , response.token);
+  localStorage.setItem("role", response.role);
+  setError('');
+  onLogin('recruiter');
+} catch (err) {
+  setError('Invalid recruiter credentials. Please check email/password.');
+}
+setIsSubmitting(false);
       return;
     } else {
       if (!recName || !recCompany || !recEmail || !recPassword) {
@@ -178,18 +185,24 @@ export const Auth: React.FC<AuthProps> = ({ students, recruiters, onLogin, onReg
     }
   };
 
-  const handleAdminSubmit = (e: React.FormEvent) => {
+  const handleAdminSubmit =async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    window.setTimeout(() => {
-      if (adminEmail === 'admin@university.edu' && adminPassword === 'admin123') {
-        setError('');
-        onLogin('admin');
-      } else {
-        setError('Invalid admin credentials. Use: admin@university.edu / admin123');
-      }
-      setIsSubmitting(false);
-    }, 450);
+      try {
+  const response = await authApi.login({
+    email: adminEmail,
+    password: adminPassword,
+    role: "TPO"
+  });
+  localStorage.setItem("token", response.token);
+  localStorage.setItem("role", response.role);
+  setError('');
+  onLogin('admin');
+} catch (err) {
+  setError('Invalid admin credentials.');
+}
+setIsSubmitting(false);
+
   };
 
   const scrollToLogin = () => {

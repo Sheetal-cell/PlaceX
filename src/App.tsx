@@ -109,9 +109,11 @@ function App() {
   };
 
   const handleLogout = () => {
-    setSession(null);
-    triggerToast('Logged out successfully.', 'info');
-  };
+  setSession(null);
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+  triggerToast('Logged out successfully.', 'info');
+};
 
   // Student apply to drive
   const handleApplyDrive = (driveId: string) => {
