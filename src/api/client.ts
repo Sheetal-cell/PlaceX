@@ -5,12 +5,31 @@ async function request<T>(
   endpoint: string,
   options?: RequestInit
 ): Promise<T> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null;
+  const token =
+    typeof window !== "undefined"
+      ? localStorage.getItem("token")
+      : null;
+
+  const publicEndpoints = [
+    "/auth/",
+    "/users/register",
+    "/recruiters/register",
+    "/students/add",
+    "/alumni/add",
+  ];
+
+  const isPublicEndpoint = publicEndpoints.some((path) =>
+    endpoint.startsWith(path)
+  );
+
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...((options?.headers as Record<string, string>) || {}),
   };
+
+  if (!isPublicEndpoint && token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
@@ -24,22 +43,34 @@ async function request<T>(
         window.dispatchEvent(new Event("auth:unauthorized"));
       }
     }
+
     const errorText = await response.text();
+
     let errorMessage = errorText;
+
     try {
       const jsonErr = JSON.parse(errorText);
+
       if (jsonErr && typeof jsonErr === "object") {
-        if (typeof jsonErr.message === "string" && jsonErr.message) {
+        if (
+          typeof jsonErr.message === "string" &&
+          jsonErr.message
+        ) {
           errorMessage = jsonErr.message;
-        } else if (typeof jsonErr.error === "string" && jsonErr.error) {
+        } else if (
+          typeof jsonErr.error === "string" &&
+          jsonErr.error
+        ) {
           errorMessage = jsonErr.error;
         }
       }
     } catch {
       // Not JSON, use errorText
     }
+
     throw new Error(
-      errorMessage || `API request failed with status ${response.status}`
+      errorMessage ||
+        `API request failed with status ${response.status}`
     );
   }
 
@@ -48,6 +79,7 @@ async function request<T>(
   }
 
   const text = await response.text();
+
   if (!text) {
     return undefined as T;
   }
