@@ -112,14 +112,6 @@ export interface ReferralRequest {
   active: boolean;
 }
 
-const ALUMNI_KEY = 'placex_alumni';
-const BLOG_KEY = 'placex_alumni_blogs';
-const REFERRAL_KEY = 'placex_alumni_referrals';
-
-const write = <T>(key: string, value: T) => {
-  localStorage.setItem(key, JSON.stringify(value));
-};
-
 export const alumniApi = {
   async getAll(): Promise<Alumni[]> {
     const res = await request<any[]>('/alumni/all');
@@ -164,8 +156,8 @@ export const alumniApi = {
     };
   },
 
-  saveAll(alumni: Alumni[]) {
-    write(ALUMNI_KEY, alumni);
+  saveAll(_alumni: Alumni[]) {
+    // No-op: Data is maintained in PostgreSQL database
   },
 
   async register(requestData: AlumniRegistrationRequest): Promise<any> {
@@ -230,8 +222,8 @@ export const alumniApi = {
     }));
   },
 
-  saveBlogs(blogs: Blog[]) {
-    write(BLOG_KEY, blogs);
+  saveBlogs(_blogs: Blog[]) {
+    // No-op: Data is maintained in PostgreSQL database
   },
 
   async createBlog(alumniId: string | number, requestData: BlogRequest): Promise<any> {
@@ -264,45 +256,23 @@ export const alumniApi = {
   },
 
   async getReferrals(): Promise<Referral[]> {
-    const data = localStorage.getItem(REFERRAL_KEY);
-    return data ? JSON.parse(data) : [];
+    return [];
   },
 
-  saveReferrals(referrals: Referral[]) {
-    write(REFERRAL_KEY, referrals);
+  saveReferrals(_referrals: Referral[]) {
+    // No-op: Referrals not supported by backend
   },
 
-  async createReferral(alumniId: string, requestData: ReferralRequest): Promise<Referral> {
-    const referrals = await this.getReferrals();
-    const newRef: Referral = {
-      id: String(Date.now()),
-      alumniId,
-      companyName: requestData.companyName,
-      role: requestData.role,
-      description: requestData.description,
-      postedDate: new Date().toISOString().split('T')[0],
-      active: requestData.active
-    };
-    referrals.push(newRef);
-    this.saveReferrals(referrals);
-    return newRef;
+  async createReferral(_alumniId: string, _requestData: ReferralRequest): Promise<Referral> {
+    throw new Error('Referrals module is currently unsupported by the backend API.');
   },
 
-  async updateReferral(id: string, requestData: ReferralRequest): Promise<Referral> {
-    const referrals = await this.getReferrals();
-    const idx = referrals.findIndex(r => r.id === id);
-    if (idx !== -1) {
-      referrals[idx] = { ...referrals[idx], ...requestData };
-      this.saveReferrals(referrals);
-      return referrals[idx];
-    }
-    throw new Error('Referral not found');
+  async updateReferral(_id: string, _requestData: ReferralRequest): Promise<Referral> {
+    throw new Error('Referrals module is currently unsupported by the backend API.');
   },
 
-  async deleteReferral(id: string): Promise<void> {
-    const referrals = await this.getReferrals();
-    const filtered = referrals.filter(r => r.id !== id);
-    this.saveReferrals(filtered);
+  async deleteReferral(_id: string): Promise<void> {
+    // No-op
   },
 
   async getProfile(id: string | number): Promise<Alumni> {

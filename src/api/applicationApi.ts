@@ -22,11 +22,14 @@ export const applicationApi = {
       body: JSON.stringify(data),
     }),
 
-  updateStatus: (id: number, status: string) =>
-    request<ApplicationResponse>(
-      `/applications/${id}/status?newStatus=${status}`,
+  updateStatus: (id: number, status: string) => {
+    const s = status.trim().toUpperCase();
+    const validStatus = s === "SHORTLISTED" || s === "REJECTED" ? s : "APPLIED";
+    return request<ApplicationResponse>(
+      `/applications/${id}/status?newStatus=${encodeURIComponent(validStatus)}`,
       { method: "PATCH" }
-    ),
+    );
+  },
 
   
   delete: (id: number) =>
