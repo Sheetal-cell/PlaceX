@@ -39,8 +39,8 @@ export default function EventForm({ onClose, onSave, isPrivate = false }: Props)
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[1000000] p-4 sm:p-6 pt-24 sm:pt-28 overflow-y-auto animate-fade-in">
-      <div className="bg-slate-50/95 rounded-3xl p-6 sm:p-8 w-full max-w-2xl sm:max-w-3xl mx-auto shadow-2xl border border-slate-200 flex flex-col gap-6 relative my-auto max-h-[80vh] overflow-y-auto mt-16 sm:mt-20">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[1000000] p-4 sm:p-6 overflow-y-auto animate-fade-in">
+      <div className="bg-slate-50/95 rounded-3xl p-6 sm:p-8 w-full max-w-2xl sm:max-w-3xl mx-auto shadow-2xl border border-slate-200 flex flex-col gap-6 relative my-auto max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-200/80 pb-5 gap-4 sticky top-0 bg-slate-50/95 z-10 pt-1">
           <div className="flex items-center gap-3.5">

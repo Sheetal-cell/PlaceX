@@ -38,8 +38,9 @@ async function request<T>(
 
   if (!response.ok) {
     if (response.status === 401) {
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined" && !isPublicEndpoint) {
         localStorage.removeItem("token");
+        localStorage.removeItem("role");
         window.dispatchEvent(new Event("auth:unauthorized"));
       }
     }

@@ -203,79 +203,60 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({
     return { name: br, pct, total: branchStudents.length, placed: branchPlaced.length };
   });
 
-  // Handlers (EXACT UNTOUCHED ALGORITHM)
+  // Handlers
   const handleDriveSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!companyName || !role || !pkg || !companyLocation) return;
+    if (!companyName.trim() || !role.trim() || !companyLocation.trim()) return;
 
-    const localDrive: DriveWithCompany = {
-      id: `drive-${Date.now()}`,
-      companyId: Date.now(),
-      companyName,
-      title: role,
-      description: jobDesc || 'Recruitment drive for software engineering candidates.',
-      location: jobLocation || companyLocation,
-      package: pkg || `${numericPkg} LPA`,
-      numericPackage: Number(numericPkg),
-      cgpaCutoff: Number(cgpaCutoff),
-      maxBacklogs: Number(maxBacklogs),
-      allowedBranches,
-      deadline,
-      skillsRequired: skillsRequiredText ? skillsRequiredText.split(',').map((s) => s.trim()) : ['React', 'Data Structures'],
-      status: 'OPEN',
-      registeredCount: 0,
-      recruitmentType: 'CAMPUS'
-    };
+    const safeNumericPkg = Number.isNaN(Number(numericPkg)) ? 0 : Number(numericPkg);
+    const safeCgpaCutoff = Number.isNaN(Number(cgpaCutoff)) ? 0 : Number(cgpaCutoff);
+    const safeMaxBacklogs = Number.isNaN(Number(maxBacklogs)) ? 0 : Number(maxBacklogs);
+    const cleanDesc = jobDesc.trim() || 'Recruitment drive for software engineering candidates.';
+    const cleanLocation = jobLocation.trim() || companyLocation.trim() || 'Campus';
+    const cleanWebsite = companyWebsite.trim()
+      ? (companyWebsite.trim().startsWith('http://') || companyWebsite.trim().startsWith('https://')
+          ? companyWebsite.trim()
+          : `https://${companyWebsite.trim()}`)
+      : undefined;
 
     try {
       const newDrive = await jobPostingApi.createDrive(
-        companyName,
-        companyLocation,
-        companyWebsite || undefined,
+        companyName.trim(),
+        companyLocation.trim(),
+        cleanWebsite,
         {
-  title: role,
-  description: jobDesc,
-  location: jobLocation,
-
-  eligibleCGPACutoff: Number(cgpaCutoff),
-  allowedBacklogs: Number(maxBacklogs),
-  allowedBranches: allowedBranches.join(', '),
-  eligibleBatch: '2026 Batch',
-  requiredSkills: skillsRequiredText,
-
-  salary: Number(numericPkg),
-  deadline,
-
-  // TPO creates ONLY On-Campus drives
-  recruitmentType: 'CAMPUS',
-  sourceType: 'TPO'
-}
+          title: role.trim(),
+          description: cleanDesc,
+          location: cleanLocation,
+          eligibleCGPACutoff: safeCgpaCutoff,
+          allowedBacklogs: safeMaxBacklogs,
+          allowedBranches: allowedBranches.join(', '),
+          eligibleBatch: '2026 Batch',
+          requiredSkills: skillsRequiredText.trim(),
+          salary: safeNumericPkg,
+          deadline: deadline || new Date().toISOString().split('T')[0],
+          recruitmentType: 'CAMPUS',
+          sourceType: 'TPO'
+        }
       );
       setRealDrives((prev) => (prev ? [newDrive, ...prev] : [newDrive]));
+      setShowDriveForm(false);
+      setRole('');
+      setCompanyName('');
+      setCompanyLocation('');
+      setCompanyWebsite('');
+      setJobLocation('');
+      setPkg('');
+      setNumericPkg(6);
+      setCgpaCutoff(7.0);
+      setMaxBacklogs(0);
+      setJobDesc('');
+      setSkillsRequiredText('React, JavaScript, Node.js');
+      setRoundsText('Aptitude Test, Technical Interview, HR Interview');
     } catch (err) {
-      console.error(
-    'Failed to create recruitment drive:', err);
-    alert(
-    'Failed to create recruitment drive. Please check the backend connection.'
-  );
-      setRealDrives((prev) => (prev ? [localDrive, ...prev] : [localDrive]));
+      console.error('Failed to create recruitment drive:', err);
+      alert('Failed to create recruitment drive. Please check backend connection.');
     }
-
-    setCompanyName('');
-    setCompanyLocation('');
-    setCompanyWebsite('');
-    setJobLocation('');
-    setRole('');
-    setPkg('');
-    setNumericPkg(6);
-    setCgpaCutoff(7.0);
-    setMaxBacklogs(0);
-    setAllowedBranches(['Computer Science', 'Information Technology']);
-    setDeadline('2026-06-30');
-    setJobDesc('');
-    setSkillsRequiredText('React, JavaScript, Node.js');
-    setRoundsText('Aptitude Test, Technical Interview, HR Interview');
-    setShowDriveForm(false);
   };
 
   const handleBranchCheckbox = (branch: string) => {

@@ -1,5 +1,5 @@
 import { useState, useEffect, type MouseEvent } from "react";
-import type { Company } from "../../mockHR";
+import type { Company } from "./hrTypes";
 import { Mail, Sparkles, Send } from "lucide-react";
 
 interface Props {

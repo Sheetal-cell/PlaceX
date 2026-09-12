@@ -50,6 +50,8 @@ export interface Student {
   email: string;
   registrationNumber?: string;
   password: string;
+  phone?: string;
+  year?: number;
 
   department: string;
   branch: string;

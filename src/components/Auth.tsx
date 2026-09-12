@@ -7,12 +7,10 @@ import {
   LogIn,
   UserPlus,
   Mail,
-  Database,
   Eye,
   EyeOff,
   Loader2,
   Building2,
-  Hash,
   Award,
   Sparkles,
   BarChart2,
@@ -25,17 +23,13 @@ import {
   Clock3
 } from 'lucide-react';
 
-import {
-  INITIAL_STUDENTS,
-  INITIAL_RECRUITERS,
-  type Student,
-  type Recruiter
-} from '../mockData';
-import type { Alumni } from '../mockAlumni';
+import type { Student, Recruiter } from '../mockData';
+import type { Alumni } from '../api/alumniApi';
 import { alumniApi, type AlumniRegistrationRequest } from '../api/alumniApi';
 import { authApi } from '../api/authApi';
 import { studentApi } from '../api/studentApi';
 import { recruiterApi } from '../api/recruiterApi';
+import { userApi } from '../api/userApi';
 import { Footer } from './Footer';
 import './Auth.css';
 
@@ -62,7 +56,7 @@ interface AuthProps {
     requestData: AlumniRegistrationRequest
   ) => Promise<void>;
 
-  onSeedData: () => void;
+  onSeedData?: () => void;
 }
 
 export type AuthRole =
@@ -78,8 +72,7 @@ export const Auth: React.FC<AuthProps> = ({
   onLogin,
   onRegister,
   onRegisterRecruiter,
-  onRegisterAlumni,
-  onSeedData
+  onRegisterAlumni
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -132,134 +125,16 @@ export const Auth: React.FC<AuthProps> = ({
   };
 
   /* =========================================================
-   DEV-ONLY LOGIN
-   Used only when backend is unavailable.
-   Real backend login remains unchanged.
-========================================================= */
-
-const DEV_LOGIN_ENABLED = import.meta.env.DEV;
-
-const handleDevLogin = (
-  role: AuthRole,
-  identifier: string,
-  password: string
-): boolean => {
-  if (!DEV_LOGIN_ENABLED) {
-    return false;
-  }
-
-  const value = identifier.trim().toLowerCase();
-
-  /* ---------------- STUDENT ---------------- */
-
-  if (role === 'student') {
-    const student = [
-      ...INITIAL_STUDENTS,
-      ...students
-    ].find((s) => {
-      const emailMatch =
-        s.email.toLowerCase() === value;
-
-      const registrationMatch =
-        s.registrationNumber?.toLowerCase() === value;
-
-      const idMatch =
-        String(s.id).toLowerCase() === value;
-
-      return (
-        (emailMatch ||
-          registrationMatch ||
-          idMatch) &&
-        s.password === password
-      );
-    });
-
-    if (student) {
-      onLogin('student', String(student.id));
-      return true;
-    }
-
-    return false;
-  }
-
-  /* ---------------- RECRUITER ---------------- */
-
-  if (role === 'recruiter') {
-    const recruiter = [
-      ...INITIAL_RECRUITERS,
-      ...recruiters
-    ].find(
-      (r) =>
-        r.email.toLowerCase() === value &&
-        r.password === password
-    );
-
-    if (recruiter) {
-      onLogin(
-        'recruiter',
-        String(recruiter.id)
-      );
-      return true;
-    }
-
-    return false;
-  }
-
-  /* ---------------- ADMIN / TPO ---------------- */
-
-  if (role === 'admin') {
-    if (
-      value === 'admin@university.edu' &&
-      password === 'admin123'
-    ) {
-      onLogin('admin');
-      return true;
-    }
-
-    return false;
-  }
-
-  /* ---------------- ALUMNI ---------------- */
-
-  if (role === 'alumni') {
-    const alumniRecord = alumni.find(
-      (a) =>
-        a.email.toLowerCase() === value &&
-        a.password === password
-    );
-
-    if (alumniRecord) {
-      onLogin(
-        'alumni',
-        String(alumniRecord.id)
-      );
-      return true;
-    }
-
-    return false;
-  }
-
-  return false;
-};
-
-  /* =========================================================
      STUDENT LOGIN / REGISTRATION
   ========================================================= */
 
-  const [studentRegNo, setStudentRegNo] =
-    useState('');
-
-  const [studentPassword, setStudentPassword] =
-    useState('');
+  const [studentRegNo, setStudentRegNo] = useState('');
+  const [studentPassword, setStudentPassword] = useState('');
 
   const [regName, setRegName] = useState('');
   const [regEmail, setRegEmail] = useState('');
-
-  const [regRegistrationNumber, setRegRegistrationNumber] =
-    useState('');
-
-  const [regPassword, setRegPassword] =
-    useState('');
+  const [regRegistrationNumber, setRegRegistrationNumber] = useState('');
+  const [regPassword, setRegPassword] = useState('');
 
   const [regBranch, setRegBranch] = useState<
     | 'Computer Science'
@@ -269,21 +144,12 @@ const handleDevLogin = (
     | 'Electrical'
   >('Computer Science');
 
-  const [regCgpa, setRegCgpa] =
-    useState('8.0');
-
-  const [regSkills, setRegSkills] =
-    useState(
-      'React, TypeScript, JavaScript'
-    );
-
-  const [regProjects, setRegProjects] =
-    useState('2');
-
-  const [regResume, setRegResume] =
-    useState(
-      'Enthusiastic developer skilled in frontend applications.'
-    );
+  const [regCgpa, setRegCgpa] = useState('8.0');
+  const [regSkills, setRegSkills] = useState('React, TypeScript, JavaScript');
+  const [regProjects, setRegProjects] = useState('2');
+  const [regResume, setRegResume] = useState(
+    'Enthusiastic developer skilled in frontend applications.'
+  );
 
   /* =========================================================
      ALUMNI REGISTRATION
@@ -322,8 +188,9 @@ const handleDevLogin = (
      ADMIN CREDENTIALS
   ========================================================= */
 
-  const [adminEmail, setAdminEmail] = useState('admin@university.edu');
-  const [adminPassword, setAdminPassword] = useState('admin123');
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminName, setAdminName] = useState('');
 
   /* =========================================================
      STUDENT SUBMIT
@@ -334,81 +201,52 @@ const handleDevLogin = (
     setError('');
 
     if (authMode === 'login') {
-  setIsSubmitting(true);
+      const loginInput = studentRegNo.trim();
 
-  try {
-    const identifier = studentRegNo.trim();
+      if (!loginInput.includes('@') || /^\d+$/.test(loginInput)) {
+        setError('Sorry, registration number login is currently unavailable. Please try logging in with your email address.');
+        return;
+      }
 
-    /* DEV LOGIN — backend not available */
-    if (
-      handleDevLogin(
-        'student',
-        identifier,
-        studentPassword
-      )
-    ) {
-      setError('');
+      setIsSubmitting(true);
+
+      try {
+        const res = await authApi.login({
+          email: loginInput,
+          password: studentPassword,
+          role: 'STUDENT',
+        });
+
+        if (res?.token) {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('role', 'STUDENT');
+        }
+
+        const allStudents = await studentApi.getAll().catch(() => []);
+
+        const realStudent = allStudents.find(
+          (s) =>
+            s.email.toLowerCase().trim() === loginInput.toLowerCase().trim() ||
+            (s.registrationNumber &&
+              s.registrationNumber.toLowerCase().trim() === loginInput.toLowerCase().trim()) ||
+            String(s.id).toLowerCase().trim() === loginInput.toLowerCase().trim()
+        );
+
+        if (realStudent) {
+          onLogin('student', String(realStudent.id));
+        } else {
+          onLogin('student', loginInput);
+        }
+      } catch (err: any) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        setError(err?.message || 'Invalid student credentials.');
+      } finally {
+        setIsSubmitting(false);
+      }
+
       return;
     }
-
-    /* REAL BACKEND LOGIN */
-    const loginEmail = identifier.includes('@')
-      ? identifier
-      : `${identifier}@university.edu`;
-
-    const res = await authApi.login({
-      email: loginEmail,
-      password: studentPassword,
-      role: 'STUDENT'
-    });
-
-    if (res?.token) {
-      localStorage.setItem('token', res.token);
-    }
-
-    const allStudents =
-      await studentApi.getAll();
-
-    const realStudent =
-      allStudents.find(
-        (s) =>
-          s.email.toLowerCase().trim() ===
-            loginEmail.toLowerCase().trim() ||
-          (s.registrationNumber &&
-            s.registrationNumber
-              .toLowerCase()
-              .trim() ===
-              identifier.toLowerCase().trim()) ||
-          String(s.id)
-            .toLowerCase()
-            .trim() ===
-              identifier.toLowerCase().trim()
-      );
-
-    if (realStudent) {
-      onLogin(
-        'student',
-        String(realStudent.id)
-      );
-    } else {
-      localStorage.removeItem('token');
-      setError(
-        'Student profile record not found.'
-      );
-    }
-  } catch (err: any) {
-    localStorage.removeItem('token');
-
-    setError(
-      err?.message ||
-        'Invalid student credentials.'
-    );
-  } finally {
-    setIsSubmitting(false);
-  }
-
-  return;
-}
 
     /* =====================================================
        STUDENT REGISTRATION
@@ -521,6 +359,7 @@ const handleDevLogin = (
 
     const numericRegNo = regRegistrationNumber.trim().replace(/\D/g, '').padEnd(12, '0').slice(0, 12);
 
+    setIsSubmitting(true);
     try {
       await studentApi.add({
         id: numericRegNo,
@@ -534,27 +373,23 @@ const handleDevLogin = (
         cgpa: newStudent.cgpa,
         activeBacklogs: 0
       });
+
+      onRegister(newStudent);
+
+      setStudentRegNo(normalizedEmail);
+      setStudentPassword('');
+
+      setAuthMode('login');
+      setSearchParams({ mode: 'login' });
+
+      setError(
+        'Student account created successfully. You can now sign in.'
+      );
     } catch (err: any) {
-      console.warn('Backend student register warning:', err);
+      setError(err?.message || 'Student registration failed.');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    onRegister(newStudent);
-
-    setStudentRegNo(
-      newStudent.registrationNumber ||
-        newStudent.email
-    );
-
-    setStudentPassword(
-      newStudent.password || ''
-    );
-
-    setAuthMode('login');
-    setSearchParams({ mode: 'login' });
-
-    setError(
-      'Student account created successfully. You can now sign in.'
-    );
   };
 
   /* =========================================================
@@ -567,22 +402,9 @@ const handleDevLogin = (
 
     if (authMode === 'login') {
       setIsSubmitting(true);
-      const identifier =
-  studentRegNo.trim();
 
-if (
-  handleDevLogin(
-    'alumni',
-    identifier,
-    studentPassword
-  )
-) {
-  setError('');
-  setIsSubmitting(false);
-  return;
-}
       try {
-        const loginEmail = studentRegNo.trim();
+        const loginEmail = alumniEmail.trim();
         const res = await authApi.login({
           email: loginEmail,
           password: studentPassword,
@@ -590,9 +412,10 @@ if (
         });
         if (res?.token) {
           localStorage.setItem('token', res.token);
+          localStorage.setItem('role', 'ALUMNI');
         }
 
-        const allAlumni = await alumniApi.getAll();
+        const allAlumni = await alumniApi.getAll().catch(() => []);
         const realAlumni = allAlumni.find(
           (a) => a.email.toLowerCase().trim() === loginEmail.toLowerCase().trim()
         );
@@ -600,11 +423,11 @@ if (
         if (realAlumni) {
           onLogin('alumni', String(realAlumni.id));
         } else {
-          localStorage.removeItem('token');
-          setError('Alumni profile record not found in system database.');
+          onLogin('alumni', loginEmail);
         }
       } catch (err: any) {
         localStorage.removeItem('token');
+        localStorage.removeItem('role');
         setError(err?.message || 'Invalid alumni credentials or login failed.');
       } finally {
         setIsSubmitting(false);
@@ -625,157 +448,88 @@ if (
       !alumniCurrentRole.trim() ||
       !alumniDepartment.trim()
     ) {
-      setError(
-        'Please fill in all required alumni fields.'
-      );
+      setError('Please fill in all required alumni fields.');
       return;
     }
 
-    const normalizedEmail =
-      alumniEmail.toLowerCase().trim();
-
-    /* Check existing alumni */
+    const normalizedEmail = alumniEmail.toLowerCase().trim();
 
     if (
       alumni.some(
-        (a) =>
-          a.email
-            .toLowerCase()
-            .trim() === normalizedEmail
+        (a) => a.email.toLowerCase().trim() === normalizedEmail
       )
     ) {
-      setError(
-        'An alumni account with this email is already registered.'
-      );
+      setError('An alumni account with this email is already registered.');
       return;
     }
-
-    /* Also prevent conflict with student account */
 
     if (
       students.some(
-        (s) =>
-          s.email
-            .toLowerCase()
-            .trim() === normalizedEmail
+        (s) => s.email.toLowerCase().trim() === normalizedEmail
       )
     ) {
-      setError(
-        'This email is already registered as a student account.'
-      );
+      setError('This email is already registered as a student account.');
       return;
     }
 
-    /* Graduation year validation */
-
-    const graduationYear =
-      parseInt(
-        alumniGraduationYear,
-        10
-      );
-
-    const currentYear =
-      new Date().getFullYear();
+    const graduationYear = parseInt(alumniGraduationYear, 10);
+    const currentYear = new Date().getFullYear();
 
     if (
       Number.isNaN(graduationYear) ||
       graduationYear < 1950 ||
       graduationYear > currentYear
     ) {
-      setError(
-        `Graduation year must be between 1950 and ${currentYear}.`
-      );
+      setError(`Graduation year must be between 1950 and ${currentYear}.`);
       return;
     }
-
-    /* LinkedIn validation */
 
     if (
       alumniLinkedIn.trim() &&
       !(
-        alumniLinkedIn
-          .trim()
-          .startsWith('http://') ||
-        alumniLinkedIn
-          .trim()
-          .startsWith('https://')
+        alumniLinkedIn.trim().startsWith('http://') ||
+        alumniLinkedIn.trim().startsWith('https://')
       )
     ) {
-      setError(
-        'LinkedIn URL should start with http:// or https://.'
-      );
+      setError('LinkedIn URL should start with http:// or https://.');
       return;
     }
 
-    /* =====================================================
-       CREATE ALUMNI ACCOUNT
-    ===================================================== */
-
     const registrationRequest: AlumniRegistrationRequest = {
-  name: alumniName.trim(),
-  email: normalizedEmail,
-  password: alumniPassword,
-  graduationYear,
-  currentCompany: alumniCompany.trim(),
-  currentRole: alumniCurrentRole.trim(),
-  department: alumniDepartment,
-  linkedIn: alumniLinkedIn.trim(),
-};
+      name: alumniName.trim(),
+      email: normalizedEmail,
+      password: alumniPassword,
+      graduationYear,
+      currentCompany: alumniCompany.trim(),
+      currentRole: alumniCurrentRole.trim(),
+      department: alumniDepartment,
+      linkedIn: alumniLinkedIn.trim(),
+    };
 
-try {
-  setIsSubmitting(true);
+    try {
+      setIsSubmitting(true);
+      await onRegisterAlumni(registrationRequest);
 
-  await onRegisterAlumni(registrationRequest);
-
-  setStudentRegNo(registrationRequest.email);
-  setStudentPassword('');
-  setAuthMode('login');
-
-  setError(
-    'Registration submitted successfully. Please wait for TPO approval before logging in.'
-  );
-} catch (error) {
-  setError(
-    error instanceof Error
-      ? error.message
-      : 'Unable to register alumni.'
-  );
-} finally {
-  setIsSubmitting(false);
-}
-
-    /*
-     * After registration:
-     * - Do NOT automatically log in.
-     * - Show login screen.
-     * - Tell user that TPO approval is required.
-     */
-
-    
-
-    setStudentPassword('');
-
-    setAuthMode('login');
-
-    setSearchParams({ mode: 'login' });
-
-    setError(
-      'Registration submitted successfully. Your alumni account is waiting for TPO approval.'
-    );
-
-    /* Reset registration fields */
+      setStudentRegNo(registrationRequest.email);
+      setStudentPassword('');
+      setAuthMode('login');
+      setSearchParams({ mode: 'login' });
+      setError('Registration submitted successfully. You can now sign in.');
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : 'Unable to register alumni.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
 
     setAlumniName('');
     setAlumniEmail('');
     setAlumniPassword('');
-    setAlumniGraduationYear(
-      currentYear.toString()
-    );
+    setAlumniGraduationYear(currentYear.toString());
     setAlumniCompany('');
     setAlumniCurrentRole('');
-    setAlumniDepartment(
-      'Information Technology'
-    );
+    setAlumniDepartment('Information Technology');
     setAlumniLinkedIn('');
   };
 
@@ -785,78 +539,45 @@ try {
 
   const handleRecruiterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setError('');
 
     if (authMode === 'login') {
-  setIsSubmitting(true);
+      setIsSubmitting(true);
 
-  try {
-    const identifier =
-      recruiterEmail.trim();
+      try {
+        const identifier = recruiterEmail.trim();
+        const res = await authApi.login({
+          email: identifier,
+          password: recruiterPassword,
+          role: 'RECRUITER',
+        });
 
-    /* DEV LOGIN */
-    if (
-      handleDevLogin(
-        'recruiter',
-        identifier,
-        recruiterPassword
-      )
-    ) {
-      setError('');
+        if (res?.token) {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('role', 'RECRUITER');
+        }
+
+        const allRecruiters = await recruiterApi.getAll().catch(() => []);
+
+        const realRecruiter = allRecruiters.find(
+          (r) => r.email.toLowerCase().trim() === identifier.toLowerCase().trim()
+        );
+
+        if (realRecruiter) {
+          onLogin('recruiter', String(realRecruiter.id));
+        } else {
+          onLogin('recruiter', identifier);
+        }
+      } catch (err: any) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        setError(err?.message || 'Invalid recruiter credentials.');
+      } finally {
+        setIsSubmitting(false);
+      }
+
       return;
     }
-
-    /* REAL BACKEND LOGIN */
-    const res = await authApi.login({
-      email: identifier,
-      password: recruiterPassword,
-      role: 'RECRUITER'
-    });
-
-    if (res?.token) {
-      localStorage.setItem(
-        'token',
-        res.token
-      );
-    }
-
-    const allRecruiters =
-      await recruiterApi.getAll();
-
-    const realRecruiter =
-      allRecruiters.find(
-        (r) =>
-          r.email.toLowerCase().trim() ===
-          identifier.toLowerCase().trim()
-      );
-
-    if (realRecruiter) {
-      onLogin(
-        'recruiter',
-        String(realRecruiter.id)
-      );
-    } else {
-      localStorage.removeItem('token');
-
-      setError(
-        'Recruiter profile record not found.'
-      );
-    }
-  } catch (err: any) {
-    localStorage.removeItem('token');
-
-    setError(
-      err?.message ||
-        'Invalid recruiter credentials.'
-    );
-  } finally {
-    setIsSubmitting(false);
-  }
-
-  return;
-}
-    /* Recruiter registration */
 
     if (
       !recName.trim() ||
@@ -864,135 +585,114 @@ try {
       !recEmail.trim() ||
       !recPassword
     ) {
-      setError(
-        'Please fill in all required recruiter fields.'
-      );
+      setError('Please fill in all required recruiter fields.');
       return;
     }
 
-    const normalizedEmail =
-      recEmail.toLowerCase().trim();
+    const normalizedEmail = recEmail.toLowerCase().trim();
 
     if (
       recruiters.some(
-        (r) =>
-          r.email
-            .toLowerCase()
-            .trim() === normalizedEmail
+        (r) => r.email.toLowerCase().trim() === normalizedEmail
       )
     ) {
-      setError(
-        'A recruiter with this email is already registered.'
-      );
+      setError('A recruiter with this email is already registered.');
       return;
     }
 
     const newRecruiter: Recruiter = {
-      id: `rec_${Math.random()
-        .toString(36)
-        .substring(2, 11)}`,
-
+      id: `rec_${Math.random().toString(36).substring(2, 11)}`,
       name: recName.trim(),
-
       email: normalizedEmail,
-
       password: recPassword,
-
-      companyName:
-        recCompany.trim(),
-
-      designation:
-        recDesignation.trim() ||
-        'Recruiter'
+      companyName: recCompany.trim(),
+      designation: recDesignation.trim() || 'Recruiter',
     };
 
+    setIsSubmitting(true);
     try {
       await recruiterApi.register({
         name: newRecruiter.name,
         email: newRecruiter.email,
         password: newRecruiter.password || 'password',
         companyName: newRecruiter.companyName,
-        designation: newRecruiter.designation
+        designation: newRecruiter.designation,
       });
-    } catch {
-      // Backend offline fallback
+
+      onRegisterRecruiter(newRecruiter);
+      setRecruiterEmail(normalizedEmail);
+      setRecruiterPassword('');
+      setAuthMode('login');
+      setSearchParams({ mode: 'login' });
+      setError('Recruiter account created successfully. You can now sign in.');
+    } catch (err: any) {
+      setError(err?.message || 'Recruiter registration failed.');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    onRegisterRecruiter(
-      newRecruiter
-    );
-
-    setRecruiterEmail(
-      newRecruiter.email
-    );
-
-    setRecruiterPassword(
-      newRecruiter.password || ''
-    );
-
-    setAuthMode('login');
-
-    setSearchParams({ mode: 'login' });
-
-    setError(
-      'Recruiter account created successfully. You can now sign in.'
-    );
   };
 
   /* =========================================================
      ADMIN SUBMIT
   ========================================================= */
 
-  const handleAdminSubmit = async (
-  e: React.FormEvent
-) => {
-  e.preventDefault();
-  setError('');
-  setIsSubmitting(true);
+  const handleAdminSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
 
-  try {
-    /* DEV LOGIN */
-    if (
-      handleDevLogin(
-        'admin',
-        adminEmail,
-        adminPassword
-      )
-    ) {
-      setError('');
+    if (authMode === 'login') {
+      setIsSubmitting(true);
+
+      try {
+        const res = await authApi.login({
+          email: adminEmail.trim(),
+          password: adminPassword,
+          role: 'TPO',
+        });
+
+        if (res?.token) {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('role', 'TPO');
+          onLogin('admin');
+        } else {
+          throw new Error('No token returned from backend.');
+        }
+      } catch (err: any) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        setError(err?.message || 'Unable to log in as administrator.');
+      } finally {
+        setIsSubmitting(false);
+      }
+
       return;
     }
 
-    /* REAL BACKEND LOGIN */
-    const res = await authApi.login({
-      email: adminEmail.trim(),
-      password: adminPassword,
-      role: 'TPO'
-    });
-
-    if (res?.token) {
-      localStorage.setItem(
-        'token',
-        res.token
-      );
-
-      onLogin('admin');
-    } else {
-      throw new Error(
-        'No token returned from backend.'
-      );
+    if (!adminName.trim() || !adminEmail.trim() || !adminPassword) {
+      setError('Please fill in all required fields.');
+      return;
     }
-  } catch (err: any) {
-    localStorage.removeItem('token');
 
-    setError(
-      err?.message ||
-        'Unable to log in.'
-    );
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+    setIsSubmitting(true);
+    try {
+      const normalizedEmail = adminEmail.toLowerCase().trim();
+      await userApi.register({
+        name: adminName.trim(),
+        email: normalizedEmail,
+        password: adminPassword,
+      });
+
+      setAdminEmail(normalizedEmail);
+      setAdminPassword('');
+      setAuthMode('login');
+      setSearchParams({ mode: 'login' });
+      setError('TPO Admin account created successfully. You can now sign in.');
+    } catch (err: any) {
+      setError(err?.message || 'TPO Admin registration failed.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   /* =========================================================
      RENDER
   ========================================================= */
@@ -1324,19 +1024,18 @@ try {
                       <div className="auth-input-group">
 
                         <label className="auth-input-label">
-                          Registration Number /
-                          Email
+                          Student Email Address
                         </label>
 
                         <div className="auth-input-box">
 
-                          <Hash
+                          <Mail
                             size={18}
                             className="auth-input-icon"
                           />
 
                           <input
-                            type="text"
+                            type="email"
                             required
                             value={
                               studentRegNo
@@ -1346,7 +1045,7 @@ try {
                                 e.target.value
                               )
                             }
-                            placeholder="e.g. 241000110xxx"
+                            placeholder="student@example.com"
                             className="auth-input-field"
                           />
 
@@ -1739,9 +1438,9 @@ try {
                           <input
                             type="email"
                             required
-                            value={studentRegNo}
+                            value={alumniEmail}
                             onChange={(e) =>
-                              setStudentRegNo(
+                              setAlumniEmail(
                                 e.target.value
                               )
                             }
@@ -2518,163 +2217,139 @@ try {
               ================================================= */}
 
               {activeRole === 'admin' && (
-                <form
-                  onSubmit={
-                    handleAdminSubmit
-                  }
-                >
+                <form onSubmit={handleAdminSubmit}>
+                  {authMode === 'register' ? (
+                    <>
+                      <div className="auth-input-group">
+                        <label className="auth-input-label">Full Name</label>
+                        <div className="auth-input-box">
+                          <UserPlus size={18} className="auth-input-icon" />
+                          <input
+                            type="text"
+                            required
+                            value={adminName}
+                            onChange={(e) => setAdminName(e.target.value)}
+                            placeholder="Dr. Placement Officer"
+                            className="auth-input-field"
+                          />
+                        </div>
+                      </div>
 
-                  <div className="auth-input-group">
+                      <div className="auth-input-group">
+                        <label className="auth-input-label">Admin Email Address</label>
+                        <div className="auth-input-box">
+                          <Mail size={18} className="auth-input-icon" />
+                          <input
+                            type="email"
+                            required
+                            value={adminEmail}
+                            onChange={(e) => setAdminEmail(e.target.value)}
+                            placeholder="tpo@university.edu"
+                            className="auth-input-field"
+                          />
+                        </div>
+                      </div>
 
-                    <label className="auth-input-label">
-                      Admin Email Address
-                    </label>
-
-                    <div className="auth-input-box">
-
-                      <Mail
-                        size={18}
-                        className="auth-input-icon"
-                      />
-
-                      <input
-                        type="email"
-                        required
-                        value={adminEmail}
-                        onChange={(e) =>
-                          setAdminEmail(
-                            e.target.value
-                          )
-                        }
-                        placeholder="admin@university.edu"
-                        className="auth-input-field"
-                      />
-
-                    </div>
-                  </div>
-
-                  <div className="auth-input-group">
-
-                    <label className="auth-input-label">
-                      Admin Password
-                    </label>
-
-                    <div className="auth-input-box">
-
-                      <input
-                        type={
-                          showPassword
-                            ? 'text'
-                            : 'password'
-                        }
-                        required
-                        value={
-                          adminPassword
-                        }
-                        onChange={(e) =>
-                          setAdminPassword(
-                            e.target.value
-                          )
-                        }
-                        placeholder="••••••••"
-                        className="auth-input-field"
-                      />
+                      <div className="auth-input-group">
+                        <label className="auth-input-label">Password</label>
+                        <div className="auth-input-box">
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            required
+                            value={adminPassword}
+                            onChange={(e) => setAdminPassword(e.target.value)}
+                            placeholder="••••••••"
+                            className="auth-input-field"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword((v) => !v)}
+                            className="text-gray-400 hover:text-gray-200 transition-colors"
+                          >
+                            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                          </button>
+                        </div>
+                      </div>
 
                       <button
-                        type="button"
-                        onClick={() =>
-                          setShowPassword(
-                            (value) =>
-                              !value
-                          )
-                        }
-                        className="text-gray-400 hover:text-gray-200 transition-colors"
+                        type="submit"
+                        className="auth-submit-btn mt-6"
+                        disabled={isSubmitting}
                       >
-                        {showPassword ? (
-                          <EyeOff size={16} />
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 size={18} className="animate-spin" />
+                            Registering...
+                          </>
                         ) : (
-                          <Eye size={16} />
+                          <>
+                            Register TPO Admin
+                            <UserPlus size={18} />
+                          </>
                         )}
                       </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="auth-input-group">
+                        <label className="auth-input-label">Admin Email Address</label>
+                        <div className="auth-input-box">
+                          <Mail size={18} className="auth-input-icon" />
+                          <input
+                            type="email"
+                            required
+                            value={adminEmail}
+                            onChange={(e) => setAdminEmail(e.target.value)}
+                            placeholder="tpo@university.edu"
+                            className="auth-input-field"
+                          />
+                        </div>
+                      </div>
 
-                    </div>
-                  </div>
+                      <div className="auth-input-group">
+                        <label className="auth-input-label">Admin Password</label>
+                        <div className="auth-input-box">
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            required
+                            value={adminPassword}
+                            onChange={(e) => setAdminPassword(e.target.value)}
+                            placeholder="••••••••"
+                            className="auth-input-field"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword((v) => !v)}
+                            className="text-gray-400 hover:text-gray-200 transition-colors"
+                          >
+                            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                          </button>
+                        </div>
+                      </div>
 
-                  <div className="admin-preset-card">
-
-                    <div className="admin-preset-row">
-                      <span>
-                        Default Admin Email:
-                      </span>
-
-                      <span className="admin-preset-val">
-                        admin@university.edu
-                      </span>
-                    </div>
-
-                    <div className="admin-preset-row">
-                      <span>
-                        Default Password:
-                      </span>
-
-                      <span className="admin-preset-val">
-                        admin123
-                      </span>
-                    </div>
-
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="auth-submit-btn mt-2"
-                    disabled={
-                      isSubmitting
-                    }
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2
-                          size={18}
-                          className="animate-spin"
-                        />
-                        Authenticating…
-                      </>
-                    ) : (
-                      <>
-                        Authenticate TPO Admin
-                        <LogIn size={18} />
-                      </>
-                    )}
-                  </button>
-
+                      <button
+                        type="submit"
+                        className="auth-submit-btn mt-6"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 size={18} className="animate-spin" />
+                            Authenticating…
+                          </>
+                        ) : (
+                          <>
+                            Authenticate TPO Admin
+                            <LogIn size={18} />
+                          </>
+                        )}
+                      </button>
+                    </>
+                  )}
                 </form>
               )}
 
             </div>
-
-            {/* =================================================
-                SEED DATA
-            ================================================= */}
-
-            <div className="auth-seed-wrapper">
-
-              <p className="auth-seed-desc">
-                Evaluation Mode: Start clean
-                or seed the placement database
-                instantly.
-              </p>
-
-              <button
-                type="button"
-                onClick={onSeedData}
-                className="btn btn-secondary btn-sm flex items-center gap-2 text-blue-300 hover:text-blue-200 border-blue-500/20 hover:border-blue-500/40"
-              >
-                <Database size={14} />
-                Seed Sample Data
-              </button>
-
-            </div>
-
           </div>
         </div>
       </div>

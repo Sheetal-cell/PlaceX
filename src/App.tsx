@@ -25,12 +25,6 @@ import { RouteLoadingBar } from './components/RouteLoadingBar';
 
 import type { ToastType } from './components/Notification';
 
-import {
-  INITIAL_STUDENTS,
-  INITIAL_DRIVES,
-  INITIAL_RECRUITERS,
-} from './mockData';
-
 import type {
   Student,
   PlacementDrive,
@@ -38,8 +32,6 @@ import type {
   Recruiter,
   ResumeFeedback,
 } from './mockData';
-
-import { INITIAL_CALENDAR_EVENTS } from './mockCalendar';
 
 import type {
   CalendarEvent,
@@ -242,39 +234,23 @@ function AppContent() {
      STUDENTS
   ======================================================= */
 
-  const [students, setStudents] =
-    useState<Student[]>(() => {
-      const saved =
-        localStorage.getItem('tpo_students');
+  /* =======================================================
+     STUDENTS
+  ======================================================= */
 
-      return saved
-        ? JSON.parse(saved)
-        : [];
-    });
-
+  const [students, setStudents] = useState<Student[]>([]);
 
   /* =======================================================
      PLACEMENT DRIVES
   ======================================================= */
 
-  const [drives, setDrives] =
-  useState<PlacementDrive[]>([]);
-
+  const [drives, setDrives] = useState<PlacementDrive[]>([]);
 
   /* =======================================================
      RECRUITERS
   ======================================================= */
 
-  const [recruiters, setRecruiters] =
-    useState<Recruiter[]>(() => {
-      const saved =
-        localStorage.getItem('tpo_recruiters');
-
-      return saved
-        ? JSON.parse(saved)
-        : [];
-    });
-
+  const [recruiters, setRecruiters] = useState<Recruiter[]>([]);
 
   /* =======================================================
      ALUMNI
@@ -282,273 +258,187 @@ function AppContent() {
 
   const [alumni, setAlumni] = useState<Alumni[]>([]);
 
-
   /* =======================================================
      ALUMNI BLOGS
   ======================================================= */
 
   const [blogs, setBlogs] = useState<Blog[]>([]);
 
-
   /* =======================================================
      ALUMNI REFERRALS
   ======================================================= */
 
-  const [referrals, setReferrals] =
-  useState<Referral[]>([]);
+  const [referrals, setReferrals] = useState<Referral[]>([]);
+
+  /* =======================================================
+     CALENDAR EVENTS
+  ======================================================= */
+
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
+
+  /* =======================================================
+     SESSION & RESTORATION
+  ======================================================= */
+
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const storedRole = localStorage.getItem('role');
+
+    if (token && storedRole) {
+      const roleLower = storedRole.toLowerCase();
+      const mappedRole: UserRole =
+        roleLower === 'student'
+          ? 'student'
+          : roleLower === 'recruiter'
+          ? 'recruiter'
+          : roleLower === 'alumni'
+          ? 'alumni'
+          : 'admin';
+
+      setSession({ role: mappedRole });
+    }
+  }, []);
 
   useEffect(() => {
     const loadBackendData = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
       try {
         const [
           alumniData,
           blogsData,
-          referralsData,
           studentsWithPlacement,
           drivesWithCompany,
           recruitersList,
-          eventsList
+          eventsList,
+          applicationsList
         ] = await Promise.all([
           alumniApi.getAll().catch(() => []),
           alumniApi.getBlogs().catch(() => []),
-          alumniApi.getReferrals().catch(() => []),
           studentApi.getAllWithPlacementInfo().catch(() => []),
           jobPostingApi.getAllWithCompanyInfo().catch(() => []),
           recruiterApi.getAll().catch(() => []),
           calendarApi.getAll().catch(() => []),
+          applicationApi.getAll().catch(() => []),
         ]);
 
-        if (alumniData.length > 0) setAlumni(alumniData);
-        if (blogsData.length > 0) setBlogs(blogsData);
-        if (referralsData.length > 0) setReferrals(referralsData);
+        setAlumni(alumniData);
+        setBlogs(blogsData);
 
-        if (studentsWithPlacement.length > 0) {
-          const mappedStudents: Student[] = studentsWithPlacement.map((s) => ({
-            id: s.id,
-            name: s.name,
-            email: s.email,
-            registrationNumber: s.id,
-            password: 'password123',
-            branch: s.department,
-            cgpa: s.cgpa,
-            backlogs: s.backlogs,
-            placementStatus: s.placementStatus,
-            placedCompany: s.placedCompany,
-            placedPackage: s.placedPackage,
-            resumeScore: s.resumeScore || 85,
-            skills: ['Java', 'React', 'Spring Boot'],
-            projectsCount: s.projectsCount || 2,
-            resumeText: s.resumeText || '',
-            applications: [],
-            department: s.department,
-          }));
-          setStudents(mappedStudents);
+        const appsByStudent = new Map<string, Application[]>();
+        for (const app of applicationsList) {
+          const sId = String(app.studentId);
+          const currentApps = appsByStudent.get(sId) || [];
+          currentApps.push({
+            driveId: String(app.jobPostingId),
+            jobPostingId: String(app.jobPostingId),
+            companyName: app.companyName || '',
+            role: app.jobTitle || '',
+            appliedDate: app.appliedDate || '',
+            status: app.status === 'SHORTLISTED' ? 'Selected' : app.status === 'REJECTED' ? 'Rejected' : 'Applied',
+            currentRoundIndex: 0,
+          });
+          appsByStudent.set(sId, currentApps);
         }
 
-        if (drivesWithCompany.length > 0) {
-  const mappedDrives: PlacementDrive[] =
-    drivesWithCompany.map((d) => ({
-      id: d.id,
+        const mappedStudents: Student[] = studentsWithPlacement.map((s) => ({
+          id: s.id,
+          name: s.name,
+          email: s.email,
+          registrationNumber: s.id,
+          password: '',
+          branch: s.department,
+          cgpa: s.cgpa,
+          backlogs: s.backlogs,
+          placementStatus: s.placementStatus,
+          placedCompany: s.placedCompany,
+          placedPackage: s.placedPackage,
+          resumeScore: 85,
+          skills: [],
+          projectsCount: 0,
+          resumeText: '',
+          applications: appsByStudent.get(String(s.id)) || [],
+          department: s.department,
+        }));
+        setStudents(mappedStudents);
 
-      companyName:
-        d.companyName,
+        const mappedDrives: PlacementDrive[] = drivesWithCompany.map((d) => ({
+          id: d.id,
+          companyName: d.companyName,
+          companyId: d.companyId,
+          role: d.roleCategory || d.title,
+          title: d.title,
+          description: d.description,
+          jobDesc: d.description || '',
+          package: d.package,
+          numericPackage: d.numericPackage,
+          cgpaCutoff: d.cgpaCutoff,
+          maxBacklogs: d.maxBacklogs,
+          allowedBranches: d.allowedBranches,
+          eligibleBatch: d.eligibleBatch,
+          deadline: d.deadline ?? null,
+          location: d.location,
+          skillsRequired: d.skillsRequired,
+          status: d.status,
+          registeredCount: d.registeredCount,
+          rounds: d.recruitmentType === 'OFF_CAMPUS' ? [] : ['Online Assessment', 'Technical Interview', 'HR Interview'],
+          recruitmentType: d.recruitmentType === 'CAMPUS' ? 'CAMPUS' : d.recruitmentType,
+          sourceType: d.sourceType,
+          applyUrl: d.applyUrl,
+          source: d.source,
+          postedAt: d.postedAt,
+          jobType: d.jobType,
+          roleCategory: d.roleCategory,
+          scrapedDate: d.scrapedDate,
+        }));
+        setDrives(mappedDrives);
 
-      companyId:
-        d.companyId,
+        const mappedRecruiters: Recruiter[] = recruitersList.map((r) => ({
+          id: String(r.id),
+          name: r.name,
+          email: r.email,
+          password: '',
+          companyName: r.companyName,
+          companyId: r.id,
+          designation: r.designation || 'Recruiter',
+          industry: r.industry || 'Technology',
+          postedDrives: [],
+        }));
+        setRecruiters(mappedRecruiters);
 
-      role:
-        d.roleCategory ||
-        d.title,
-
-      title:
-        d.title,
-
-      description:
-        d.description,
-
-      jobDesc:
-        d.description || '',
-
-      package:
-        d.package,
-
-      numericPackage:
-        d.numericPackage,
-
-      /*
-       * These remain null for
-       * OFF_CAMPUS.
-       */
-      cgpaCutoff:
-        d.cgpaCutoff,
-
-      maxBacklogs:
-        d.maxBacklogs,
-
-      allowedBranches:
-        d.allowedBranches,
-
-      eligibleBatch:
-        d.eligibleBatch,
-
-      deadline:
-        d.deadline ?? null,
-
-      location:
-        d.location,
-
-      skillsRequired:
-        d.skillsRequired,
-
-      status:
-        d.status,
-
-      registeredCount:
-        d.registeredCount,
-
-      rounds:
-        d.recruitmentType === 'OFF_CAMPUS'
-          ? []
-          : [
-              'Online Assessment',
-              'Technical Interview',
-              'HR Interview'
-            ],
-
-      recruitmentType:
-        d.recruitmentType === 'CAMPUS'
-          ? 'CAMPUS'
-          : d.recruitmentType,
-
-      sourceType:
-        d.sourceType,
-
-      applyUrl:
-        d.applyUrl,
-
-      source:
-        d.source,
-
-      postedAt:
-        d.postedAt,
-
-      jobType:
-        d.jobType,
-
-      roleCategory:
-        d.roleCategory,
-
-      scrapedDate:
-        d.scrapedDate,
-    }));
-
-  setDrives(mappedDrives);
-}
-        if (recruitersList.length > 0) {
-          const mappedRecruiters: Recruiter[] = recruitersList.map((r) => ({
-            id: String(r.id),
-            name: r.name,
-            email: r.email,
-            password: 'password123',
-            companyName: r.companyName,
-            companyId: r.id,
-            designation: r.designation || 'Technical Recruiter',
-            industry: r.industry || 'IT Services',
-            postedDrives: []
-          }));
-          setRecruiters(mappedRecruiters);
-        }
-
-        if (eventsList.length > 0) {
-          setCalendarEvents(eventsList);
-        }
+        setCalendarEvents(eventsList);
       } catch (error) {
         console.error('Failed to load initial backend data:', error);
       }
     };
 
     loadBackendData();
-  }, []);
-
-
-  /* =======================================================
-     CALENDAR EVENTS
-  ======================================================= */
-
-  const [calendarEvents, setCalendarEvents] =
-    useState<CalendarEvent[]>(
-      INITIAL_CALENDAR_EVENTS
-    );
-
-
-  /* =======================================================
-     SESSION
-  ======================================================= */
-
-  const [session, setSession] =
-    useState<Session | null>(null);
-
+  }, [session]);
 
   /* =======================================================
      TOAST
   ======================================================= */
 
-  const [toast, setToast] =
-    useState<ToastType | null>(null);
-
-
-  /* =======================================================
-     TOAST HELPER
-  ======================================================= */
+  const [toast, setToast] = useState<ToastType | null>(null);
 
   const triggerToast = (
     message: string,
-    type:
-      | 'success'
-      | 'error'
-      | 'warning'
-      | 'info'
+    type: 'success' | 'error' | 'warning' | 'info'
   ) => {
     setToast({
-      id: Math.random()
-        .toString(36)
-        .substring(2, 11),
+      id: Math.random().toString(36).substring(2, 11),
       message,
       type,
     });
   };
 
-
-  /* =======================================================
-     LOCAL STORAGE
-  ======================================================= */
-
-  useEffect(() => {
-    localStorage.setItem(
-      'tpo_students',
-      JSON.stringify(students)
-    );
-  }, [students]);
-
-
-  useEffect(() => {
-    localStorage.setItem(
-      'tpo_drives',
-      JSON.stringify(drives)
-    );
-  }, [drives]);
-
-
-  useEffect(() => {
-    localStorage.setItem(
-      'tpo_recruiters',
-      JSON.stringify(recruiters)
-    );
-  }, [recruiters]);
-
   useEffect(() => {
     const handleUnauthorized = () => {
       localStorage.removeItem('token');
+      localStorage.removeItem('role');
       localStorage.removeItem('placex_session');
       setSession(null);
       triggerToast('Session expired or unauthorized. Please log in again.', 'warning');
@@ -561,23 +451,8 @@ function AppContent() {
     };
   }, [navigate]);
 
-
-  
-
-
-  /* =======================================================
-     SEED DATA
-  ======================================================= */
-
   const handleSeedData = () => {
-    setStudents(INITIAL_STUDENTS);
-    setDrives(INITIAL_DRIVES);
-    setRecruiters(INITIAL_RECRUITERS);
-
-    triggerToast(
-      'Sample data seeded successfully. Feel free to log in!',
-      'success'
-    );
+    triggerToast('Seed operation is deprecated. Data comes from backend.', 'info');
   };
 
 
