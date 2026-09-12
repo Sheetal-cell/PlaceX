@@ -15,8 +15,8 @@ export default function EventModal({ event, onClose }: EventModalProps) {
   const locationText = event.location || event.venue || "Campus Main Hall";
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[1000000] p-4 sm:p-8 pt-24 sm:pt-28 overflow-y-auto animate-fade-in">
-      <div className="bg-white rounded-3xl p-8 sm:p-10 w-full max-w-2xl sm:max-w-3xl mx-auto shadow-2xl border border-slate-200/90 flex flex-col gap-7 relative overflow-hidden my-auto mt-16 sm:mt-20">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[1000000] p-4 sm:p-6 animate-fade-in">
+      <div className="bg-white rounded-3xl p-7 sm:p-9 w-full max-w-2xl sm:max-w-3xl mx-auto shadow-2xl border border-slate-200/90 flex flex-col gap-6 relative overflow-hidden max-h-[90vh] overflow-y-auto my-auto">
         {/* Top Accent Color Line */}
         <div
           className="absolute top-0 left-0 right-0 h-2"

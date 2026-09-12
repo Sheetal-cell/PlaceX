@@ -313,7 +313,8 @@ function AppContent() {
           studentsWithPlacement,
           drivesWithCompany,
           recruitersList,
-          eventsList
+          eventsList,
+          applicationsList
         ] = await Promise.all([
           alumniApi.getAll().catch(() => []),
           alumniApi.getBlogs().catch(() => []),
@@ -321,10 +322,27 @@ function AppContent() {
           jobPostingApi.getAllWithCompanyInfo().catch(() => []),
           recruiterApi.getAll().catch(() => []),
           calendarApi.getAll().catch(() => []),
+          applicationApi.getAll().catch(() => []),
         ]);
 
         setAlumni(alumniData);
         setBlogs(blogsData);
+
+        const appsByStudent = new Map<string, Application[]>();
+        for (const app of applicationsList) {
+          const sId = String(app.studentId);
+          const currentApps = appsByStudent.get(sId) || [];
+          currentApps.push({
+            driveId: String(app.jobPostingId),
+            jobPostingId: String(app.jobPostingId),
+            companyName: app.companyName || '',
+            role: app.jobTitle || '',
+            appliedDate: app.appliedDate || '',
+            status: app.status === 'SHORTLISTED' ? 'Selected' : app.status === 'REJECTED' ? 'Rejected' : 'Applied',
+            currentRoundIndex: 0,
+          });
+          appsByStudent.set(sId, currentApps);
+        }
 
         const mappedStudents: Student[] = studentsWithPlacement.map((s) => ({
           id: s.id,
@@ -342,7 +360,7 @@ function AppContent() {
           skills: [],
           projectsCount: 0,
           resumeText: '',
-          applications: [],
+          applications: appsByStudent.get(String(s.id)) || [],
           department: s.department,
         }));
         setStudents(mappedStudents);

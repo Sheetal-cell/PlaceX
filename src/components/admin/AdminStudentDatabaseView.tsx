@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Users, FileText, ChevronRight, X, Save, Award, TrendingUp } from 'lucide-react';
+import { Users, FileText, ChevronRight, X, Save, TrendingUp } from 'lucide-react';
 import type { Student, PlacementDrive, ResumeFeedback } from '../../mockData';
 import type { StudentWithPlacement } from '../../api/types';
 import { StudentVisualizerView } from '../student/StudentVisualizerView';
+import { RecordPlacementOfferModal } from './RecordPlacementOfferModal';
 
 interface AdminStudentDatabaseViewProps {
   filteredStudents: (Student | StudentWithPlacement)[];
@@ -401,66 +402,24 @@ export const AdminStudentDatabaseView: React.FC<AdminStudentDatabaseViewProps> =
       )}
 
       {/* Record Corporate Placement Offer Modal */}
-      {statusChangeStudentId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white rounded-2xl p-6 sm:p-7 max-w-md w-full shadow-2xl border border-slate-200 flex flex-col gap-5">
-            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2">
-                <Award size={22} className="text-emerald-600" />
-                <h3 className="font-bold text-slate-900 text-base font-display">Record Placement Offer</h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setStatusChangeStudentId(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-            </div>
+      {statusChangeStudentId && (() => {
+        const targetStudent = allStudents.find(
+          (s) => s.id === statusChangeStudentId || ('registrationNo' in s && s.registrationNo === statusChangeStudentId)
+        ) || null;
 
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-slate-700">Recruiting Company Name *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Google / Amazon / Microsoft"
-                  value={placedCompanyInput}
-                  onChange={(e) => setPlacedCompanyInput(e.target.value)}
-                  className="input-field"
-                />
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-slate-700">Offered Annual Package (CTC) *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. 24 LPA"
-                  value={placedPackageInput}
-                  onChange={(e) => setPlacedPackageInput(e.target.value)}
-                  className="input-field"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => setStatusChangeStudentId(null)}
-                className="btn btn-secondary h-11 px-5 rounded-xl text-xs font-bold"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => handleManualStatusSave(statusChangeStudentId)}
-                className="btn btn-primary h-11 px-6 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-600"
-              >
-                Save Offer
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+        return (
+          <RecordPlacementOfferModal
+            studentId={statusChangeStudentId}
+            targetStudent={targetStudent}
+            placedCompanyInput={placedCompanyInput}
+            setPlacedCompanyInput={setPlacedCompanyInput}
+            placedPackageInput={placedPackageInput}
+            setPlacedPackageInput={setPlacedPackageInput}
+            onClose={() => setStatusChangeStudentId(null)}
+            onSave={handleManualStatusSave}
+          />
+        );
+      })()}
 
       {/* Resume Analyzer Feedback Modal */}
       {selectedStudentForResume && (
